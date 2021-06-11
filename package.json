@@ -1,18 +1,18 @@
 {
-  "version": "0.0.0",
-  "name": "{{ name_of_lib }}",
-  "description": "{{ desc_of_lib }}",
+  "version": "0.1.0",
+  "name": "@thisbeyond/solid-dnd",
+  "description": "A lightweight drag and drop toolkit for Solid JS.",
   "type": "module",
   "files": [
     "dist"
   ],
-  "main": "dist/esm/{{ name_of_lib }}.js",
-  "module": "dist/esm/{{ name_of_lib }}.js",
-  "types": "dist/types/{{ name_of_lib }}.d.ts",
+  "main": "dist/esm/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "solid": "./dist/source/{{ name_of_lib }}.jsx",
-      "default": "./dist/esm/{{ name_of_lib }}.js"
+      "solid": "./dist/source/index.jsx",
+      "default": "./dist/esm/index.js"
     }
   },
   "scripts": {
@@ -21,12 +21,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/{{ me }}/{{ name_of_lib }}.git"
+    "url": "git+https://github.com/thisbeyond/solid-dnd.git"
   },
   "keywords": [],
-  "author": "{{ me }}",
+  "author": "Martin Pengelly-Phillips",
   "license": "MIT",
-  "homepage": "https://github.com/{{ me }}/{{ name_of_lib }}#readme",
+  "homepage": "https://github.com/thisbeyond/solid-dnd#readme",
   "dependencies": {
     "solid-js": "^0.26.5"
   },

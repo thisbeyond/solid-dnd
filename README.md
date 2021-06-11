@@ -1,17 +1,17 @@
-# {{ name_of_lib }}
+# solid-dnd
 
-{{ desc_of_lib }}
+A lightweight drag and drop toolkit for [Solid JS](https://solidjs.com/).
 
 ## Quick start
 
 Install it:
 
 ```bash
-npm install {{ me }}/{{ name_of_lib }}
+npm install @thisbeyond/solid-dnd
 ```
 
 Use it:
 
 ```tsx
-import {{ name_of_lib }} from '{{ name_of_lib }}'
+import { Dnd, useDraggable, useDroppable } from "@thisbeyond/solid-dnd"
 ```
