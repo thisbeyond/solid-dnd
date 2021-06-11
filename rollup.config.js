@@ -1,6 +1,6 @@
-import withSolid from 'rollup-preset-solid';
+import withSolid from "rollup-preset-solid";
 
 export default withSolid({
-  input: 'src/useHello.tsx',
+  input: "src/index.tsx",
   printInstructions: true,
 });

@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "solid-js": "^0.26.5"
   },
   "devDependencies": {
+    "prettier": "^2.3.1",
     "rollup": "^2.28.2",
     "rollup-preset-solid": "^0.3.0",
     "typescript": "^4.0.3"

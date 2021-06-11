@@ -7,7 +7,7 @@
 Install it:
 
 ```bash
-pnpm add {{ me }}/{{ name_of_lib }}
+npm install {{ me }}/{{ name_of_lib }}
 ```
 
 Use it:
