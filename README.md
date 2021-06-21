@@ -115,7 +115,7 @@ each other.
 
 ## Who made this? ✍
 
-Martin Pengelly-Phillips [@thesociable](https://twitter.com/thesociablenet)
+[Martin Pengelly-Phillips](https://twitter.com/thesociablenet)
 
 ## Why did you make it?
 
