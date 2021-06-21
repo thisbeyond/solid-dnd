@@ -51,7 +51,7 @@ const Draggable = (props) => {
   );
 };
 
-const Droppable = () => {
+const Droppable = (props) => {
   const droppable = createDroppable({ id: props.id });
   const style = () => ({
     // Your styling...
