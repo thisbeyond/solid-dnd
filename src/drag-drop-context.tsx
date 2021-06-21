@@ -196,10 +196,12 @@ export const DragDropContext = (props) => {
     batch(() => {
       setState("previous", "draggable", state.active.draggable);
       setState("previous", "droppable", state.active.droppable);
-      setState("draggables", state.active.draggable, "translate", {
-        x: 0,
-        y: 0,
-      });
+      if (state.active.draggable) {
+        setState("draggables", state.active.draggable, "translate", {
+          x: 0,
+          y: 0,
+        });
+      }
       setState("active", ["draggable", "droppable"], null);
     });
   };
