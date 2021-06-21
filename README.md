@@ -127,14 +127,13 @@ book-keeping across renders. In the end, I changed my app behaviour to sidestep
 the issues and carried on with React.
 
 But I also found myself watching Solid's progress too, commenting a bit here and
-there in the community. So, when I started a new side project
-([Horizons](https://gethorizons.com/app)) I decided to jump in and give it a go.
-Performance was great, but what kept me invested in Solid was the clean lines of
-its primitives / API and the incredibly helpful community. It felt quick to be
-productive, and I liked how there seemed to be a focus on real world problems
-and getting it done (progress over perfection or even a hacker spirit). Somehow
-it also felt closer to vanilla JS and that I was working more with the language
-than against it.
+there in the community. So, when I started a new side project I decided to jump
+in and give Solid a go. Performance was great, but what kept me invested in
+Solid was the clean lines of its primitives / API and the incredibly helpful
+community. It felt quick to be productive, and I liked how there seemed to be a
+focus on real world problems and getting it done (progress over perfection or
+even a hacker spirit). Somehow it also felt closer to vanilla JS and that I was
+working more with the language than against it.
 
 However, there are always tradeoffs. In this case it was that Solid was not
 particularly well known and there was not an ecosystem of libraries available to
