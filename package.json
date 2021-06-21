@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0",
   "name": "@thisbeyond/solid-dnd",
-  "description": "A lightweight drag and drop toolkit for Solid JS.",
+  "version": "0.1.0",
+  "description": "A lightweight drag and drop toolkit for Solid.",
   "type": "module",
   "files": [
     "dist"
