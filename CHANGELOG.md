@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - 2021-06-21
+## 0.1.1 - 2021-06-22
 
 Initial release supporting plain drag and drop as well as an early preset for
 sortable lists.
