@@ -42,11 +42,10 @@ export const createSortable = (options) => {
             (activeDraggableLayout.y + activeDraggableLayout.height)
           : activeDroppableLayout.y - activeDraggableLayout.y;
     } else {
-      const gap = 12;
       if (activeDraggableInitialIndex > initialIndex()) {
-        delta.y += activeDraggableLayout.height + gap;
+        delta.y += activeDraggableLayout.outerHeight;
       } else {
-        delta.y -= activeDraggableLayout.height + gap;
+        delta.y -= activeDraggableLayout.outerHeight;
       }
     }
 
