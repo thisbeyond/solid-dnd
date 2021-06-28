@@ -23,7 +23,14 @@
     "type": "git",
     "url": "git+https://github.com/thisbeyond/solid-dnd.git"
   },
-  "keywords": [],
+  "keywords": [
+    "drag and drop",
+    "dnd",
+    "sortable",
+    "reorder",
+    "reorderable",
+    "solid"
+  ],
   "author": "Martin Pengelly-Phillips",
   "license": "MIT",
   "homepage": "https://github.com/thisbeyond/solid-dnd#readme",
