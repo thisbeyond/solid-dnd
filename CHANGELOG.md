@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.2] - 2021-07-03
 
 Simplify releasing.
 
@@ -35,5 +35,6 @@ and drop vertical list reordering.
 - Support using multiple (or nested) `DragDropContext` for containers isolated
 from each other.
   
-[Unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.1.1...HEAD
+[Unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.1.2...HEAD
+[0.1.2]: https://github.com/thisbeyond/solid-dnd/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/thisbeyond/solid-dnd/releases/tag/0.1.1
