@@ -1,6 +1,17 @@
 # Changelog
 
-## 0.1.1 - 2021-06-22
+## [Unreleased]
+
+Simplify releasing.
+
+### Added
+
+- Use [release-it](https://github.com/release-it/release-it) to simplify
+performing a release.
+- Add keywords to `package.json` for easier discoverability of package.
+- Add default publish configuration to `package.json`.
+
+## [0.1.1] - 2021-06-22
 
 Initial release supporting plain drag and drop as well as an early preset for
 sortable lists.
@@ -23,3 +34,6 @@ ones for common usage (`mostIntersectingLayout` and `closestLayoutCenter`).
 and drop vertical list reordering.
 - Support using multiple (or nested) `DragDropContext` for containers isolated
 from each other.
+  
+[Unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.1.1...HEAD
+[0.1.1]: https://github.com/thisbeyond/solid-dnd/releases/tag/0.1.1
