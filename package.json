@@ -2,6 +2,17 @@
   "name": "@thisbeyond/solid-dnd",
   "version": "0.1.1",
   "description": "A lightweight drag and drop toolkit for Solid.",
+  "homepage": "https://github.com/thisbeyond/solid-dnd#readme",
+  "license": "MIT",
+  "author": "Martin Pengelly-Phillips",
+  "keywords": [
+    "drag and drop",
+    "dnd",
+    "sortable",
+    "reorder",
+    "reorderable",
+    "solid"
+  ],
   "type": "module",
   "files": [
     "dist"
@@ -23,17 +34,6 @@
     "type": "git",
     "url": "git+https://github.com/thisbeyond/solid-dnd.git"
   },
-  "keywords": [
-    "drag and drop",
-    "dnd",
-    "sortable",
-    "reorder",
-    "reorderable",
-    "solid"
-  ],
-  "author": "Martin Pengelly-Phillips",
-  "license": "MIT",
-  "homepage": "https://github.com/thisbeyond/solid-dnd#readme",
   "peerDependencies": {
     "solid-js": "0"
   },
