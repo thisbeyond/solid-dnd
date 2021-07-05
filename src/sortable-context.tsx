@@ -1,10 +1,5 @@
-import {
-  createContext,
-  createEffect,
-  createState,
-  untrack,
-  useContext,
-} from "solid-js";
+import { createContext, createEffect, untrack, useContext } from "solid-js";
+import { createStore } from "solid-js/store";
 
 import { useDragDropContext } from "./drag-drop-context";
 import { moveArrayItem } from "./move-array-item";
@@ -14,7 +9,7 @@ export const Context = createContext();
 export const SortableContext = (props) => {
   const [dndState] = useDragDropContext();
 
-  const [state, setState] = createState({
+  const [state, setState] = createStore({
     initialIds: [],
     sortedIds: [],
   });

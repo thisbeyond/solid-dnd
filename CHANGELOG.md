@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Update to work with Solid 1.0! This is a breaking change that requires
+updating peer dependency of Solid to 1.0 or greater.
+
 ## [0.1.2] - 2021-07-03
 
 Simplify releasing.

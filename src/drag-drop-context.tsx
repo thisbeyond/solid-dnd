@@ -2,11 +2,11 @@ import {
   batch,
   createContext,
   createEffect,
-  createState,
   mergeProps,
   untrack,
   useContext,
 } from "solid-js";
+import { createStore } from "solid-js/store";
 
 import {
   layoutsAreEqual,
@@ -23,7 +23,7 @@ export const DragDropContext = (props) => {
     props
   );
 
-  const [state, setState] = createState({
+  const [state, setState] = createStore({
     draggables: {},
     droppables: {},
     sensors: {},
