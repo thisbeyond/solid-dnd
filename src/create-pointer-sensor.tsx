@@ -7,7 +7,7 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     useDragDropContext();
 
   onMount(() => {
-    addSensor({ id, activators: { onPointerDown: onActivate } });
+    addSensor({ id, activators: { pointerdown: onActivate } });
   });
 
   onCleanup(() => {

@@ -89,7 +89,9 @@ export const DragDropContext = (props) => {
 
   const anySensorActive = () => state.active.sensor != null;
 
-  const draggableActivators = ({ draggableId }) => {
+  const draggableActivators = (
+    { draggableId, asHandlers } = { asHandlers: false }
+  ) => {
     const eventMap = {};
     for (const sensor of Object.values(state.sensors)) {
       for (const [type, activator] of Object.entries(sensor.activators)) {
@@ -98,7 +100,10 @@ export const DragDropContext = (props) => {
       }
     }
     const listeners = {};
-    for (const key in eventMap) {
+    for (let key in eventMap) {
+      if (asHandlers) {
+        key = `on${key}`;
+      }
       listeners[key] = (event) => {
         for (const { sensor, activator } of eventMap[key]) {
           if (activator({ event, draggableId })) {
