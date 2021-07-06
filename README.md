@@ -8,7 +8,7 @@ A lightweight drag and drop toolkit for [Solid](https://solidjs.com/).
   to sortable lists, multiple containers and beyond.
 - **Extendable:** build your own sensors, collision detection algorithms and
   presets like sortable lists out of the primitives.
-- **Zero dependencies:** Just pair with Solid and good to go. 
+- **Zero dependencies:** Just pair with Solid and good to go.
 - **Performant:** No component re-rendering, coupled with CSS transforms and
   transitions for silky smooth performance.
 
@@ -36,32 +36,12 @@ import {
 
 const Draggable = (props) => {
   const draggable = createDraggable({ id: props.id });
-
-  const style = () => {
-    return {
-      // Your styling...
-      // Plus you need the transform applied.
-      ...transformStyle({ translate: draggable.translate }),
-    };
-  };
-  return (
-    <div ref={draggable.ref} {...draggable.dragActivators} style={style()}>
-      draggable
-    </div>
-  );
+  return <div use:draggable>draggable</div>;
 };
 
 const Droppable = (props) => {
   const droppable = createDroppable({ id: props.id });
-  const style = () => ({
-    // Your styling...
-    'border-color': droppable.isActiveDroppable() ? '#999' : 'transparent'
-  });
-  return (
-    <div {...droppable} style={style()}>
-      droppable
-    </div>
-  );
+  return <div use:droppable>droppable</div>;
 };
 
 const Sandbox = () => {
@@ -74,11 +54,11 @@ const Sandbox = () => {
       // drop.
     }
   });
-  
+
   return (
     <div>
       <Draggable id={"draggable-1"} />
-      <Droppable id={"droppable-1"}/>
+      <Droppable id={"droppable-1"} />
     </div>
   );
 };
@@ -99,19 +79,19 @@ export default App;
 ## What's implemented? ✔️
 
 - [x] Use `createDraggable` with your elements to easily integrate drag
-behaviour. Maintain full control over how your element looks and behaves.
+      behaviour. Maintain full control over how your element looks and behaves.
 - [x] Manage droppable areas with `createDroppable`. Conditionally enable and
-disable droppable areas based on the current `DragDropContext`.
+      disable droppable areas based on the current `DragDropContext`.
 - [x] Use `DragOverlay` when you want to drag a representation of your element
-that is removed from the normal flow.
+      that is removed from the normal flow.
 - [x] Support for different sensors to detect and manage dragging (pointer
-sensor provided by default).
+      sensor provided by default).
 - [x] Layout collision detection algorithms (`mostIntersectingLayout` and
-`closestLayoutCenter`) for common usage. You can also add your own.
+      `closestLayoutCenter`) for common usage. You can also add your own.
 - [x] Sortable list primitives for drag and drop list reordering (currently only
-vertical sorting supported).
+      vertical sorting supported).
 - [x] Use multiple (or nested) `DragDropContext` for containers isolated from
-each other.
+      each other.
 
 ## Who made this? ✍
 
