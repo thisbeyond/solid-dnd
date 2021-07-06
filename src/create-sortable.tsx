@@ -9,7 +9,7 @@ export const createSortable = (options) => {
   const [sortableState] = useSortableContext();
   const draggable = createDraggable(options);
   const droppable = createDroppable(options);
-  const ref = combineRefs(draggable.ref, droppable.ref);
+  const setNode = combineRefs(draggable.ref, droppable.ref);
 
   const initialIndex = () => sortableState.initialIds.indexOf(options.id);
   const currentIndex = () => sortableState.sortedIds.indexOf(options.id);
@@ -30,7 +30,7 @@ export const createSortable = (options) => {
     const activeDraggableInitialIndex =
       sortableState.initialIds.indexOf(activeDraggableId);
 
-    if (draggable.isActiveDraggable()) {
+    if (draggable.isActiveDraggable) {
       const activeDroppableId = dndState.active.droppable;
       const activeDroppableLayout = layoutById({ id: activeDroppableId });
       const activeDroppableInitialIndex =
@@ -52,12 +52,35 @@ export const createSortable = (options) => {
     return delta;
   };
 
-  return {
-    ...draggable,
-    ...droppable,
-    ref,
-    get translate() {
-      return translate();
+  const sortable = Object.defineProperties(
+    (node) => {
+      setNode(node);
     },
-  };
+    {
+      ref: {
+        enumerable: true,
+        value: setNode,
+      },
+      translate: {
+        enumerable: true,
+        get: translate,
+      },
+      isActiveDraggable: {
+        enumerable: true,
+        get: draggable.isActiveDraggable,
+      },
+      dragActivators: {
+        enumerable: true,
+        get: () => {
+          return draggable.dragActivators;
+        },
+      },
+      isActiveDroppable: {
+        enumerable: true,
+        get: droppable.isActiveDroppable,
+      },
+    }
+  );
+
+  return sortable;
 };
