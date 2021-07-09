@@ -17,6 +17,16 @@ const MyComponent = (props) => {
 };
 ```
 
+Some options can be specified to control the directive default behaviour. For
+example, disable applying the transform style (if using a `DragOverlay`):
+
+```js
+const MyComponent = (props) => {
+  const draggable = createDraggable({ id: props.id });
+  return <div use:draggable={{ transform: false }}>Drag me!</div>;
+};
+```
+
 If finer control needed, the underlying primitives are accessible by property
 lookup on the directive::
 

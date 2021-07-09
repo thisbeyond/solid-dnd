@@ -29,12 +29,15 @@ export const createDraggable = ({ id, data }) => {
   const translate = () => state.draggables[id]?.translate;
 
   const draggable = Object.defineProperties(
-    (node) => {
+    (node, options) => {
+      const { transform } = options();
       setNode(node);
-      createRenderEffect(() => {
-        const { transform } = transformStyle({ translate: translate() });
-        node.style.setProperty("transform", transform);
-      });
+      if (transform !== false) {
+        createRenderEffect(() => {
+          const { transform } = transformStyle({ translate: translate() });
+          node.style.setProperty("transform", transform);
+        });
+      }
     },
     {
       ref: {
