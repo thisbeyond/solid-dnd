@@ -3,14 +3,13 @@ import { createSignal, onCleanup, onMount } from "solid-js";
 import { useDragDropContext } from "./drag-drop-context";
 import { elementLayout } from "./layout";
 
-export const createDroppable = ({ id, disabled, data }) => {
+export const createDroppable = ({ id, data }) => {
   const [state, { addDroppable, removeDroppable }] = useDragDropContext();
   const [node, setNode] = createSignal(null);
 
   onMount(() =>
     addDroppable({
       id,
-      disabled,
       node: node(),
       layout: elementLayout({ element: node() }),
       data,

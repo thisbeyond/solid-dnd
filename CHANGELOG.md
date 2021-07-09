@@ -41,12 +41,16 @@ const MyComponent = (props) => {
   `onPointerDown` for activation. As part of this, add a `asHandlers` option to
   `draggableActivators` to control whether to return object with `on___` form or
   not (default is `false`).
-- Pass active draggable to droppable `disabled` functions. If `disabled` is a
-  function, it should now receive an options object containing `{draggable}`.
-  This reduces the need to explicitly access drag and drop context just to
-  retrieve active draggable for this function logic.
 - Update `README.md` to reflect simpler directive interface for draggables and
   droppables.
+
+### Removed
+
+- Remove support for explicitly managing droppable `disabled` state. The current
+  implementation feels limiting and potentially confusing. For example, it
+  prevents detecting when a draggable is over a disabled droppable and styling
+  it appropriately. Note that a similar effect to `disabled` can be achieved by
+  determining drop suitability in `onDragEnd`.
 
 ## [0.1.2] - 2021-07-03
 

@@ -57,16 +57,9 @@ export const DragDropContext = (props) => {
 
   const anyDraggableActive = () => state.active.draggable != null;
 
-  const addDroppable = ({ id, disabled, node, layout, data }) =>
+  const addDroppable = ({ id, node, layout, data }) =>
     setState("droppables", id, {
       id,
-      get disabled() {
-        if (typeof disabled === "function") {
-          return disabled({ draggable: activeDraggable() });
-        } else {
-          return disabled;
-        }
-      },
       node,
       layout,
       data,
@@ -162,7 +155,6 @@ export const DragDropContext = (props) => {
       const layouts = [];
       const droppableIds = [];
       for (const droppable of Object.values(state.droppables)) {
-        if (droppable.disabled) continue;
         droppableIds.push(droppable.id);
         layouts.push(droppable.layout);
       }
