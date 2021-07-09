@@ -53,8 +53,9 @@ export const createSortable = (options) => {
   };
 
   const sortable = Object.defineProperties(
-    (node) => {
-      setNode(node);
+    (element, options) => {
+      draggable(element, options);
+      droppable(element);
     },
     {
       ref: {
