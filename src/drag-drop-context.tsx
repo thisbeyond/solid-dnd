@@ -61,7 +61,11 @@ export const DragDropContext = (props) => {
     setState("droppables", id, {
       id,
       get disabled() {
-        return typeof disabled === "function" ? disabled() : disabled;
+        if (typeof disabled === "function") {
+          return disabled({ draggable: activeDraggable() });
+        } else {
+          return disabled;
+        }
       },
       node,
       layout,
