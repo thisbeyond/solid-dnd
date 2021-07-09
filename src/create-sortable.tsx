@@ -67,17 +67,15 @@ export const createSortable = (options) => {
       },
       isActiveDraggable: {
         enumerable: true,
-        get: draggable.isActiveDraggable,
+        get: () => draggable.isActiveDraggable,
       },
       dragActivators: {
         enumerable: true,
-        get: () => {
-          return draggable.dragActivators;
-        },
+        get: () => draggable.dragActivators,
       },
       isActiveDroppable: {
         enumerable: true,
-        get: droppable.isActiveDroppable,
+        get: () => droppable.isActiveDroppable,
       },
     }
   );
