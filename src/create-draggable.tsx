@@ -29,13 +29,29 @@ export const createDraggable = ({ id, data }) => {
   const translate = () => state.draggables[id]?.translate;
 
   const draggable = Object.defineProperties(
-    (node, options) => {
+    (element, options) => {
       const { transform } = options();
-      setNode(node);
+
+      createEffect(() => {
+        const resolvedNode = node();
+        const activators = draggableActivators({ draggableId: id });
+        for (const key in activators) {
+          resolvedNode.addEventListener(key, activators[key]);
+        }
+
+        onCleanup(() => {
+          for (const key in activators) {
+            resolvedNode.removeEventListener(key, activators[key]);
+          }
+        });
+      });
+
+      setNode(element);
+
       if (transform !== false) {
         createRenderEffect(() => {
           const { transform } = transformStyle({ translate: translate() });
-          node.style.setProperty("transform", transform);
+          element.style.setProperty("transform", transform);
         });
       }
     },
@@ -60,20 +76,6 @@ export const createDraggable = ({ id, data }) => {
       },
     }
   );
-
-  createEffect(() => {
-    const resolvedNode = node();
-    const activators = draggableActivators({ draggableId: id });
-    for (const key in activators) {
-      resolvedNode.addEventListener(key, activators[key]);
-    }
-
-    onCleanup(() => {
-      for (const key in activators) {
-        resolvedNode.removeEventListener(key, activators[key]);
-      }
-    });
-  });
 
   return draggable;
 };
