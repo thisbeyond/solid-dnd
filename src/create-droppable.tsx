@@ -20,8 +20,8 @@ export const createDroppable = ({ id, data }) => {
   const isActiveDroppable = () => state.active.droppable === id;
 
   const droppable = Object.defineProperties(
-    (node) => {
-      setNode(node);
+    (element) => {
+      setNode(element);
     },
     {
       ref: {
