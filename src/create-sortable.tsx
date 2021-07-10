@@ -18,11 +18,12 @@ export const createSortable = (options) => {
   const layoutById = ({ id }) => dndState.droppables[id]?.layout;
 
   const translate = () => {
+    const delta = { x: 0, y: 0 };
+
     if (!anyDraggableActive() || currentIndex() === initialIndex()) {
-      return null;
+      return delta;
     }
 
-    const delta = { x: 0, y: 0 };
     const activeDraggableId = dndState.active.draggable;
     const activeDraggableLayout = layoutById({ id: activeDraggableId });
     const activeDraggableInitialIndex =

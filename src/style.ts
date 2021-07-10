@@ -8,6 +8,5 @@ export const layoutStyle = ({ layout }) => {
 };
 
 export const transformStyle = ({ translate }) => {
-  if (!translate) return {};
   return { transform: `translate3d(${translate.x}px, ${translate.y}px, 0)` };
 };
