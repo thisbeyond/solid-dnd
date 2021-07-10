@@ -2,11 +2,11 @@
 
 ## [Unreleased]
 
-### Changed
+Update to work with Solid 1.0 and streamline the interface with new directives.
 
-- Update to work with Solid 1.0! This is a breaking change that requires
-  updating peer dependency of Solid to 1.0 or greater.
-- Refactor `createDraggable`, `createDroppable` and `createSortable` to provide
+### Added
+
+- Update `createDraggable`, `createDroppable` and `createSortable` to provide
   a custom directive. These can be used with the Solid `use:___` syntactic sugar
   for common usage setup - no need to pass refs and props around:
 
@@ -14,16 +14,6 @@
 const MyComponent = (props) => {
   const draggable = createDraggable({ id: props.id });
   return <div use:draggable>Drag me!</div>;
-};
-```
-
-Some options can be specified to control the directive default behaviour. For
-example, disable applying the transform style (if using a `DragOverlay`):
-
-```js
-const MyComponent = (props) => {
-  const draggable = createDraggable({ id: props.id });
-  return <div use:draggable={{ transform: false }}>Drag me!</div>;
 };
 ```
 
@@ -42,6 +32,13 @@ const MyComponent = (props) => {
 };
 ```
 
+- Automatically detect and register usage of `DragOverlay`. Add to
+  `DragDropContext` state a `usingDragOverlay` property that can be checked.
+
+### Changed
+
+- Update to work with Solid 1.0! This is a breaking change that requires
+  updating peer dependency of Solid to 1.0 or greater.
 - Refactor `isActiveDraggable` and `isActiveDroppable` to appear as resolved
   properties rather than functions to call (this is more consistent with the
   rest of interface). E.g. `draggable.isActiveDraggable()`
@@ -51,6 +48,8 @@ const MyComponent = (props) => {
   `onPointerDown` for activation. As part of this, add a `asHandlers` option to
   `draggableActivators` to control whether to return object with `on___` form or
   not (default is `false`).
+- Assume valid `translate` value is always present. In particular,
+  `transformStyle` no longer checks for a `null` translate value.
 - Update `README.md` to reflect simpler directive interface for draggables and
   droppables.
 
