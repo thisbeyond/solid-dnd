@@ -181,6 +181,14 @@ export const DragDropContext = (props) => {
     }
   };
 
+  const displace = ({ type, id, translate }) => {
+    untrack(() => {
+      if (state[type][id]) {
+        setState(type, id, "translate", { ...translate });
+      }
+    });
+  };
+
   const dragStart = ({ draggableId }) => {
     batch(() => {
       setState("draggables", draggableId, "translate", { x: 0, y: 0 });
@@ -266,6 +274,7 @@ export const DragDropContext = (props) => {
     removeSensor,
     recomputeLayouts,
     detectCollisions,
+    displace,
     activeDraggable,
     activeDroppable,
     activeSensor,

@@ -3,16 +3,18 @@ import { createDroppable } from "./create-droppable";
 import { combineRefs } from "./combine-refs";
 import { useSortableContext } from "./sortable-context";
 import { useDragDropContext } from "./drag-drop-context";
+import { createComputed } from "solid-js";
 
 export const createSortable = (options) => {
-  const [dndState, { anyDraggableActive }] = useDragDropContext();
+  const { id } = options;
+  const [dndState, { anyDraggableActive, displace }] = useDragDropContext();
   const [sortableState] = useSortableContext();
   const draggable = createDraggable(options);
   const droppable = createDroppable(options);
   const setNode = combineRefs(draggable.ref, droppable.ref);
 
-  const initialIndex = () => sortableState.initialIds.indexOf(options.id);
-  const currentIndex = () => sortableState.sortedIds.indexOf(options.id);
+  const initialIndex = () => sortableState.initialIds.indexOf(id);
+  const currentIndex = () => sortableState.sortedIds.indexOf(id);
   const layoutById = ({ id }) => dndState.droppables[id]?.layout;
 
   const translate = () => {
@@ -49,9 +51,15 @@ export const createSortable = (options) => {
   };
 
   const sortable = Object.defineProperties(
-    (element, options) => {
-      draggable(element, options);
+    (element) => {
+      draggable(element);
       droppable(element);
+
+      createComputed(() => {
+        if (dndState.usingDragOverlay || dndState.active.draggable !== id) {
+          displace({ type: "droppables", id, translate: translate() });
+        }
+      });
     },
     {
       ref: {

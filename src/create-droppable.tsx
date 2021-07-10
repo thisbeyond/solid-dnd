@@ -1,7 +1,8 @@
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { createRenderEffect, createSignal, onCleanup, onMount } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
 import { elementLayout } from "./layout";
+import { transformStyle } from "./style";
 
 export const createDroppable = ({ id, data }) => {
   const [state, { addDroppable, removeDroppable }] = useDragDropContext();
@@ -18,10 +19,16 @@ export const createDroppable = ({ id, data }) => {
   onCleanup(() => removeDroppable({ id }));
 
   const isActiveDroppable = () => state.active.droppable === id;
+  const translate = () => state.droppables[id]?.translate;
 
   const droppable = Object.defineProperties(
     (element) => {
       setNode(element);
+
+      createRenderEffect(() => {
+        const { transform } = transformStyle({ translate: translate() });
+        element.style.setProperty("transform", transform);
+      });
     },
     {
       ref: {
