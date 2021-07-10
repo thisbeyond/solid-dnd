@@ -16,11 +16,7 @@ export const createSortable = (options) => {
   const layoutById = ({ id }) => dndState.droppables[id]?.layout;
 
   const translate = () => {
-    if (
-      !anyDraggableActive() ||
-      !anyDraggableActive() ||
-      currentIndex() === initialIndex()
-    ) {
+    if (!anyDraggableActive() || currentIndex() === initialIndex()) {
       return null;
     }
 
