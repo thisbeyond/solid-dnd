@@ -36,7 +36,11 @@ export const DragDropContext = (props) => {
       draggable: null,
       droppable: null,
     },
+    usingDragOverlay: false,
   });
+
+  const setUsingDragOverlay = (boolean = true) =>
+    setState("usingDragOverlay", boolean);
 
   const addDraggable = ({ id, node, layout, data }) =>
     setState("draggables", id, {
@@ -253,6 +257,7 @@ export const DragDropContext = (props) => {
   props.onDragEnd && onDragEnd(props.onDragEnd);
 
   const actions = {
+    setUsingDragOverlay,
     addDraggable,
     removeDraggable,
     addDroppable,

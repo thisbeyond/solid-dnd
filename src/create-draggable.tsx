@@ -29,9 +29,7 @@ export const createDraggable = ({ id, data }) => {
   const translate = () => state.draggables[id]?.translate;
 
   const draggable = Object.defineProperties(
-    (element, options) => {
-      const { transform } = options();
-
+    (element) => {
       createEffect(() => {
         const resolvedNode = node();
         const activators = draggableActivators({ draggableId: id });
@@ -48,12 +46,12 @@ export const createDraggable = ({ id, data }) => {
 
       setNode(element);
 
-      if (transform !== false) {
-        createRenderEffect(() => {
+      createRenderEffect(() => {
+        if (!state.usingDragOverlay) {
           const { transform } = transformStyle({ translate: translate() });
           element.style.setProperty("transform", transform);
-        });
-      }
+        }
+      });
     },
     {
       ref: {
