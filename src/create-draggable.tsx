@@ -7,7 +7,7 @@ import {
 } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { elementLayout } from "./layout";
+import { elementLayout, noopTransform } from "./layout";
 import { transformStyle } from "./style";
 
 export const createDraggable = ({ id, data }) => {
@@ -28,7 +28,9 @@ export const createDraggable = ({ id, data }) => {
   const isActiveDraggable = () => state.active.draggable === id;
   const transform = () => {
     const resolvedTransform = state.draggables[id]?.transform;
-    return resolvedTransform === undefined ? { x: 0, y: 0 } : resolvedTransform;
+    return resolvedTransform === undefined
+      ? noopTransform()
+      : resolvedTransform;
   };
 
   const draggable = Object.defineProperties(

@@ -1,9 +1,11 @@
+import { createComputed } from "solid-js";
+
 import { createDraggable } from "./create-draggable";
 import { createDroppable } from "./create-droppable";
 import { combineRefs } from "./combine-refs";
 import { useSortableContext } from "./sortable-context";
 import { useDragDropContext } from "./drag-drop-context";
-import { createComputed } from "solid-js";
+import { noopTransform } from "./layout";
 
 export const createSortable = (options) => {
   const { id } = options;
@@ -18,7 +20,7 @@ export const createSortable = (options) => {
   const layoutById = ({ id }) => dndState.droppables[id]?.layout;
 
   const transform = () => {
-    const delta = { x: 0, y: 0 };
+    const delta = noopTransform();
 
     if (!anyDraggableActive() || currentIndex() === initialIndex()) {
       return delta;

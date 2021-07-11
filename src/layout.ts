@@ -32,6 +32,8 @@ export const elementLayout = ({ element }) => {
   };
 };
 
+export const noopTransform = () => ({ x: 0, y: 0 });
+
 export const transformLayout = ({ layout, transform }) => {
   return {
     ...layout,

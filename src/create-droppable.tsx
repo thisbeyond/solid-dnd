@@ -1,7 +1,7 @@
 import { createRenderEffect, createSignal, onCleanup, onMount } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { elementLayout } from "./layout";
+import { elementLayout, noopTransform } from "./layout";
 import { transformStyle } from "./style";
 
 export const createDroppable = ({ id, data }) => {
@@ -21,7 +21,9 @@ export const createDroppable = ({ id, data }) => {
   const isActiveDroppable = () => state.active.droppable === id;
   const transform = () => {
     const resolvedTransform = state.droppables[id]?.transform;
-    return resolvedTransform === undefined ? { x: 0, y: 0 } : resolvedTransform;
+    return resolvedTransform === undefined
+      ? noopTransform()
+      : resolvedTransform;
   };
 
   const droppable = Object.defineProperties(

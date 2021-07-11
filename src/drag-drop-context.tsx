@@ -13,6 +13,7 @@ import {
   mostIntersectingLayout,
   elementLayout,
   transformLayout,
+  noopTransform,
 } from "./layout";
 
 export const Context = createContext();
@@ -48,7 +49,7 @@ export const DragDropContext = (props) => {
       node,
       layout,
       data,
-      transform: { x: 0, y: 0 },
+      transform: noopTransform(),
     });
 
   const removeDraggable = ({ id }) => setState("draggables", id, undefined);
@@ -67,7 +68,7 @@ export const DragDropContext = (props) => {
       node,
       layout,
       data,
-      transform: { x: 0, y: 0 },
+      transform: noopTransform(),
     });
 
   const removeDroppable = ({ id }) => setState("droppables", id, undefined);
@@ -191,7 +192,7 @@ export const DragDropContext = (props) => {
 
   const dragStart = ({ draggableId }) => {
     batch(() => {
-      setState("draggables", draggableId, "transform", { x: 0, y: 0 });
+      setState("draggables", draggableId, "transform", noopTransform());
       setState("active", "draggable", draggableId);
     });
     recomputeLayouts();
