@@ -19,9 +19,9 @@ export const createDroppable = ({ id, data }) => {
   onCleanup(() => removeDroppable({ id }));
 
   const isActiveDroppable = () => state.active.droppable === id;
-  const translate = () => {
-    const resolvedTranslate = state.droppables[id]?.translate;
-    return resolvedTranslate === undefined ? { x: 0, y: 0 } : resolvedTranslate;
+  const transform = () => {
+    const resolvedTransform = state.droppables[id]?.transform;
+    return resolvedTransform === undefined ? { x: 0, y: 0 } : resolvedTransform;
   };
 
   const droppable = Object.defineProperties(
@@ -29,8 +29,8 @@ export const createDroppable = ({ id, data }) => {
       setNode(element);
 
       createRenderEffect(() => {
-        const { transform } = transformStyle({ translate: translate() });
-        element.style.setProperty("transform", transform);
+        const style = transformStyle({ transform: transform() });
+        element.style.setProperty("transform", style.transform);
       });
     },
     {

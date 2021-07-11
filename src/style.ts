@@ -7,6 +7,6 @@ export const layoutStyle = ({ layout }) => {
   };
 };
 
-export const transformStyle = ({ translate }) => {
-  return { transform: `translate3d(${translate.x}px, ${translate.y}px, 0)` };
+export const transformStyle = ({ transform }) => {
+  return { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` };
 };

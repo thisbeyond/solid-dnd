@@ -16,7 +16,7 @@ export const DragOverlay = (props) => {
       position: "fixed",
       transition: "transform 0s",
       ...layoutStyle({ layout: draggable.layout }),
-      ...transformStyle({ translate: draggable.translate }),
+      ...transformStyle({ transform: draggable.transform }),
       ...props.style,
     };
   };

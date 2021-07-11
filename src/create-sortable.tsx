@@ -17,7 +17,7 @@ export const createSortable = (options) => {
   const currentIndex = () => sortableState.sortedIds.indexOf(id);
   const layoutById = ({ id }) => dndState.droppables[id]?.layout;
 
-  const translate = () => {
+  const transform = () => {
     const delta = { x: 0, y: 0 };
 
     if (!anyDraggableActive() || currentIndex() === initialIndex()) {
@@ -58,7 +58,7 @@ export const createSortable = (options) => {
 
       createComputed(() => {
         if (dndState.usingDragOverlay || dndState.active.draggable !== id) {
-          displace({ type: "droppables", id, translate: translate() });
+          displace({ type: "droppables", id, transform: transform() });
         }
       });
     },
@@ -67,9 +67,9 @@ export const createSortable = (options) => {
         enumerable: true,
         value: setNode,
       },
-      translate: {
+      transform: {
         enumerable: true,
-        get: translate,
+        get: transform,
       },
       isActiveDraggable: {
         enumerable: true,

@@ -48,8 +48,12 @@ const MyComponent = (props) => {
   `onPointerDown` for activation. As part of this, add a `asHandlers` option to
   `draggableActivators` to control whether to return object with `on___` form or
   not (default is `false`).
-- Assume valid `translate` value is always present. In particular,
-  `transformStyle` no longer checks for a `null` translate value.
+- Rename occurrences of `translate` to `transform`, which feels a more
+  appropriate name. E.g. `translateStyle` should now be `transformStyle` and the
+  `translate` property returned from `create___` calls should be called
+  `transform`.
+- Assume valid `transform` value is always present. In particular,
+  `transformStyle` no longer checks for a `null` transform value.
 - Update `README.md` to reflect simpler directive interface for draggables and
   droppables.
 

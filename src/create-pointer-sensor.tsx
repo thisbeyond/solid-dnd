@@ -37,7 +37,7 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     if (isActiveSensor()) {
       event.preventDefault();
       dragMove({
-        translate: {
+        transform: {
           x: event.clientX - initialCoordinates.x,
           y: event.clientY - initialCoordinates.y,
         },

@@ -32,11 +32,11 @@ export const elementLayout = ({ element }) => {
   };
 };
 
-export const translateLayout = ({ layout, translate }) => {
+export const transformLayout = ({ layout, transform }) => {
   return {
     ...layout,
-    x: layout.x + translate.x,
-    y: layout.y + translate.y,
+    x: layout.x + transform.x,
+    y: layout.y + transform.y,
     get left() {
       return this.x;
     },

@@ -26,9 +26,9 @@ export const createDraggable = ({ id, data }) => {
   onCleanup(() => removeDraggable({ id }));
 
   const isActiveDraggable = () => state.active.draggable === id;
-  const translate = () => {
-    const resolvedTranslate = state.draggables[id]?.translate;
-    return resolvedTranslate === undefined ? { x: 0, y: 0 } : resolvedTranslate;
+  const transform = () => {
+    const resolvedTransform = state.draggables[id]?.transform;
+    return resolvedTransform === undefined ? { x: 0, y: 0 } : resolvedTransform;
   };
 
   const draggable = Object.defineProperties(
@@ -51,8 +51,8 @@ export const createDraggable = ({ id, data }) => {
 
       createRenderEffect(() => {
         if (!state.usingDragOverlay) {
-          const { transform } = transformStyle({ translate: translate() });
-          element.style.setProperty("transform", transform);
+          const style = transformStyle({ transform: transform() });
+          element.style.setProperty("transform", style.transform);
         }
       });
     },
@@ -71,9 +71,9 @@ export const createDraggable = ({ id, data }) => {
           return draggableActivators({ draggableId: id, asHandlers: true });
         },
       },
-      translate: {
+      transform: {
         enumerable: true,
-        get: translate,
+        get: transform,
       },
     }
   );

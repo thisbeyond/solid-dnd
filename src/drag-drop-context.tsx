@@ -12,7 +12,7 @@ import {
   layoutsAreEqual,
   mostIntersectingLayout,
   elementLayout,
-  translateLayout,
+  transformLayout,
 } from "./layout";
 
 export const Context = createContext();
@@ -48,7 +48,7 @@ export const DragDropContext = (props) => {
       node,
       layout,
       data,
-      translate: { x: 0, y: 0 },
+      transform: { x: 0, y: 0 },
     });
 
   const removeDraggable = ({ id }) => setState("draggables", id, undefined);
@@ -67,7 +67,7 @@ export const DragDropContext = (props) => {
       node,
       layout,
       data,
-      translate: { x: 0, y: 0 },
+      transform: { x: 0, y: 0 },
     });
 
   const removeDroppable = ({ id }) => setState("droppables", id, undefined);
@@ -151,9 +151,9 @@ export const DragDropContext = (props) => {
   const detectCollisions = () => {
     const draggable = activeDraggable();
     if (draggable) {
-      const draggableLayout = translateLayout({
+      const draggableLayout = transformLayout({
         layout: draggable.layout,
-        translate: draggable.translate,
+        transform: draggable.transform,
       });
 
       const layouts = [];
@@ -181,26 +181,26 @@ export const DragDropContext = (props) => {
     }
   };
 
-  const displace = ({ type, id, translate }) => {
+  const displace = ({ type, id, transform }) => {
     untrack(() => {
       if (state[type][id]) {
-        setState(type, id, "translate", { ...translate });
+        setState(type, id, "transform", { ...transform });
       }
     });
   };
 
   const dragStart = ({ draggableId }) => {
     batch(() => {
-      setState("draggables", draggableId, "translate", { x: 0, y: 0 });
+      setState("draggables", draggableId, "transform", { x: 0, y: 0 });
       setState("active", "draggable", draggableId);
     });
     recomputeLayouts();
   };
 
-  const dragMove = ({ translate }) => {
+  const dragMove = ({ transform }) => {
     const draggableId = state.active.draggable;
     if (draggableId) {
-      setState("draggables", draggableId, "translate", { ...translate });
+      setState("draggables", draggableId, "transform", { ...transform });
       detectCollisions();
     }
   };
@@ -210,7 +210,7 @@ export const DragDropContext = (props) => {
       setState("previous", "draggable", state.active.draggable);
       setState("previous", "droppable", state.active.droppable);
       if (state.active.draggable) {
-        setState("draggables", state.active.draggable, "translate", {
+        setState("draggables", state.active.draggable, "transform", {
           x: 0,
           y: 0,
         });
@@ -232,7 +232,7 @@ export const DragDropContext = (props) => {
     createEffect(() => {
       const draggable = activeDraggable();
       if (draggable) {
-        draggable.translate;
+        draggable.transform;
         untrack(() => handler({ draggable }));
       }
     });
