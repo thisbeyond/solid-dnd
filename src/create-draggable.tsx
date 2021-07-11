@@ -26,7 +26,10 @@ export const createDraggable = ({ id, data }) => {
   onCleanup(() => removeDraggable({ id }));
 
   const isActiveDraggable = () => state.active.draggable === id;
-  const translate = () => state.draggables[id]?.translate;
+  const translate = () => {
+    const resolvedTranslate = state.draggables[id]?.translate;
+    return resolvedTranslate === undefined ? { x: 0, y: 0 } : resolvedTranslate;
+  };
 
   const draggable = Object.defineProperties(
     (element) => {

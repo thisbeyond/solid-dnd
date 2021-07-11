@@ -19,7 +19,10 @@ export const createDroppable = ({ id, data }) => {
   onCleanup(() => removeDroppable({ id }));
 
   const isActiveDroppable = () => state.active.droppable === id;
-  const translate = () => state.droppables[id]?.translate;
+  const translate = () => {
+    const resolvedTranslate = state.droppables[id]?.translate;
+    return resolvedTranslate === undefined ? { x: 0, y: 0 } : resolvedTranslate;
+  };
 
   const droppable = Object.defineProperties(
     (element) => {
