@@ -34,6 +34,9 @@ const MyComponent = (props) => {
 
 - Automatically detect and register usage of `DragOverlay`. Add to
   `DragDropContext` state a `usingDragOverlay` property that can be checked.
+- Return a new function `displace` as part of the `DragDropContext` that can be
+  used to set the transform for a droppable or draggable. See usage in
+  `createSortable` for example.
 
 ### Changed
 
