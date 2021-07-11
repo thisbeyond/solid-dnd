@@ -7,7 +7,7 @@ import {
 } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { elementLayout, noopTransform } from "./layout";
+import { elementLayout, noopTransform, transformsAreEqual } from "./layout";
 import { transformStyle } from "./style";
 
 export const createDraggable = ({ id, data }) => {
@@ -53,8 +53,18 @@ export const createDraggable = ({ id, data }) => {
 
       createRenderEffect(() => {
         if (!state.usingDragOverlay) {
-          const style = transformStyle({ transform: transform() });
-          element.style.setProperty("transform", style.transform);
+          const resolvedTransform = transform();
+          if (
+            !transformsAreEqual({
+              transform1: resolvedTransform,
+              transform2: noopTransform(),
+            })
+          ) {
+            const style = transformStyle({ transform: transform() });
+            element.style.setProperty("transform", style.transform);
+          } else {
+            element.style.removeProperty("transform");
+          }
         }
       });
     },

@@ -34,6 +34,10 @@ export const elementLayout = ({ element }) => {
 
 export const noopTransform = () => ({ x: 0, y: 0 });
 
+export const transformsAreEqual = ({ transform1, transform2 }) => {
+  return transform1.x === transform2.x && transform1.y === transform2.y;
+};
+
 export const transformLayout = ({ layout, transform }) => {
   return {
     ...layout,

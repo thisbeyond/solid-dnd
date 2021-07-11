@@ -1,7 +1,7 @@
 import { createRenderEffect, createSignal, onCleanup, onMount } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { elementLayout, noopTransform } from "./layout";
+import { elementLayout, noopTransform, transformsAreEqual } from "./layout";
 import { transformStyle } from "./style";
 
 export const createDroppable = ({ id, data }) => {
@@ -31,8 +31,18 @@ export const createDroppable = ({ id, data }) => {
       setNode(element);
 
       createRenderEffect(() => {
-        const style = transformStyle({ transform: transform() });
-        element.style.setProperty("transform", style.transform);
+        const resolvedTransform = transform();
+        if (
+          !transformsAreEqual({
+            transform1: resolvedTransform,
+            transform2: noopTransform(),
+          })
+        ) {
+          const style = transformStyle({ transform: transform() });
+          element.style.setProperty("transform", style.transform);
+        } else {
+          element.style.removeProperty("transform");
+        }
       });
     },
     {
