@@ -37,8 +37,8 @@ export const createSortable = (options) => {
       delta.y =
         activeDroppableInitialIndex > activeDraggableInitialIndex
           ? activeDroppableLayout.y +
-            activeDroppableLayout.height -
-            (activeDraggableLayout.y + activeDraggableLayout.height)
+            activeDroppableLayout.outerHeight -
+            (activeDraggableLayout.y + activeDraggableLayout.outerHeight)
           : activeDroppableLayout.y - activeDraggableLayout.y;
     } else {
       if (activeDraggableInitialIndex > initialIndex()) {
