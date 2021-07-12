@@ -1,22 +1,11 @@
 export const elementLayout = ({ element }) => {
   const { x, y, width, height } = element.getBoundingClientRect();
-  const style = window.getComputedStyle(element);
-
-  const outerHeight = ["top", "bottom"]
-    .map((side) => parseInt(style.getPropertyValue(`margin-${side}`)))
-    .reduce((total, side) => total + side, height);
-
-  const outerWidth = ["left", "right"]
-    .map((side) => parseInt(style.getPropertyValue(`margin-${side}`)))
-    .reduce((total, side) => total + side, width);
 
   return {
     x,
     y,
     width,
     height,
-    outerWidth,
-    outerHeight,
     get left() {
       return this.x;
     },

@@ -21,32 +21,39 @@ export const createSortable = (options) => {
 
   const transform = () => {
     const delta = noopTransform();
+    const resolvedInitialIndex = initialIndex();
+    const resolvedCurrentIndex = currentIndex();
 
-    if (!anyDraggableActive() || currentIndex() === initialIndex()) {
+    if (
+      !anyDraggableActive() ||
+      resolvedCurrentIndex === resolvedInitialIndex
+    ) {
       return delta;
     }
 
-    const activeDraggableId = dndState.active.draggable;
-    const activeDraggableLayout = layoutById({ id: activeDraggableId });
-    const activeDraggableInitialIndex =
-      sortableState.initialIds.indexOf(activeDraggableId);
+    const draggableId = dndState.active.draggable;
+    const draggableInitialIndex = sortableState.initialIds.indexOf(draggableId);
+    const draggableLayout = layoutById({ id: draggableId });
 
     if (draggable.isActiveDraggable) {
-      const activeDroppableId = dndState.active.droppable;
-      const activeDroppableLayout = layoutById({ id: activeDroppableId });
-      const activeDroppableInitialIndex =
-        sortableState.initialIds.indexOf(activeDroppableId);
-      delta.y =
-        activeDroppableInitialIndex > activeDraggableInitialIndex
-          ? activeDroppableLayout.y +
-            activeDroppableLayout.outerHeight -
-            (activeDraggableLayout.y + activeDraggableLayout.outerHeight)
-          : activeDroppableLayout.y - activeDraggableLayout.y;
-    } else {
-      if (activeDraggableInitialIndex > initialIndex()) {
-        delta.y += activeDraggableLayout.outerHeight;
+      const droppableId = dndState.active.droppable;
+      const droppableLayout = layoutById({ id: droppableId });
+      if (resolvedCurrentIndex > resolvedInitialIndex) {
+        delta.y = droppableLayout.bottom - draggableLayout.bottom;
       } else {
-        delta.y -= activeDraggableLayout.outerHeight;
+        delta.y = droppableLayout.top - draggableLayout.top;
+      }
+    } else {
+      if (resolvedCurrentIndex > resolvedInitialIndex) {
+        const leadingId = sortableState.initialIds[draggableInitialIndex - 1];
+        const leadingLayout = layoutById({ id: leadingId });
+        const leadingGap = draggableLayout.top - leadingLayout.bottom;
+        delta.y += draggableLayout.height + leadingGap;
+      } else {
+        const trailingId = sortableState.initialIds[draggableInitialIndex + 1];
+        const trailingLayout = layoutById({ id: trailingId });
+        const trailingGap = trailingLayout.top - draggableLayout.bottom;
+        delta.y -= draggableLayout.height + trailingGap;
       }
     }
 

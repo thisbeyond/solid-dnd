@@ -57,6 +57,10 @@ const MyComponent = (props) => {
   `transform`.
 - Assume valid `transform` value is always present. In particular,
   `transformStyle` no longer checks for a `null` transform value.
+- Improve vertical sort algorithm to better handle arbitrary gaps (such as those
+  created by the CSS gap property on flexbox). As part of this, remove the now
+  redundant `outerHeight` and `outerWidth` properties from the layout data
+  returned by `elementLayout`.
 - Update `README.md` to reflect simpler directive interface for draggables and
   droppables.
 
