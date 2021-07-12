@@ -107,10 +107,7 @@ sortable lists.
 - Support using multiple (or nested) `DragDropContext` for containers isolated
   from each other.
 
-[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.1.2...HEAD
+[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.2.0...HEAD
 [0.2.0]: https://github.com/thisbeyond/solid-dnd/compare/0.1.2...0.2.0
 [0.1.2]: https://github.com/thisbeyond/solid-dnd/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/thisbeyond/solid-dnd/releases/tag/0.1.1
-
-
-[Unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.2.0...HEAD
