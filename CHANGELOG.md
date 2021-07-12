@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.0] - 2021-07-12
 
 Update to work with Solid 1.0 and streamline the interface with new directives.
 
@@ -108,5 +108,9 @@ sortable lists.
   from each other.
 
 [unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.1.2...HEAD
+[0.2.0]: https://github.com/thisbeyond/solid-dnd/compare/0.1.2...0.2.0
 [0.1.2]: https://github.com/thisbeyond/solid-dnd/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/thisbeyond/solid-dnd/releases/tag/0.1.1
+
+
+[Unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.2.0...HEAD
