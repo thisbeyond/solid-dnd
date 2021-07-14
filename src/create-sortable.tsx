@@ -36,7 +36,7 @@ export const createSortable = (options) => {
     const draggableLayout = layoutById({ id: draggableId });
 
     if (draggable.isActiveDraggable) {
-      const droppableId = dndState.active.droppable;
+      const droppableId = sortableState.initialIds[resolvedCurrentIndex];
       const droppableLayout = layoutById({ id: droppableId });
       if (resolvedCurrentIndex > resolvedInitialIndex) {
         delta.y = droppableLayout.bottom - draggableLayout.bottom;
@@ -56,7 +56,6 @@ export const createSortable = (options) => {
         delta.y -= draggableLayout.height + trailingGap;
       }
     }
-
     return delta;
   };
 

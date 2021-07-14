@@ -161,7 +161,12 @@ export const DragDropContext = (props) => {
       const droppableIds = [];
       for (const droppable of Object.values(state.droppables)) {
         droppableIds.push(droppable.id);
-        layouts.push(droppable.layout);
+        layouts.push(
+          transformLayout({
+            layout: droppable.layout,
+            transform: droppable.transform,
+          })
+        );
       }
 
       const layout = props.collisionDetectionAlgorithm({

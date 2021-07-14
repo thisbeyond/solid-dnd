@@ -27,7 +27,7 @@ export const SortableContext = (props) => {
     if (dndState.active.draggable && dndState.active.droppable) {
       untrack(() => {
         const fromIndex = state.sortedIds.indexOf(dndState.active.draggable);
-        const toIndex = state.initialIds.indexOf(dndState.active.droppable);
+        const toIndex = state.sortedIds.indexOf(dndState.active.droppable);
         if (
           fromIndex !== toIndex &&
           isValidIndex({ index: fromIndex }) &&
