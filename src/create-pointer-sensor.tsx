@@ -18,6 +18,7 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
   ] = useDragDropContext();
 
   const activationDelay = 250; // milliseconds
+  const activationDistance = 10; // pixels
 
   onMount(() => {
     addSensor({ id, activators: { pointerdown: attach } });
@@ -32,18 +33,18 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
   const initialCoordinates = { x: 0, y: 0 };
 
   let activationDelayTimeoutId = null;
+  let activationDraggableId = null;
 
   const attach = ({ event, draggableId }) => {
     event.preventDefault();
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
 
+    activationDraggableId = draggableId;
     initialCoordinates.x = event.clientX;
     initialCoordinates.y = event.clientY;
 
-    activationDelayTimeoutId = setTimeout(onActivate, activationDelay, {
-      draggableId,
-    });
+    activationDelayTimeoutId = setTimeout(onActivate, activationDelay);
   };
 
   const detach = () => {
@@ -56,24 +57,30 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     document.removeEventListener("pointerup", onPointerUp);
   };
 
-  const onActivate = ({ draggableId }) => {
+  const onActivate = () => {
     if (!anySensorActive()) {
       sensorStart(id);
-      dragStart({ draggableId });
+      dragStart({ draggableId: activationDraggableId });
     } else {
       detach();
     }
   };
 
   const onPointerMove = (event) => {
+    const transform = {
+      x: event.clientX - initialCoordinates.x,
+      y: event.clientY - initialCoordinates.y,
+    };
+
+    if (!anySensorActive()) {
+      if (Math.sqrt(transform.x ** 2 + transform.y ** 2) > activationDistance) {
+        onActivate();
+      }
+    }
+
     if (isActiveSensor()) {
       event.preventDefault();
-      dragMove({
-        transform: {
-          x: event.clientX - initialCoordinates.x,
-          y: event.clientY - initialCoordinates.y,
-        },
-      });
+      dragMove({ transform });
     }
   };
 
