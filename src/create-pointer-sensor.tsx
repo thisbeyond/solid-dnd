@@ -3,11 +3,22 @@ import { onCleanup, onMount } from "solid-js";
 import { useDragDropContext } from "./drag-drop-context";
 
 export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
-  const [state, { addSensor, removeSensor, dragStart, dragMove, dragEnd }] =
-    useDragDropContext();
+  const [
+    state,
+    {
+      addSensor,
+      removeSensor,
+      sensorStart,
+      sensorEnd,
+      dragStart,
+      dragMove,
+      dragEnd,
+      anySensorActive,
+    },
+  ] = useDragDropContext();
 
   onMount(() => {
-    addSensor({ id, activators: { pointerdown: onActivate } });
+    addSensor({ id, activators: { pointerdown: attach } });
   });
 
   onCleanup(() => {
@@ -20,7 +31,7 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
 
   let activationDelayTimeoutId = null;
 
-  const onActivate = ({ event, draggableId }) => {
+  const attach = ({ event, draggableId }) => {
     event.preventDefault();
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
@@ -28,9 +39,26 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     initialCoordinates.x = event.clientX;
     initialCoordinates.y = event.clientY;
 
-    activationDelayTimeoutId = setTimeout(dragStart, 250, { draggableId });
+    activationDelayTimeoutId = setTimeout(onActivate, 250, { draggableId });
+  };
 
-    return true;
+  const detach = () => {
+    if (activationDelayTimeoutId) {
+      clearTimeout(activationDelayTimeoutId);
+      activationDelayTimeoutId = null;
+    }
+
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
+  };
+
+  const onActivate = ({ draggableId }) => {
+    if (!anySensorActive()) {
+      sensorStart(id);
+      dragStart({ draggableId });
+    } else {
+      detach();
+    }
   };
 
   const onPointerMove = (event) => {
@@ -46,17 +74,11 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
   };
 
   const onPointerUp = (event) => {
-    if (activationDelayTimeoutId) {
-      clearTimeout(activationDelayTimeoutId);
-      activationDelayTimeoutId = null;
-    }
-
-    document.removeEventListener("pointermove", onPointerMove);
-    document.removeEventListener("pointerup", onPointerUp);
-
+    detach();
     if (isActiveSensor()) {
       event.preventDefault();
       dragEnd();
+      sensorEnd();
     }
   };
 };

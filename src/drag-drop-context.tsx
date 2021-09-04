@@ -86,6 +86,10 @@ export const DragDropContext = (props) => {
 
   const removeSensor = ({ id }) => setState("sensors", id, undefined);
 
+  const sensorStart = ({ id }) => setState("active", "sensor", id);
+
+  const sensorEnd = () => setState("active", "sensor", null);
+
   const activeSensor = () =>
     state.active.sensor && state.sensors[state.active.sensor];
 
@@ -107,11 +111,11 @@ export const DragDropContext = (props) => {
         key = `on${key}`;
       }
       listeners[key] = (event) => {
-        for (const { sensor, activator } of eventMap[key]) {
-          if (activator({ event, draggableId })) {
-            setState("active", "sensor", sensor.id);
+        for (const { activator } of eventMap[key]) {
+          if (anySensorActive()) {
             break;
           }
+          activator({ event, draggableId });
         }
       };
     }
@@ -273,6 +277,8 @@ export const DragDropContext = (props) => {
     removeDroppable,
     addSensor,
     removeSensor,
+    sensorStart,
+    sensorEnd,
     recomputeLayouts,
     detectCollisions,
     displace,
