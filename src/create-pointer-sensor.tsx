@@ -17,6 +17,8 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     },
   ] = useDragDropContext();
 
+  const activationDelay = 250; // milliseconds
+
   onMount(() => {
     addSensor({ id, activators: { pointerdown: attach } });
   });
@@ -39,7 +41,9 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     initialCoordinates.x = event.clientX;
     initialCoordinates.y = event.clientY;
 
-    activationDelayTimeoutId = setTimeout(onActivate, 250, { draggableId });
+    activationDelayTimeoutId = setTimeout(onActivate, activationDelay, {
+      draggableId,
+    });
   };
 
   const detach = () => {
