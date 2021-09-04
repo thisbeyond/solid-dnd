@@ -61,7 +61,7 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     if (!anySensorActive()) {
       sensorStart({ id });
       dragStart({ draggableId: activationDraggableId });
-    } else {
+    } else if (!isActiveSensor()) {
       detach();
     }
   };
