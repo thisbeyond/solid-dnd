@@ -1,5 +1,29 @@
 # Changelog
 
+## [unreleased]
+
+### Added
+
+- Add `sensorStart` and `sensorEnd` to support sensors explicitly indicating
+  whether they are active or not. Note that only one sensor can be considered
+  active at a time.
+
+### Changed
+
+- Activate sensor in `createPointerSensor` if the pointer has moved more than 10
+  pixels. This is irrespective of whether the delay condition has been met. It
+  addresses the issue where a dragged item appears to jump to its new location
+  after a delay if the pointer moved quickly at the outset of the drag.
+
+- Make managing sensor active state explicit. Returning a truthy value from a
+  sensor activator will no longer cause that sensor to be automatically marked
+  as the active sensor. In addition, other activators will continue to be called
+  until a sensor explicitly indicates it is active by calling `sensorStart`.
+  Similarly, an active sensor must now call `sensorEnd` when it is no longer
+  active (typically when a drag completes). This makes it clearer that a sensor
+  is responsible for managing its activation state (and how to do so),
+  especially in cases of delayed activation.
+
 ## [0.2.0] - 2021-07-12
 
 Update to work with Solid 1.0 and streamline the interface with new directives.
