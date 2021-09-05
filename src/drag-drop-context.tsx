@@ -148,9 +148,7 @@ export const DragDropContext = (props) => {
       }
     });
 
-    if (anyLayoutChanged) {
-      detectCollisions();
-    }
+    return anyLayoutChanged;
   };
 
   const detectCollisions = () => {
@@ -200,6 +198,7 @@ export const DragDropContext = (props) => {
       setState("active", "draggable", draggableId);
     });
     recomputeLayouts();
+    detectCollisions();
   };
 
   const dragMove = ({ transform }) => {

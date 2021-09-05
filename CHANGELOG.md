@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- As part of the fix for detecting collisions on drag start, `recomputeLayouts`
+  no longer automatically calls `detectCollisions` when layouts have changed.
+  Instead, it returns a boolean indicating whether a layout change detected
+  - enabling the caller to call `detectCollisions` if desired.
+
+### Fixed
+
+- Fix case where a drag with no movement results in an incorrect drop. This was
+  due to collisions not being detected on drag start if layouts had not changed
+  (the common case). Collisions now always detected by `dragStart`.
+
 ## [0.3.0] - 2021-09-04
 
 ### Added
