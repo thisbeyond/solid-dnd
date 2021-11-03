@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Cleanup dangling references to removed items. When draggables, droppables or
+  sensors removed, clean up dangling references to them in the state (such as
+  'active' or 'previous' values). This helps prevent potential infinite recursion
+  (such as in onDragEnd) where an item (like a draggable) oscillates between
+  having a valid 'previous' value reference and undefined.
+
 ## [0.3.1] - 2021-09-05
 
 ### Changed

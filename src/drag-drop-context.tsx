@@ -52,7 +52,17 @@ export const DragDropContext = (props) => {
       transform: noopTransform(),
     });
 
-  const removeDraggable = ({ id }) => setState("draggables", id, undefined);
+  const removeDraggable = ({ id }) => {
+    batch(() => {
+      setState("draggables", id, undefined);
+      if (state.active.draggable === id) {
+        setState("active", "draggable", null);
+      }
+      if (state.previous.draggable === id) {
+        setState("previous", "draggable", null);
+      }
+    });
+  };
 
   const activeDraggable = () =>
     state.active.draggable && state.draggables[state.active.draggable];
@@ -71,7 +81,17 @@ export const DragDropContext = (props) => {
       transform: noopTransform(),
     });
 
-  const removeDroppable = ({ id }) => setState("droppables", id, undefined);
+  const removeDroppable = ({ id }) => {
+    batch(() => {
+      setState("droppables", id, undefined);
+      if (state.active.droppable === id) {
+        setState("active", "droppable", null);
+      }
+      if (state.previous.droppable === id) {
+        setState("previous", "droppable", null);
+      }
+    });
+  };
 
   const activeDroppable = () =>
     state.active.droppable && state.droppables[state.active.droppable];
@@ -84,7 +104,14 @@ export const DragDropContext = (props) => {
   const addSensor = ({ id, activators }) =>
     setState("sensors", id, { id, activators });
 
-  const removeSensor = ({ id }) => setState("sensors", id, undefined);
+  const removeSensor = ({ id }) => {
+    batch(() => {
+      setState("sensors", id, undefined);
+      if (state.active.sensor === id) {
+        setState("active", "sensor", null);
+      }
+    });
+  };
 
   const sensorStart = ({ id }) => setState("active", "sensor", id);
 
@@ -257,6 +284,12 @@ export const DragDropContext = (props) => {
       const currentDraggable = activeDraggable();
       const draggable = previousDraggable();
       const droppable = previousDroppable();
+      console.log(
+        "(onDragEnd) currentDraggable:",
+        currentDraggable,
+        "previousDraggable:",
+        draggable
+      );
       if (draggable && !currentDraggable) {
         untrack(() => handler({ draggable, droppable }));
       }
