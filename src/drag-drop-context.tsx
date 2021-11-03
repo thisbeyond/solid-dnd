@@ -284,12 +284,6 @@ export const DragDropContext = (props) => {
       const currentDraggable = activeDraggable();
       const draggable = previousDraggable();
       const droppable = previousDroppable();
-      console.log(
-        "(onDragEnd) currentDraggable:",
-        currentDraggable,
-        "previousDraggable:",
-        draggable
-      );
       if (draggable && !currentDraggable) {
         untrack(() => handler({ draggable, droppable }));
       }

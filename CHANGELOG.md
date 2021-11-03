@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Remove leftover debug log.
+
 ## [0.3.2] - 2021-11-03
 
 ### Fixed
