@@ -1,6 +1,6 @@
 {
   "name": "@thisbeyond/solid-dnd",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A lightweight drag and drop toolkit for Solid.",
   "homepage": "https://github.com/thisbeyond/solid-dnd#readme",
   "license": "MIT",
