@@ -1,8 +1,12 @@
+import { useDragDropContext } from "./drag-drop-context";
 import { onCleanup, onMount } from "solid-js";
 
-import { useDragDropContext } from "./drag-drop-context";
+interface PointerAttachParams {
+  event: PointerEvent;
+  draggableId: string;
+}
 
-export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
+const createPointerSensor = (id: string = "pointer-sensor"): void => {
   const [
     state,
     {
@@ -15,8 +19,7 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
       dragEnd,
       anySensorActive,
     },
-  ] = useDragDropContext();
-
+  ] = useDragDropContext()!;
   const activationDelay = 250; // milliseconds
   const activationDistance = 10; // pixels
 
@@ -25,17 +28,17 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
   });
 
   onCleanup(() => {
-    removeSensor({ id });
+    removeSensor(id);
   });
 
   const isActiveSensor = () => state.active.sensor === id;
 
   const initialCoordinates = { x: 0, y: 0 };
 
-  let activationDelayTimeoutId = null;
-  let activationDraggableId = null;
+  let activationDelayTimeoutId: number | null = null;
+  let activationDraggableId: string | null = null;
 
-  const attach = ({ event, draggableId }) => {
+  const attach = ({ event, draggableId }: PointerAttachParams): void => {
     event.preventDefault();
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
@@ -44,10 +47,10 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     initialCoordinates.x = event.clientX;
     initialCoordinates.y = event.clientY;
 
-    activationDelayTimeoutId = setTimeout(onActivate, activationDelay);
+    activationDelayTimeoutId = window.setTimeout(onActivate, activationDelay);
   };
 
-  const detach = () => {
+  const detach = (): void => {
     if (activationDelayTimeoutId) {
       clearTimeout(activationDelayTimeoutId);
       activationDelayTimeoutId = null;
@@ -57,16 +60,16 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     document.removeEventListener("pointerup", onPointerUp);
   };
 
-  const onActivate = () => {
+  const onActivate = (): void => {
     if (!anySensorActive()) {
-      sensorStart({ id });
-      dragStart({ draggableId: activationDraggableId });
+      sensorStart(id);
+      dragStart(activationDraggableId!);
     } else if (!isActiveSensor()) {
       detach();
     }
   };
 
-  const onPointerMove = (event) => {
+  const onPointerMove = (event: PointerEvent): void => {
     const transform = {
       x: event.clientX - initialCoordinates.x,
       y: event.clientY - initialCoordinates.y,
@@ -80,11 +83,11 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
 
     if (isActiveSensor()) {
       event.preventDefault();
-      dragMove({ transform });
+      dragMove(transform);
     }
   };
 
-  const onPointerUp = (event) => {
+  const onPointerUp = (event: PointerEvent): void => {
     detach();
     if (isActiveSensor()) {
       event.preventDefault();
@@ -93,3 +96,5 @@ export const createPointerSensor = ({ id } = { id: "pointer-sensor" }) => {
     }
   };
 };
+
+export { createPointerSensor };

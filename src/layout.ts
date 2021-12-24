@@ -1,4 +1,23 @@
-export const elementLayout = ({ element }) => {
+interface Point {
+  x: number;
+  y: number;
+}
+interface Transform {
+  x: number;
+  y: number;
+}
+interface Layout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  get top(): number;
+  get left(): number;
+  get right(): number;
+  get bottom(): number;
+}
+
+const elementLayout = (element: HTMLElement): Layout => {
   const { x, y, width, height } = element.getBoundingClientRect();
 
   return {
@@ -20,14 +39,17 @@ export const elementLayout = ({ element }) => {
     },
   };
 };
-
-export const noopTransform = () => ({ x: 0, y: 0 });
-
-export const transformsAreEqual = ({ transform1, transform2 }) => {
-  return transform1.x === transform2.x && transform1.y === transform2.y;
+const noopTransform = (): Transform => ({ x: 0, y: 0 });
+const transformsAreEqual = (
+  firstTransform: Transform,
+  secondTransform: Transform
+): boolean => {
+  return (
+    firstTransform.x === secondTransform.x &&
+    firstTransform.y === secondTransform.y
+  );
 };
-
-export const transformLayout = ({ layout, transform }) => {
+const transformLayout = (layout: Layout, transform: Transform): Layout => {
   return {
     ...layout,
     x: layout.x + transform.x,
@@ -46,24 +68,28 @@ export const transformLayout = ({ layout, transform }) => {
     },
   };
 };
-
-export const layoutCenter = ({ layout }) => {
+const layoutCenter = (layout: Layout): Point => {
   return {
     x: layout.x + layout.width * 0.5,
     y: layout.y + layout.height * 0.5,
   };
 };
-
-export const distanceBetweenPoints = ({ point1, point2 }) => {
+const distanceBetweenPoints = (
+  firstPoint: Point,
+  secondPoint: Point
+): number => {
   return Math.sqrt(
-    Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2)
+    Math.pow(firstPoint.x - secondPoint.x, 2) +
+      Math.pow(firstPoint.y - secondPoint.y, 2)
   );
 };
-
-export const closestLayoutCenter = ({ layout, layouts }) => {
-  const point1 = layoutCenter({ layout });
+const closestLayoutCenter = (
+  referenceLayout: Layout,
+  layouts: Layout[]
+): Layout | null => {
+  const point1 = layoutCenter(referenceLayout);
   const distances = layouts.map((layout) =>
-    distanceBetweenPoints({ point1, point2: layoutCenter({ layout }) })
+    distanceBetweenPoints(point1, layoutCenter(layout))
   );
   if (distances.length === 0) {
     return null;
@@ -71,29 +97,33 @@ export const closestLayoutCenter = ({ layout, layouts }) => {
   const minDistance = Math.min(...distances);
   return layouts[distances.indexOf(minDistance)];
 };
-
-export const intersectionRatioOfLayouts = ({ layout1, layout2 }) => {
-  const top = Math.max(layout1.top, layout2.top);
-  const left = Math.max(layout1.left, layout2.left);
-  const right = Math.min(layout1.right, layout2.right);
-  const bottom = Math.min(layout1.bottom, layout2.bottom);
+const intersectionRatioOfLayouts = (
+  firstLayout: Layout,
+  secondLayout: Layout
+): number => {
+  const top = Math.max(firstLayout.top, secondLayout.top);
+  const left = Math.max(firstLayout.left, secondLayout.left);
+  const right = Math.min(firstLayout.right, secondLayout.right);
+  const bottom = Math.min(firstLayout.bottom, secondLayout.bottom);
 
   const width = right - left;
   const height = bottom - top;
 
   if (left < right && top < bottom) {
-    const layout1Area = layout1.width * layout1.height;
-    const layout2Area = layout2.width * layout2.height;
+    const layout1Area = firstLayout.width * firstLayout.height;
+    const layout2Area = secondLayout.width * secondLayout.height;
     const intersectionArea = width * height;
     return intersectionArea / (layout1Area + layout2Area - intersectionArea);
   }
 
   return 0;
 };
-
-export const mostIntersectingLayout = ({ layout, layouts }) => {
-  const intersectionRatios = layouts.map((layout2) =>
-    intersectionRatioOfLayouts({ layout1: layout, layout2 })
+const mostIntersectingLayout = (
+  referenceLayout: Layout,
+  layouts: Layout[]
+): Layout | null => {
+  const intersectionRatios = layouts.map((layout) =>
+    intersectionRatioOfLayouts(referenceLayout, layout)
   );
   if (intersectionRatios.length === 0) {
     return null;
@@ -101,17 +131,18 @@ export const mostIntersectingLayout = ({ layout, layouts }) => {
   const maxRatio = Math.max(...intersectionRatios);
   return maxRatio > 0 ? layouts[intersectionRatios.indexOf(maxRatio)] : null;
 };
-
-export const layoutsAreEqual = ({ layout1, layout2 }) => {
+const layoutsAreEqual = (
+  firstLayout: Layout,
+  secondLayout: Layout
+): boolean => {
   return (
-    layout1.x === layout2.x &&
-    layout1.y === layout2.y &&
-    layout1.width === layout2.width &&
-    layout1.height === layout2.height
+    firstLayout.x === secondLayout.x &&
+    firstLayout.y === secondLayout.y &&
+    firstLayout.width === secondLayout.width &&
+    firstLayout.height === secondLayout.height
   );
 };
-
-export const layoutContainsPoint = ({ layout, point }) => {
+const layoutContainsPoint = (layout: Layout, point: Point): boolean => {
   return !(
     point.x < layout.left ||
     point.x > layout.right ||
@@ -119,3 +150,18 @@ export const layoutContainsPoint = ({ layout, point }) => {
     point.y < layout.top
   );
 };
+
+export {
+  elementLayout,
+  noopTransform,
+  transformsAreEqual,
+  transformLayout,
+  layoutCenter,
+  distanceBetweenPoints,
+  closestLayoutCenter,
+  intersectionRatioOfLayouts,
+  mostIntersectingLayout,
+  layoutsAreEqual,
+  layoutContainsPoint,
+};
+export type { Layout, Transform };

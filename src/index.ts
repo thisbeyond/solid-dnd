@@ -1,10 +1,11 @@
-export { DragDropContext, useDragDropContext } from "./drag-drop-context";
+export { DragDropProvider, useDragDropContext } from "./drag-drop-context";
 export { DragDropSensors } from "./drag-drop-sensors";
 export { createPointerSensor } from "./create-pointer-sensor";
 export { createDraggable } from "./create-draggable";
 export { createDroppable } from "./create-droppable";
 export { DragOverlay } from "./drag-overlay";
-export { SortableContext, useSortableContext } from "./sortable-context";
+export { SortableProvider, useSortableContext } from "./sortable-context";
 export { createSortable } from "./create-sortable";
 export { layoutStyle, transformStyle } from "./style";
 export { closestLayoutCenter, mostIntersectingLayout } from "./layout";
+export type { DragEventHandler } from "./drag-drop-context";

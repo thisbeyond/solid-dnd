@@ -1,25 +1,35 @@
-import { createComputed } from "solid-js";
-
 import { createDraggable } from "./create-draggable";
 import { createDroppable } from "./create-droppable";
-import { combineRefs } from "./combine-refs";
+import { RefSetter, combineRefs } from "./combine-refs";
 import { useSortableContext } from "./sortable-context";
-import { useDragDropContext } from "./drag-drop-context";
-import { noopTransform } from "./layout";
+import { Listeners, useDragDropContext } from "./drag-drop-context";
+import { Layout, noopTransform, Transform } from "./layout";
+import { createComputed } from "solid-js";
 
-export const createSortable = (options) => {
-  const { id } = options;
-  const [dndState, { anyDraggableActive, displace }] = useDragDropContext();
-  const [sortableState] = useSortableContext();
-  const draggable = createDraggable(options);
-  const droppable = createDroppable(options);
+interface Sortable {
+  ref: RefSetter<HTMLElement | null>;
+  get transform(): Transform;
+  get dragActivators(): Listeners;
+  get isActiveDraggable(): boolean;
+  get isActiveDroppable(): boolean;
+}
+
+const createSortable = (
+  id: string,
+  data: Record<string, any> = {}
+): Sortable => {
+  const [dndState, { anyDraggableActive, displace }] = useDragDropContext()!;
+  const [sortableState] = useSortableContext()!;
+  const draggable = createDraggable(id, data);
+  const droppable = createDroppable(id, data);
   const setNode = combineRefs(draggable.ref, droppable.ref);
 
-  const initialIndex = () => sortableState.initialIds.indexOf(id);
-  const currentIndex = () => sortableState.sortedIds.indexOf(id);
-  const layoutById = ({ id }) => dndState.droppables[id]?.layout;
+  const initialIndex = (): number => sortableState.initialIds.indexOf(id);
+  const currentIndex = (): number => sortableState.sortedIds.indexOf(id);
+  const layoutById = (id: string): Layout | null =>
+    dndState.droppables[id]?.layout || null;
 
-  const transform = () => {
+  const transform = (): Transform => {
     const delta = noopTransform();
     const resolvedInitialIndex = initialIndex();
     const resolvedCurrentIndex = currentIndex();
@@ -31,13 +41,13 @@ export const createSortable = (options) => {
       return delta;
     }
 
-    const draggableId = dndState.active.draggable;
+    const draggableId = dndState.active.draggable!;
     const draggableInitialIndex = sortableState.initialIds.indexOf(draggableId);
-    const draggableLayout = layoutById({ id: draggableId });
+    const draggableLayout = layoutById(draggableId)!;
 
     if (draggable.isActiveDraggable) {
-      const droppableId = dndState.active.droppable;
-      const droppableLayout = layoutById({ id: droppableId });
+      const droppableId = dndState.active.droppable!;
+      const droppableLayout = layoutById(droppableId)!;
       if (resolvedCurrentIndex > resolvedInitialIndex) {
         delta.y = droppableLayout.bottom - draggableLayout.bottom;
       } else {
@@ -46,12 +56,12 @@ export const createSortable = (options) => {
     } else {
       if (resolvedCurrentIndex > resolvedInitialIndex) {
         const leadingId = sortableState.initialIds[draggableInitialIndex - 1];
-        const leadingLayout = layoutById({ id: leadingId });
+        const leadingLayout = layoutById(leadingId)!;
         const leadingGap = draggableLayout.top - leadingLayout.bottom;
         delta.y += draggableLayout.height + leadingGap;
       } else {
         const trailingId = sortableState.initialIds[draggableInitialIndex + 1];
-        const trailingLayout = layoutById({ id: trailingId });
+        const trailingLayout = layoutById(trailingId)!;
         const trailingGap = trailingLayout.top - draggableLayout.bottom;
         delta.y -= draggableLayout.height + trailingGap;
       }
@@ -61,13 +71,13 @@ export const createSortable = (options) => {
   };
 
   const sortable = Object.defineProperties(
-    (element) => {
+    (element: HTMLElement) => {
       draggable(element);
       droppable(element);
 
       createComputed(() => {
         if (dndState.usingDragOverlay || dndState.active.draggable !== id) {
-          displace({ type: "droppables", id, transform: transform() });
+          displace("droppables", id, transform());
         }
       });
     },
@@ -93,7 +103,9 @@ export const createSortable = (options) => {
         get: () => droppable.isActiveDroppable,
       },
     }
-  );
+  ) as unknown as Sortable;
 
   return sortable;
 };
+
+export { createSortable };

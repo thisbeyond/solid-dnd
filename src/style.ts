@@ -1,4 +1,7 @@
-export const layoutStyle = ({ layout }) => {
+import { Layout, Transform } from "./layout";
+import { JSX } from "solid-js/jsx-runtime";
+
+const layoutStyle = (layout: Layout): JSX.CSSProperties => {
   return {
     top: `${layout.y}px`,
     left: `${layout.x}px`,
@@ -6,7 +9,8 @@ export const layoutStyle = ({ layout }) => {
     height: `${layout.height}px`,
   };
 };
-
-export const transformStyle = ({ transform }) => {
+const transformStyle = (transform: Transform): JSX.CSSProperties => {
   return { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` };
 };
+
+export { layoutStyle, transformStyle };
