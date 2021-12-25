@@ -7,6 +7,7 @@ import { Layout, noopTransform, Transform } from "./layout";
 import { createComputed } from "solid-js";
 
 interface Sortable {
+  (element: HTMLElement): void;
   ref: RefSetter<HTMLElement | null>;
   get transform(): Transform;
   get dragActivators(): Listeners;
