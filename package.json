@@ -22,7 +22,7 @@
   "types": "dist/types/index.d.ts",
   "exports": {
     ".": {
-      "solid": "./dist/source/index.js",
+      "solid": "./dist/source/index.jsx",
       "default": "./dist/esm/index.js"
     }
   },
