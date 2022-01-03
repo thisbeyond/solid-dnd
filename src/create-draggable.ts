@@ -24,7 +24,7 @@ interface Draggable {
 }
 
 const createDraggable = (
-  id: string,
+  id: string | number,
   data: Record<string, any> = {}
 ): Draggable => {
   const [state, { addDraggable, removeDraggable, draggableActivators }] =

@@ -16,7 +16,7 @@ interface Sortable {
 }
 
 const createSortable = (
-  id: string,
+  id: string | number,
   data: Record<string, any> = {}
 ): Sortable => {
   const [dndState, { anyDraggableActive, displace }] = useDragDropContext()!;
@@ -27,7 +27,7 @@ const createSortable = (
 
   const initialIndex = (): number => sortableState.initialIds.indexOf(id);
   const currentIndex = (): number => sortableState.sortedIds.indexOf(id);
-  const layoutById = (id: string): Layout | null =>
+  const layoutById = (id: string | number): Layout | null =>
     dndState.droppables[id]?.layout || null;
 
   const transform = (): Transform => {

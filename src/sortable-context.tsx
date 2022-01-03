@@ -10,11 +10,11 @@ import {
 import { createStore, Store } from "solid-js/store";
 
 interface SortableContextState {
-  initialIds: string[];
-  sortedIds: string[];
+  initialIds: Array<string | number>;
+  sortedIds: Array<string | number>;
 }
 interface SortableContextProps {
-  ids: string[];
+  ids: Array<string | number>;
 }
 
 type SortableContext = [Store<SortableContextState>, {}];

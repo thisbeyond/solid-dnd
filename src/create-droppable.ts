@@ -21,7 +21,7 @@ interface Droppable {
 }
 
 const createDroppable = (
-  id: string,
+  id: string | number,
   data: Record<string, any> = {}
 ): Droppable => {
   const [state, { addDroppable, removeDroppable }] = useDragDropContext()!;
