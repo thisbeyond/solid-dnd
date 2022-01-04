@@ -48,9 +48,9 @@ interface Sensor {
   activators: { [K in keyof HTMLElementEventMap]?: SensorActivator<K> };
 }
 interface DragDropState {
-  draggables: Record<string | number, Draggable | null>;
-  droppables: Record<string | number, Droppable | null>;
-  sensors: Record<string | number, Sensor | null>;
+  draggables: Record<string | number, Draggable | undefined | null>;
+  droppables: Record<string | number, Droppable | undefined | null>;
+  sensors: Record<string | number, Sensor | undefined | null>;
   active: {
     draggable: string | number | null;
     droppable: string | number | null;
@@ -163,7 +163,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
   const removeDraggable = (id: string | number): void => {
     batch(() => {
-      setState("draggables", id, null);
+      setState("draggables", id, undefined);
       if (state.active.draggable === id) {
         setState("active", "draggable", null);
       }
@@ -201,7 +201,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
   const removeDroppable = (id: string | number): void => {
     batch(() => {
-      setState("droppables", id, null);
+      setState("droppables", id, undefined);
       if (state.active.droppable === id) {
         setState("active", "droppable", null);
       }
@@ -228,7 +228,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
   const removeSensor = (id: string | number): void => {
     batch(() => {
-      setState("sensors", id, null);
+      setState("sensors", id, undefined);
       if (state.active.sensor === id) {
         setState("active", "sensor", null);
       }
