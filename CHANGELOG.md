@@ -28,6 +28,13 @@
   reflect usage. Note that `useDragDropContext` and `useSortableContext` remain
   unchanged.
 
+### Fixed
+
+- Fix `eventMap[key] is undefined` error when attempting to drag a draggable
+  that has been composed manually using the `draggable.dragActivators` property.
+  This was due to naive key renaming in the `asHandlers` logic and so did not
+  affect draggable usage as a directive.
+
 ## [0.3.3] - 2021-11-03
 
 ### Fixed

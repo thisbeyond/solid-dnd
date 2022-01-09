@@ -267,11 +267,12 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       }
     }
     const listeners: Listeners = {};
-    for (let key in eventMap) {
+    for (const key in eventMap) {
+      let handlerKey = key;
       if (asHandlers) {
-        key = `on${key}`;
+        handlerKey = `on${key}`;
       }
-      listeners[key] = (event) => {
+      listeners[handlerKey] = (event) => {
         for (const { activator } of eventMap[key]) {
           if (anySensorActive()) {
             break;
