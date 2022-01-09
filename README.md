@@ -1,8 +1,13 @@
-<h1 align="center">Solid Drag & Drop 🐨</h1>
+<p align="center">
+  <a href="https://solid-dnd.com">
+    <img
+      alt="Solid DnD - A lightweight drag and drop toolkit for Solid."
+      width="520"
+      src="./resources/solid-dnd-website-preview.png">
+  </a>
+</p>
 
-A lightweight drag and drop toolkit for [Solid](https://solidjs.com/).
-
-- **Built for Solid:** leverages fine-grained reactivity primitives for
+- **Built for [Solid](https://solidjs.com/):** leverages fine-grained reactivity primitives for
   coordination.
 - **Flexible:** built to support a wide range of cases, from plain drag and drop
   to sortable lists, multiple containers and beyond.
@@ -65,11 +70,11 @@ const Sandbox = () => {
 
 const App = () => {
   return (
-    <DragDropContext>
+    <DragDropProvider>
       <DragDropSensors>
         <Sandbox />
       </DragDropSensors>
-    </DragDropContext>
+    </DragDropProvider>
   );
 };
 
