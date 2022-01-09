@@ -2,7 +2,6 @@
   <a href="https://solid-dnd.com">
     <img
       alt="Solid DnD - A lightweight drag and drop toolkit for Solid."
-      width="520"
       src="./resources/solid-dnd-website-preview.png">
   </a>
 </p>
