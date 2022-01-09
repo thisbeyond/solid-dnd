@@ -12,13 +12,15 @@
 - **Breaking Change** As part of adding typings to Solid DnD, change most
   function signatures to use positional parameters over an options object. This
   simplifies the typing and makes it easier to use and understand the function
-  parameters. For example, a call to `createDraggable({ id })` should now be
-  `createDraggable(id)`.
+  parameters.
 
   For reference, the rules used when applying this change were:
 
-  * Default to multiple positional params.
-  * Use an object when multiple params are related as a single entity.
+  * Default to multiple positional params. For example, a call to
+    `createDraggable({ id })` should now be `createDraggable(id)`.
+  * Use an object when multiple params are related as a single entity (such as
+    an 'event'). For example, an `onDragEnd(event)` handler can remain unchanged
+    (accepting a single parameter).
   * Use an options object when there are a large number of parameters (>3).
 
 - **Breaking Change** Rename `DragDropContext` to `DragDropProvider` and
