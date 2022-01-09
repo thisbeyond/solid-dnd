@@ -1,6 +1,9 @@
+import { Component } from "solid-js";
 import { createPointerSensor } from "./create-pointer-sensor";
 
-export const DragDropSensors = (props) => {
+const DragDropSensors: Component = (props) => {
   createPointerSensor();
   return <>{props.children}</>;
 };
+
+export { DragDropSensors };

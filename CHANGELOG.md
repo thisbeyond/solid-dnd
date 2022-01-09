@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- [TypeScript](https://www.typescriptlang.org/) Typings! Thanks to
+  [@areknawo](https://github.com/areknawo), Solid DnD is now fully typed.
+
+### Changed
+
+- **Breaking Change** As part of adding typings to Solid DnD, change most
+  function signatures to use positional parameters over an options object. This
+  simplifies the typing and makes it easier to use and understand the function
+  parameters. For example, a call to `createDraggable({ id })` should now be
+  `createDraggable(id)`.
+
+  For reference, the rules used when applying this change were:
+
+  * Default to multiple positional params.
+  * Use an object when multiple params are related as a single entity.
+  * Use an options object when there are a large number of parameters (>3).
+
+- **Breaking Change** Rename `DragDropContext` to `DragDropProvider` and
+  `SortableContext` to `SortableProvider` to match Solid convention and better
+  reflect usage. Note that `useDragDropContext` and `useSortableContext` remain
+  unchanged.
+
 ## [0.3.3] - 2021-11-03
 
 ### Fixed
@@ -22,8 +48,8 @@
 
 - As part of the fix for detecting collisions on drag start, `recomputeLayouts`
   no longer automatically calls `detectCollisions` when layouts have changed.
-  Instead, it returns a boolean indicating whether a layout change detected
-  - enabling the caller to call `detectCollisions` if desired.
+  Instead, it returns a boolean indicating whether a layout change detected and
+  the caller can choose to call `detectCollisions` if desired.
 
 ### Fixed
 
@@ -95,8 +121,8 @@ const MyComponent = (props) => {
 
 ### Changed
 
-- Update to work with Solid 1.0! This is a breaking change that requires
-  updating peer dependency of Solid to 1.0 or greater.
+- **Breaking Change** Update to work with Solid 1.0! Requires updating peer
+  dependency of Solid to 1.0 or greater.
 - Refactor `isActiveDraggable` and `isActiveDroppable` to appear as resolved
   properties rather than functions to call (this is more consistent with the
   rest of interface). E.g. `draggable.isActiveDraggable()`

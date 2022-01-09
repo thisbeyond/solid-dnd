@@ -26,7 +26,7 @@ Use it:
 
 ```jsx
 import {
-  DragDropContext,
+  DragDropProvider,
   DragDropSensors,
   useDragDropContext,
   createDraggable,
@@ -35,19 +35,19 @@ import {
 } from "@thisbeyond/solid-dnd";
 
 const Draggable = (props) => {
-  const draggable = createDraggable({ id: props.id });
+  const draggable = createDraggable(props.id);
   return <div use:draggable>draggable</div>;
 };
 
 const Droppable = (props) => {
-  const droppable = createDroppable({ id: props.id });
+  const droppable = createDroppable(props.id);
   return <div use:droppable>droppable</div>;
 };
 
 const Sandbox = () => {
   const [, { onDragEnd }] = useDragDropContext();
 
-  onDragEnd(({ draggable, droppable }) => {
+  onDragEnd(({draggable, droppable}) => {
     if (droppable) {
       // Handle the drop. Note that solid-dnd doesn't move a draggable into a
       // droppable on drop. It leaves it up to you how you want to handle the
@@ -57,8 +57,8 @@ const Sandbox = () => {
 
   return (
     <div>
-      <Draggable id={"draggable-1"} />
-      <Droppable id={"droppable-1"} />
+      <Draggable id="draggable-1" />
+      <Droppable id="droppable-1" />
     </div>
   );
 };
@@ -81,7 +81,7 @@ export default App;
 - [x] Use `createDraggable` with your elements to easily integrate drag
       behaviour. Maintain full control over how your element looks and behaves.
 - [x] Manage droppable areas with `createDroppable`. Conditionally enable and
-      disable droppable areas based on the current `DragDropContext`.
+      disable droppable areas based on the current context.
 - [x] Use `DragOverlay` when you want to drag a representation of your element
       that is removed from the normal flow.
 - [x] Support for different sensors to detect and manage dragging (pointer
@@ -90,7 +90,7 @@ export default App;
       `closestLayoutCenter`) for common usage. You can also add your own.
 - [x] Sortable list primitives for drag and drop list reordering (currently only
       vertical sorting supported).
-- [x] Use multiple (or nested) `DragDropContext` for containers isolated from
+- [x] Use multiple (or nested) `DragDropProvider` for containers isolated from
       each other.
 
 ## Who made this? ✍
