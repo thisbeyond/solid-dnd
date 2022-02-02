@@ -15,6 +15,15 @@ interface Sortable {
   get isActiveDroppable(): boolean;
 }
 
+declare module "solid-js" {
+  namespace JSX {
+    interface Directives {
+      sortable: Sortable;
+    }
+  }
+}
+
+
 const createSortable = (
   id: string | number,
   data: Record<string, any> = {}
