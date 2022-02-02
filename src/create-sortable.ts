@@ -23,7 +23,6 @@ declare module "solid-js" {
   }
 }
 
-
 const createSortable = (
   id: string | number,
   data: Record<string, any> = {}
