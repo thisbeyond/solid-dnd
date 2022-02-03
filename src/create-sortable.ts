@@ -18,7 +18,7 @@ interface Sortable {
 declare module "solid-js" {
   namespace JSX {
     interface Directives {
-      sortable: Sortable;
+      [key: string]: Sortable | boolean;
     }
   }
 }
