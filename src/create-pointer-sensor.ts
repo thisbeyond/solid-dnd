@@ -34,7 +34,6 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
   let activationDraggableId: string | number | null = null;
 
   const attach = (event: PointerEvent, draggableId: string | number): void => {
-    event.preventDefault();
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
 
@@ -53,12 +52,16 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
 
     document.removeEventListener("pointermove", onPointerMove);
     document.removeEventListener("pointerup", onPointerUp);
+    document.removeEventListener("selectionchange", clearSelection);
   };
 
   const onActivate = (): void => {
     if (!anySensorActive()) {
       sensorStart(id);
       dragStart(activationDraggableId!);
+
+      clearSelection();
+      document.addEventListener("selectionchange", clearSelection);
     } else if (!isActiveSensor()) {
       detach();
     }
@@ -89,6 +92,10 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
       dragEnd();
       sensorEnd();
     }
+  };
+
+  const clearSelection = () => {
+    window.getSelection()?.removeAllRanges();
   };
 };
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Fix pointer sensor preventing default event behaviour on attachment. Instead,
+  wait for activation of drag before intercepting relevant events. This avoids
+  unexpected side effects, such as an `<input/>` not receiving focus on click.
+
+  With this change, also listen for and clear any text selection that happens as
+  a side effect during an active drag operation.
+
+  Thanks to [@yonathan06](https://github.com/yonathan06) for reporting this
+  behaviour.
+
 ## [0.4.0] - 2022-01-09
 
 ### Added
