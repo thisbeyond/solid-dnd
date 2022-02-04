@@ -80,6 +80,8 @@ const App = () => {
 export default App;
 ```
 
+See more examples at https://solid-dnd.com
+
 ## What's implemented? ✔️
 
 - [x] Use `createDraggable` with your elements to easily integrate drag
