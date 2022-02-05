@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Update `rollup-plugin-solid` to 1.2.2 to address
+  [Bundlephobia](bundlephobia.com) build error (caused by it tripping over the
+  optinal chaining syntax `?.`). The plugin now targets a slightly older env in
+  order to compile this syntax away.
+
 ## [0.4.1] - 2022-02-03
 
 ### Fixed
