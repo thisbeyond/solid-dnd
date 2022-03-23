@@ -42,11 +42,10 @@ const SortableProvider: Component<SortableContextProps> = (props) => {
       untrack(() => {
         const fromIndex = state.sortedIds.indexOf(dndState.active.draggable!);
         const toIndex = state.initialIds.indexOf(dndState.active.droppable!);
-        if (
-          fromIndex !== toIndex &&
-          isValidIndex(fromIndex) &&
-          isValidIndex(toIndex)
-        ) {
+
+        if (!isValidIndex(fromIndex) || !isValidIndex(toIndex)) {
+          setState("sortedIds", [...props.ids]);
+        } else if (fromIndex !== toIndex) {
           const resorted = moveArrayItem(state.sortedIds, fromIndex, toIndex);
           setState("sortedIds", resorted);
         }
