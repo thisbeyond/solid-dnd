@@ -89,8 +89,8 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
     detach();
     if (isActiveSensor()) {
       event.preventDefault();
-      dragEnd();
       sensorEnd();
+      dragEnd();
     }
   };
 
