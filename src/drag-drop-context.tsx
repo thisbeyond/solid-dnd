@@ -155,14 +155,14 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Draggable, "transform">): void => {
-    setState("draggables", id, {
+    setState("draggables", id, (draggable) => ({
       id,
       node,
       layout,
       data,
-      transform: noopTransform(),
+      transform: draggable?.transform ?? noopTransform(),
       _pendingCleanup: false,
-    });
+    }));
   };
   const removeDraggable = (id: string | number): void => {
     setState("draggables", id, "_pendingCleanup", true);
@@ -200,14 +200,14 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Droppable, "transform">): void => {
-    setState("droppables", id, {
+    setState("droppables", id, (droppable) => ({
       id,
       node,
       layout,
       data,
-      transform: noopTransform(),
+      transform: droppable?.transform ?? noopTransform(),
       _pendingCleanup: false,
-    });
+    }));
   };
   const removeDroppable = (id: string | number): void => {
     setState("droppables", id, "_pendingCleanup", true);
