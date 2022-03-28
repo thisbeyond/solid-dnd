@@ -29,6 +29,7 @@ type Draggable = {
   layout: Layout;
   data: Record<string, any>;
   transform: Transform;
+  _pendingCleanup?: boolean;
 };
 type Droppable = {
   id: string | number;
@@ -36,6 +37,7 @@ type Droppable = {
   layout: Layout;
   data: Record<string, any>;
   transform: Transform;
+  _pendingCleanup?: boolean;
 };
 type DragEvent = {
   draggable: Draggable;
@@ -159,16 +161,23 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       layout,
       data,
       transform: noopTransform(),
+      _pendingCleanup: false,
     });
   };
   const removeDraggable = (id: string | number): void => {
+    setState("draggables", id, "_pendingCleanup", true);
+    queueMicrotask(() => cleanupDraggable(id));
+  };
+  const cleanupDraggable = (id: string | number) => {
     batch(() => {
-      setState("draggables", id, undefined);
-      if (state.active.draggable === id) {
-        setState("active", "draggable", null);
-      }
-      if (state.previous.draggable === id) {
-        setState("previous", "draggable", null);
+      if (state.draggables[id]?._pendingCleanup) {
+        setState("draggables", id, undefined);
+        if (state.active.draggable === id) {
+          setState("active", "draggable", null);
+        }
+        if (state.previous.draggable === id) {
+          setState("previous", "draggable", null);
+        }
       }
     });
   };
@@ -197,16 +206,23 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       layout,
       data,
       transform: noopTransform(),
+      _pendingCleanup: false,
     });
   };
   const removeDroppable = (id: string | number): void => {
+    setState("droppables", id, "_pendingCleanup", true);
+    queueMicrotask(() => cleanupDroppable(id));
+  };
+  const cleanupDroppable = (id: string | number) => {
     batch(() => {
-      setState("droppables", id, undefined);
-      if (state.active.droppable === id) {
-        setState("active", "droppable", null);
-      }
-      if (state.previous.droppable === id) {
-        setState("previous", "droppable", null);
+      if (state.droppables[id]?._pendingCleanup) {
+        setState("droppables", id, undefined);
+        if (state.active.droppable === id) {
+          setState("active", "droppable", null);
+        }
+        if (state.previous.droppable === id) {
+          setState("previous", "droppable", null);
+        }
       }
     });
   };
