@@ -73,8 +73,8 @@ const createSortable = (
 
   const sortable = Object.defineProperties(
     (element: HTMLElement) => {
-      draggable(element);
       droppable(element);
+      draggable(element);
 
       createComputed(() => {
         if (dndState.usingDragOverlay || dndState.active.draggable !== id) {
