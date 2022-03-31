@@ -163,6 +163,11 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       transform: draggable?.transform ?? noopTransform(),
       _pendingCleanup: false,
     }));
+
+    if (anyDraggableActive()) {
+      recomputeLayouts();
+      detectCollisions();
+    }
   };
   const removeDraggable = (id: string | number): void => {
     setState("draggables", id, "_pendingCleanup", true);
@@ -208,6 +213,11 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       transform: droppable?.transform ?? noopTransform(),
       _pendingCleanup: false,
     }));
+
+    if (anyDraggableActive()) {
+      recomputeLayouts();
+      detectCollisions();
+    }
   };
   const removeDroppable = (id: string | number): void => {
     setState("droppables", id, "_pendingCleanup", true);
