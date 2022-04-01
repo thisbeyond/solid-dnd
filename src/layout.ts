@@ -6,38 +6,66 @@ interface Transform {
   x: number;
   y: number;
 }
-interface Layout {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  get top(): number;
-  get left(): number;
-  get right(): number;
-  get bottom(): number;
+class Layout {
+  x;
+  y;
+  width;
+  height;
+
+  constructor(rect: { x: number; y: number; width: number; height: number }) {
+    this.x = rect.x;
+    this.y = rect.y;
+    this.width = rect.width;
+    this.height = rect.height;
+  }
+
+  get left() {
+    return this.x;
+  }
+  get top() {
+    return this.y;
+  }
+  get right() {
+    return this.x + this.width;
+  }
+  get bottom() {
+    return this.y + this.height;
+  }
 }
-
 const elementLayout = (element: HTMLElement): Layout => {
-  const { x, y, width, height } = element.getBoundingClientRect();
+  let layout = new Layout(element.getBoundingClientRect());
 
-  return {
-    x,
-    y,
-    width,
-    height,
-    get left() {
-      return this.x;
-    },
-    get top() {
-      return this.y;
-    },
-    get right() {
-      return this.x + this.width;
-    },
-    get bottom() {
-      return this.y + this.height;
-    },
-  };
+  const { transform } = getComputedStyle(element);
+  if (transform) {
+    layout = stripTransformFromLayout(layout, transform);
+  }
+
+  return layout;
+};
+const stripTransformFromLayout = (
+  layout: Layout,
+  transform: string
+): Layout => {
+  let translateX, translateY;
+
+  if (transform.startsWith("matrix3d(")) {
+    const matrix = transform.slice(9, -1).split(/, /);
+    translateX = +matrix[12];
+    translateY = +matrix[13];
+  } else if (transform.startsWith("matrix(")) {
+    const matrix = transform.slice(7, -1).split(/, /);
+    translateX = +matrix[4];
+    translateY = +matrix[5];
+  } else {
+    translateX = 0;
+    translateY = 0;
+  }
+
+  return new Layout({
+    ...layout,
+    x: layout.x - translateX,
+    y: layout.y - translateY,
+  });
 };
 const noopTransform = (): Transform => ({ x: 0, y: 0 });
 const transformsAreEqual = (
@@ -50,23 +78,11 @@ const transformsAreEqual = (
   );
 };
 const transformLayout = (layout: Layout, transform: Transform): Layout => {
-  return {
+  return new Layout({
     ...layout,
     x: layout.x + transform.x,
     y: layout.y + transform.y,
-    get left() {
-      return this.x;
-    },
-    get top() {
-      return this.y;
-    },
-    get right() {
-      return this.x + this.width;
-    },
-    get bottom() {
-      return this.y + this.height;
-    },
-  };
+  });
 };
 const layoutCenter = (layout: Layout): Point => {
   return {
@@ -156,6 +172,7 @@ export {
   noopTransform,
   transformsAreEqual,
   transformLayout,
+  stripTransformFromLayout,
   layoutCenter,
   distanceBetweenPoints,
   closestLayoutCenter,
