@@ -8,4 +8,5 @@ export { SortableProvider, useSortableContext } from "./sortable-context";
 export { createSortable } from "./create-sortable";
 export { layoutStyle, transformStyle } from "./style";
 export { closestLayoutCenter, mostIntersectingLayout } from "./layout";
+export { DragDropDebugger } from "./drag-drop-debugger";
 export type { DragEventHandler } from "./drag-drop-context";
