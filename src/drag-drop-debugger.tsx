@@ -30,7 +30,28 @@ const Highlighter: Component<HighlighterProps> = (props) => {
 };
 
 const DragDropDebugger = () => {
-  const [state] = useDragDropContext()!;
+  const [state, { recomputeLayouts }] = useDragDropContext()!;
+
+  let ticking = false;
+
+  const update = () => {
+    if (!ticking) {
+      window.requestAnimationFrame(function () {
+        recomputeLayouts();
+        ticking = false;
+      });
+
+      ticking = true;
+    }
+  };
+
+  onMount(() => {
+    document.addEventListener("scroll", update);
+  });
+
+  onCleanup(() => {
+    document.removeEventListener("scroll", update);
+  });
 
   return (
     <Portal mount={document.body}>
