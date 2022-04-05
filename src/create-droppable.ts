@@ -18,6 +18,7 @@ interface Droppable {
   (element: HTMLElement): void;
   ref: Setter<HTMLElement | null>;
   get isActiveDroppable(): boolean;
+  get transform(): Transform;
 }
 
 const createDroppable = (
@@ -67,6 +68,10 @@ const createDroppable = (
       isActiveDroppable: {
         enumerable: true,
         get: isActiveDroppable,
+      },
+      transform: {
+        enumerable: true,
+        get: transform,
       },
     }
   ) as Droppable;
