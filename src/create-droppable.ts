@@ -15,7 +15,7 @@ import {
 } from "solid-js";
 
 interface Droppable {
-  (element: HTMLElement): void;
+  (element: HTMLElement, accessor?: () => { skipTransform?: boolean }): void;
   ref: Setter<HTMLElement | null>;
   get isActiveDroppable(): boolean;
   get transform(): Transform;
@@ -47,18 +47,22 @@ const createDroppable = (
     return state.droppables[id]?.transform || noopTransform();
   };
   const droppable = Object.defineProperties(
-    (element: HTMLElement) => {
+    (element: HTMLElement, accessor?: () => { skipTransform?: boolean }) => {
+      const config = accessor ? accessor() : {};
+
       setNode(element);
 
-      createRenderEffect(() => {
-        const resolvedTransform = transform();
-        if (!transformsAreEqual(resolvedTransform, noopTransform())) {
-          const style = transformStyle(transform());
-          element.style.setProperty("transform", style.transform);
-        } else {
-          element.style.removeProperty("transform");
-        }
-      });
+      if (!config.skipTransform) {
+        createRenderEffect(() => {
+          const resolvedTransform = transform();
+          if (!transformsAreEqual(resolvedTransform, noopTransform())) {
+            const style = transformStyle(transform());
+            element.style.setProperty("transform", style.transform);
+          } else {
+            element.style.removeProperty("transform");
+          }
+        });
+      }
     },
     {
       ref: {

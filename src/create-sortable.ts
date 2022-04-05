@@ -1,10 +1,12 @@
+import { createComputed, createRenderEffect } from "solid-js";
+
 import { createDraggable } from "./create-draggable";
 import { createDroppable } from "./create-droppable";
 import { RefSetter, combineRefs } from "./combine-refs";
 import { useSortableContext } from "./sortable-context";
 import { Listeners, useDragDropContext } from "./drag-drop-context";
-import { Layout, noopTransform, Transform } from "./layout";
-import { createComputed } from "solid-js";
+import { Layout, noopTransform, Transform, transformsAreEqual } from "./layout";
+import { transformStyle } from "./style";
 
 interface Sortable {
   (element: HTMLElement): void;
@@ -30,7 +32,7 @@ const createSortable = (
   const layoutById = (id: string | number): Layout | null =>
     dndState.droppables[id]?.layout || null;
 
-  const transform = (): Transform => {
+  const sortedTransform = (): Transform => {
     const delta = noopTransform();
     const resolvedInitialIndex = initialIndex();
     const resolvedCurrentIndex = currentIndex();
@@ -71,14 +73,30 @@ const createSortable = (
     return delta;
   };
 
+  createComputed(() => {
+    displace("droppables", id, sortedTransform());
+  });
+
+  const transform = (): Transform => {
+    return (
+      (id === dndState.active.draggable && !dndState.usingDragOverlay
+        ? dndState.draggables[id]?.transform
+        : dndState.droppables[id]?.transform) || noopTransform()
+    );
+  };
+
   const sortable = Object.defineProperties(
     (element: HTMLElement) => {
-      droppable(element);
-      draggable(element);
+      draggable(element, () => ({ skipTransform: true }));
+      droppable(element, () => ({ skipTransform: true }));
 
-      createComputed(() => {
-        if (dndState.usingDragOverlay || dndState.active.draggable !== id) {
-          displace("droppables", id, transform());
+      createRenderEffect(() => {
+        const resolvedTransform = transform();
+        if (!transformsAreEqual(resolvedTransform, noopTransform())) {
+          const style = transformStyle(transform());
+          element.style.setProperty("transform", style.transform);
+        } else {
+          element.style.removeProperty("transform");
         }
       });
     },

@@ -16,7 +16,7 @@ import {
 } from "solid-js";
 
 interface Draggable {
-  (element: HTMLElement): void;
+  (element: HTMLElement, accessor?: () => { skipTransform?: boolean }): void;
   ref: Setter<HTMLElement | null>;
   get isActiveDraggable(): boolean;
   get dragActivators(): Listeners;
@@ -51,7 +51,9 @@ const createDraggable = (
   };
 
   const draggable = Object.defineProperties(
-    (element: HTMLElement) => {
+    (element: HTMLElement, accessor?: () => { skipTransform?: boolean }) => {
+      const config = accessor ? accessor() : {};
+
       createEffect(() => {
         const resolvedNode = node();
         const activators = draggableActivators(id);
@@ -72,18 +74,21 @@ const createDraggable = (
       });
 
       setNode(element);
-      createRenderEffect(() => {
-        if (!state.usingDragOverlay) {
-          const resolvedTransform = transform();
 
-          if (!transformsAreEqual(resolvedTransform, noopTransform())) {
-            const style = transformStyle(transform());
-            element.style.setProperty("transform", style.transform);
-          } else {
-            element.style.removeProperty("transform");
+      if (!config.skipTransform) {
+        createRenderEffect(() => {
+          if (!state.usingDragOverlay) {
+            const resolvedTransform = transform();
+
+            if (!transformsAreEqual(resolvedTransform, noopTransform())) {
+              const style = transformStyle(transform());
+              element.style.setProperty("transform", style.transform);
+            } else {
+              element.style.removeProperty("transform");
+            }
           }
-        }
-      });
+        });
+      }
     },
     {
       ref: {
