@@ -155,14 +155,18 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Draggable, "transform">): void => {
-    setState("draggables", id, (draggable) => ({
+    const existingDraggable = untrack(() => state.draggables[id]);
+    setState("draggables", id, {
       id,
       node,
       layout,
       data,
-      transform: draggable?.transform ?? noopTransform(),
+      transform: noopTransform(),
       _pendingCleanup: false,
-    }));
+    });
+    if (existingDraggable) {
+      displace("draggables", id, existingDraggable.transform);
+    }
 
     if (anyDraggableActive()) {
       recomputeLayouts();
@@ -205,14 +209,18 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Droppable, "transform">): void => {
-    setState("droppables", id, (droppable) => ({
+    const existingDroppable = untrack(() => state.droppables[id]);
+    setState("droppables", id, {
       id,
       node,
       layout,
       data,
-      transform: droppable?.transform ?? noopTransform(),
+      transform: noopTransform(),
       _pendingCleanup: false,
-    }));
+    });
+    if (existingDroppable) {
+      displace("droppables", id, existingDroppable.transform);
+    }
 
     if (anyDraggableActive()) {
       recomputeLayouts();
@@ -394,9 +402,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
   const dragStart = (draggableId: string | number): void => {
     batch(() => {
-      setState("draggables", draggableId, (value) => {
-        return value ? { ...value, transform: noopTransform() } : value;
-      });
+      displace("draggables", draggableId, noopTransform());
       setState("active", "draggable", draggableId);
     });
     recomputeLayouts();
@@ -405,9 +411,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   const dragMove = (transform: Transform): void => {
     const draggableId = state.active.draggable;
     if (draggableId) {
-      setState("draggables", draggableId, (value) => {
-        return value ? { ...value, transform: { ...transform } } : value;
-      });
+      displace("draggables", draggableId, transform);
       detectCollisions();
     }
   };
@@ -416,9 +420,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       setState("previous", "draggable", state.active.draggable);
       setState("previous", "droppable", state.active.droppable);
       if (state.active.draggable) {
-        setState("draggables", state.active.draggable, (value) => {
-          return value ? { ...value, transform: noopTransform() } : value;
-        });
+        displace("draggables", state.active.draggable, noopTransform());
       }
       setState("active", ["draggable", "droppable"], null);
     });
