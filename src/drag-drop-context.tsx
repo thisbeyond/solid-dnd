@@ -49,6 +49,12 @@ interface Sensor {
   id: string | number;
   activators: { [K in keyof HTMLElementEventMap]?: SensorActivator<K> };
 }
+
+type Transformer = (
+  transform: Transform,
+  context: { type: "draggables" | "droppables"; id: string | number }
+) => Transform;
+
 interface DragDropState {
   draggables: Record<string | number, Draggable | undefined | null>;
   droppables: Record<string | number, Droppable | undefined | null>;
@@ -62,6 +68,7 @@ interface DragDropState {
     draggable: string | number | null;
     droppable: string | number | null;
   };
+  transformers: Transformer[];
   usingDragOverlay: boolean;
 }
 interface DragDropActions {
@@ -144,6 +151,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       draggable: null,
       droppable: null,
     },
+    transformers: [],
     usingDragOverlay: false,
   });
   const setUsingDragOverlay = (boolean: boolean = true): void => {
@@ -155,18 +163,49 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Draggable, "transform">): void => {
-    const existingDraggable = untrack(() => state.draggables[id]);
-    setState("draggables", id, {
-      id,
-      node,
-      layout,
-      data,
-      transform: noopTransform(),
-      _pendingCleanup: false,
+    const existingDraggable = untrack(() =>
+      state.draggables[id]
+        ? ({ ...state.draggables[id] } as Draggable)
+        : undefined
+    );
+    batch(() => {
+      setState("draggables", id, {
+        id,
+        node,
+        layout,
+        data,
+        transform: noopTransform(),
+        _pendingCleanup: false,
+      });
+      if (existingDraggable) {
+        const layoutDelta = {
+          x: existingDraggable.layout.x - layout.x,
+          y: existingDraggable.layout.y - layout.y,
+        };
+
+        const transformer: Transformer = (transform, { type, id: itemId }) => {
+          if (type === "draggables" && itemId === id) {
+            return {
+              x: transform.x + layoutDelta.x,
+              y: transform.y + layoutDelta.y,
+            };
+          }
+          return transform;
+        };
+        transformer.draggableId = id;
+
+        setState("transformers", (transformers) => [
+          transformer,
+          ...transformers,
+        ]);
+
+        displace(
+          "draggables",
+          id,
+          existingDraggable.transform.base ?? existingDraggable.transform
+        );
+      }
     });
-    if (existingDraggable) {
-      displace("draggables", id, existingDraggable.transform);
-    }
 
     if (anyDraggableActive()) {
       recomputeLayouts();
@@ -180,6 +219,9 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   const cleanupDraggable = (id: string | number) => {
     batch(() => {
       if (state.draggables[id]?._pendingCleanup) {
+        setState("transformers", (transformers) =>
+          transformers.filter((transformer) => transformer.draggableId !== id)
+        );
         setState("draggables", id, undefined);
         if (state.active.draggable === id) {
           setState("active", "draggable", null);
@@ -387,6 +429,22 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       }
     }
   };
+
+  const applyTransformers = (
+    transform: Transform,
+    context: { type: "draggables" | "droppables"; id: string | number }
+  ) => {
+    return {
+      ...state.transformers.reduce<Transform>(
+        (transform: Transform, transformer) => {
+          return transformer(transform, context);
+        },
+        { ...transform }
+      ),
+      base: { x: transform.x, y: transform.y },
+    };
+  };
+
   const displace = (
     type: "draggables" | "droppables",
     id: string | number,
@@ -395,7 +453,12 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     untrack(() => {
       if (state[type][id]) {
         setState(type, id, (value) => {
-          return value ? { ...value, transform: { ...transform } } : value;
+          return value
+            ? {
+                ...value,
+                transform: applyTransformers(transform, { type, id }),
+              }
+            : value;
         });
       }
     });
@@ -420,6 +483,11 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       setState("previous", "draggable", state.active.draggable);
       setState("previous", "droppable", state.active.droppable);
       if (state.active.draggable) {
+        setState("transformers", (transformers) =>
+          transformers.filter(
+            (transformer) => transformer.draggableId !== state.active.draggable
+          )
+        );
         displace("draggables", state.active.draggable, noopTransform());
       }
       setState("active", ["draggable", "droppable"], null);

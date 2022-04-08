@@ -5,6 +5,10 @@ interface Point {
 interface Transform {
   x: number;
   y: number;
+  base?: {
+    x: number;
+    y: number;
+  };
 }
 class Layout {
   x;
