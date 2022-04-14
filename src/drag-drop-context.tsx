@@ -56,9 +56,9 @@ type Transformer = (
 ) => Transform;
 
 interface DragDropState {
-  draggables: Record<string | number, Draggable | undefined | null>;
-  droppables: Record<string | number, Droppable | undefined | null>;
-  sensors: Record<string | number, Sensor | undefined | null>;
+  draggables: Record<string | number, Draggable>;
+  droppables: Record<string | number, Droppable>;
+  sensors: Record<string | number, Sensor>;
   active: {
     draggable: string | number | null;
     droppable: string | number | null;
@@ -223,7 +223,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
         setState("transformers", (transformers) =>
           transformers.filter((transformer) => transformer.draggableId !== id)
         );
-        setState("draggables", id, undefined);
+        setState("draggables", id, undefined!);
         if (state.active.draggable === id) {
           setState("active", "draggable", null);
         }
@@ -286,7 +286,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   const cleanupDroppable = (id: string | number) => {
     batch(() => {
       if (state.droppables[id]?._pendingCleanup) {
-        setState("droppables", id, undefined);
+        setState("droppables", id, undefined!);
         if (state.active.droppable === id) {
           setState("active", "droppable", null);
         }
@@ -314,7 +314,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
   const removeSensor = (id: string | number): void => {
     batch(() => {
-      setState("sensors", id, undefined);
+      setState("sensors", id, undefined!);
       if (state.active.sensor === id) {
         setState("active", "sensor", null);
       }
