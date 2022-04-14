@@ -1,8 +1,6 @@
 import {
   layoutsAreEqual,
-  mostIntersectingLayout,
   elementLayout,
-  transformLayout,
   noopTransform,
   Layout,
   Transform,
@@ -18,6 +16,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, Store } from "solid-js/store";
+import { mostIntersecting } from "./collision";
 
 type SensorActivator<K extends keyof HTMLElementEventMap> = (
   event: HTMLElementEventMap[K],
@@ -112,9 +111,10 @@ interface DragDropContextProps {
   onDragOver?: DragEventHandler;
   onDragEnd?: DragEventHandler;
   collisionDetectionAlgorithm?(
-    layout: Layout,
-    layouts: Layout[]
-  ): Layout | null;
+    draggable: Draggable,
+    droppables: Droppable[],
+    context: { activeDroppableId: string | number | null }
+  ): Droppable | null;
 }
 
 type DragDropContext = [Store<DragDropState>, DragDropActions];
@@ -135,7 +135,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       PropsWithChildren<DragDropContextProps>,
       "collisionDetectionAlgorithm"
     > = mergeProps(
-    { collisionDetectionAlgorithm: mostIntersectingLayout },
+    { collisionDetectionAlgorithm: mostIntersecting },
     passedProps
   );
   const [state, setState] = createStore<DragDropState>({
@@ -408,29 +408,18 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   const detectCollisions = (): void => {
     const draggable = activeDraggable();
     if (draggable) {
-      const draggableLayout = transformLayout(
-        draggable.layout,
-        draggable.transform
-      );
-
-      const layouts = [];
-      const droppableIds = [];
-      for (const droppable of Object.values(state.droppables)) {
-        if (droppable) {
-          droppableIds.push(droppable.id);
-          layouts.push(droppable.layout);
+      const droppable = props.collisionDetectionAlgorithm(
+        draggable,
+        Object.values(state.droppables),
+        {
+          activeDroppableId: state.active.droppable,
         }
-      }
-
-      const layout = props.collisionDetectionAlgorithm(
-        draggableLayout,
-        layouts
       );
 
-      let droppableId: string | number | null = null;
-      if (layout) {
-        droppableId = droppableIds[layouts.indexOf(layout)];
-      }
+      const droppableId: string | number | null = droppable
+        ? droppable.id
+        : null;
+
       if (state.active.droppable !== droppableId) {
         batch(() => {
           setState("previous", "droppable", state.active.droppable);
@@ -584,4 +573,4 @@ const useDragDropContext = (): DragDropContext | null => {
 };
 
 export { Context, DragDropProvider, useDragDropContext };
-export type { Listeners, DragEventHandler };
+export type { Listeners, DragEventHandler, Draggable, Droppable };

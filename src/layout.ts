@@ -103,20 +103,7 @@ const distanceBetweenPoints = (
       Math.pow(firstPoint.y - secondPoint.y, 2)
   );
 };
-const closestLayoutCenter = (
-  referenceLayout: Layout,
-  layouts: Layout[]
-): Layout | null => {
-  const point1 = layoutCenter(referenceLayout);
-  const distances = layouts.map((layout) =>
-    distanceBetweenPoints(point1, layoutCenter(layout))
-  );
-  if (distances.length === 0) {
-    return null;
-  }
-  const minDistance = Math.min(...distances);
-  return layouts[distances.indexOf(minDistance)];
-};
+
 const intersectionRatioOfLayouts = (
   firstLayout: Layout,
   secondLayout: Layout
@@ -138,19 +125,7 @@ const intersectionRatioOfLayouts = (
 
   return 0;
 };
-const mostIntersectingLayout = (
-  referenceLayout: Layout,
-  layouts: Layout[]
-): Layout | null => {
-  const intersectionRatios = layouts.map((layout) =>
-    intersectionRatioOfLayouts(referenceLayout, layout)
-  );
-  if (intersectionRatios.length === 0) {
-    return null;
-  }
-  const maxRatio = Math.max(...intersectionRatios);
-  return maxRatio > 0 ? layouts[intersectionRatios.indexOf(maxRatio)] : null;
-};
+
 const layoutsAreEqual = (
   firstLayout: Layout,
   secondLayout: Layout
@@ -179,9 +154,7 @@ export {
   stripTransformFromLayout,
   layoutCenter,
   distanceBetweenPoints,
-  closestLayoutCenter,
   intersectionRatioOfLayouts,
-  mostIntersectingLayout,
   layoutsAreEqual,
   layoutContainsPoint,
 };

@@ -7,6 +7,7 @@ export { DragOverlay } from "./drag-overlay";
 export { SortableProvider, useSortableContext } from "./sortable-context";
 export { createSortable } from "./create-sortable";
 export { layoutStyle, transformStyle } from "./style";
-export { closestLayoutCenter, mostIntersectingLayout } from "./layout";
+export { transformLayout, layoutCenter, distanceBetweenPoints } from "./layout";
+export { closestCenter, mostIntersecting } from "./collision";
 export { DragDropDebugger } from "./drag-drop-debugger";
 export type { DragEventHandler } from "./drag-drop-context";
