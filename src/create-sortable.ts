@@ -1,4 +1,4 @@
-import { createComputed, createRenderEffect } from "solid-js";
+import { createEffect } from "solid-js";
 
 import { createDraggable } from "./create-draggable";
 import { createDroppable } from "./create-droppable";
@@ -73,7 +73,7 @@ const createSortable = (
     return delta;
   };
 
-  createComputed(() => {
+  createEffect(() => {
     displace("droppables", id, sortedTransform());
   });
 
@@ -90,7 +90,7 @@ const createSortable = (
       draggable(element, () => ({ skipTransform: true }));
       droppable(element, () => ({ skipTransform: true }));
 
-      createRenderEffect(() => {
+      createEffect(() => {
         const resolvedTransform = transform();
         if (!transformsAreEqual(resolvedTransform, noopTransform())) {
           const style = transformStyle(transform());

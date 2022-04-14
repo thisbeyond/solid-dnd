@@ -2,7 +2,6 @@ import { useDragDropContext } from "./drag-drop-context";
 import { moveArrayItem } from "./move-array-item";
 import {
   Component,
-  createComputed,
   createContext,
   createEffect,
   untrack,
@@ -33,7 +32,7 @@ const SortableProvider: Component<SortableContextProps> = (props) => {
     return index >= 0 && index < state.initialIds.length;
   };
 
-  createComputed(() => {
+  createEffect(() => {
     setState("initialIds", [...props.ids]);
     setState("sortedIds", [...props.ids]);
   });

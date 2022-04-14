@@ -7,7 +7,7 @@ import {
 } from "./layout";
 import { transformStyle } from "./style";
 import {
-  createRenderEffect,
+  createEffect,
   createSignal,
   onCleanup,
   onMount,
@@ -53,7 +53,7 @@ const createDroppable = (
       setNode(element);
 
       if (!config.skipTransform) {
-        createRenderEffect(() => {
+        createEffect(() => {
           const resolvedTransform = transform();
           if (!transformsAreEqual(resolvedTransform, noopTransform())) {
             const style = transformStyle(transform());

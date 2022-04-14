@@ -8,7 +8,6 @@ import {
 import { transformStyle } from "./style";
 import {
   createEffect,
-  createRenderEffect,
   createSignal,
   onCleanup,
   onMount,
@@ -76,7 +75,7 @@ const createDraggable = (
       setNode(element);
 
       if (!config.skipTransform) {
-        createRenderEffect(() => {
+        createEffect(() => {
           if (!state.usingDragOverlay) {
             const resolvedTransform = transform();
 
