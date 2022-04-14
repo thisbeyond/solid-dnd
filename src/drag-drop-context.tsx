@@ -163,11 +163,16 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Draggable, "transform">): void => {
-    const existingDraggable = untrack(() =>
-      state.draggables[id]
-        ? ({ ...state.draggables[id] } as Draggable)
-        : undefined
-    );
+    const existingDraggable = state.draggables[id]
+      ? {
+          transform: {
+            ...(state.draggables[id]!.transform.base ??
+              state.draggables[id]!.transform),
+          },
+          layout: { ...state.draggables[id]!.layout },
+        }
+      : undefined;
+
     batch(() => {
       setState("draggables", id, {
         id,
@@ -199,11 +204,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
           ...transformers,
         ]);
 
-        displace(
-          "draggables",
-          id,
-          existingDraggable.transform.base ?? existingDraggable.transform
-        );
+        displace("draggables", id, existingDraggable.transform);
       }
     });
 
@@ -251,7 +252,16 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     layout,
     data,
   }: Omit<Droppable, "transform">): void => {
-    const existingDroppable = untrack(() => state.droppables[id]);
+    const existingDroppable =
+      state.droppables[id] !== undefined
+        ? {
+            transform: {
+              ...(state.droppables[id]!.transform.base ??
+                state.droppables[id]!.transform),
+            },
+          }
+        : undefined;
+
     setState("droppables", id, {
       id,
       node,
