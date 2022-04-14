@@ -58,6 +58,7 @@ const mostIntersecting = (
       collision.ratio = ratio;
       collision.droppable = droppable;
     } else if (
+      ratio > 0 &&
       ratio === collision.ratio &&
       droppable.id === context.activeDroppableId
     ) {
