@@ -41,6 +41,19 @@ class Layout {
       y: this.bottom * 0.5,
     };
   }
+  get corners(): {
+    topLeft: Point;
+    topRight: Point;
+    bottomRight: Point;
+    bottomLeft: Point;
+  } {
+    return {
+      topLeft: { x: this.left, y: this.top },
+      topRight: { x: this.right, y: this.top },
+      bottomRight: { x: this.left, y: this.bottom },
+      bottomLeft: { x: this.right, y: this.bottom },
+    };
+  }
 }
 const elementLayout = (element: HTMLElement): Layout => {
   let layout = new Layout(element.getBoundingClientRect());

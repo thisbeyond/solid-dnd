@@ -35,6 +35,53 @@ const closestCenter = (
   return collision.droppable;
 };
 
+const closestCorners = (
+  draggable: Draggable,
+  droppables: Droppable[],
+  context: { activeDroppableId: string | number | null }
+) => {
+  const draggableLayout = transformLayout(
+    draggable.layout,
+    draggable.transform
+  );
+
+  const draggableCorners = draggableLayout.corners;
+  const collision = { distance: Infinity, droppable: null as Droppable | null };
+
+  for (const droppable of droppables) {
+    const droppableCorners = droppable.layout.corners;
+    const distance =
+      distanceBetweenPoints(
+        droppableCorners.topLeft,
+        draggableCorners.topLeft
+      ) +
+      distanceBetweenPoints(
+        droppableCorners.topRight,
+        draggableCorners.topRight
+      ) +
+      distanceBetweenPoints(
+        droppableCorners.bottomRight,
+        draggableCorners.bottomRight
+      ) +
+      distanceBetweenPoints(
+        droppableCorners.bottomLeft,
+        draggableCorners.bottomLeft
+      );
+
+    if (distance < collision.distance) {
+      collision.distance = distance;
+      collision.droppable = droppable;
+    } else if (
+      distance === collision.distance &&
+      droppable.id === context.activeDroppableId
+    ) {
+      collision.droppable = droppable;
+    }
+  }
+
+  return collision.droppable;
+};
+
 const mostIntersecting = (
   draggable: Draggable,
   droppables: Droppable[],
@@ -65,4 +112,4 @@ const mostIntersecting = (
   return collision.droppable;
 };
 
-export { closestCenter, mostIntersecting };
+export { closestCenter, closestCorners, mostIntersecting };
