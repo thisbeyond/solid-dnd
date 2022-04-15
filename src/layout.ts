@@ -35,6 +35,12 @@ class Layout {
   get bottom() {
     return this.y + this.height;
   }
+  get center(): Point {
+    return {
+      x: this.right * 0.5,
+      y: this.bottom * 0.5,
+    };
+  }
 }
 const elementLayout = (element: HTMLElement): Layout => {
   let layout = new Layout(element.getBoundingClientRect());
@@ -88,12 +94,7 @@ const transformLayout = (layout: Layout, transform: Transform): Layout => {
     y: layout.y + transform.y,
   });
 };
-const layoutCenter = (layout: Layout): Point => {
-  return {
-    x: layout.x + layout.width * 0.5,
-    y: layout.y + layout.height * 0.5,
-  };
-};
+
 const distanceBetweenPoints = (
   firstPoint: Point,
   secondPoint: Point
@@ -152,7 +153,6 @@ export {
   transformsAreEqual,
   transformLayout,
   stripTransformFromLayout,
-  layoutCenter,
   distanceBetweenPoints,
   intersectionRatioOfLayouts,
   layoutsAreEqual,

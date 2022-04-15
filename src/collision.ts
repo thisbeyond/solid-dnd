@@ -2,7 +2,6 @@ import { Draggable, Droppable } from "./drag-drop-context";
 import {
   distanceBetweenPoints,
   intersectionRatioOfLayouts,
-  layoutCenter,
   transformLayout,
 } from "./layout";
 
@@ -16,14 +15,11 @@ const closestCenter = (
     draggable.transform
   );
 
-  const point1 = layoutCenter(draggableLayout);
+  const point1 = draggableLayout.center;
   const collision = { distance: Infinity, droppable: null as Droppable | null };
 
   for (const droppable of droppables) {
-    const distance = distanceBetweenPoints(
-      point1,
-      layoutCenter(droppable.layout)
-    );
+    const distance = distanceBetweenPoints(point1, droppable.layout.center);
 
     if (distance < collision.distance) {
       collision.distance = distance;
