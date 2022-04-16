@@ -16,7 +16,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, Store } from "solid-js/store";
-import { mostIntersecting } from "./collision";
+import { CollisionDetector, mostIntersecting } from "./collision";
 
 type SensorActivator<K extends keyof HTMLElementEventMap> = (
   event: HTMLElementEventMap[K],
@@ -110,11 +110,7 @@ interface DragDropContextProps {
   onDragMove?: DragEventHandler;
   onDragOver?: DragEventHandler;
   onDragEnd?: DragEventHandler;
-  collisionDetectionAlgorithm?(
-    draggable: Draggable,
-    droppables: Droppable[],
-    context: { activeDroppableId: string | number | null }
-  ): Droppable | null;
+  collisionDetector?: CollisionDetector;
 }
 
 type DragDropContext = [Store<DragDropState>, DragDropActions];
@@ -127,17 +123,9 @@ type DragEventHandler = (event: DragEvent) => void;
 const Context = createContext<DragDropContext>();
 
 const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
-  const props: Pick<
-    Required<DragDropContextProps>,
-    "collisionDetectionAlgorithm"
-  > &
-    Omit<
-      PropsWithChildren<DragDropContextProps>,
-      "collisionDetectionAlgorithm"
-    > = mergeProps(
-    { collisionDetectionAlgorithm: mostIntersecting },
-    passedProps
-  );
+  const props: Pick<Required<DragDropContextProps>, "collisionDetector"> &
+    Omit<PropsWithChildren<DragDropContextProps>, "collisionDetector"> =
+    mergeProps({ collisionDetector: mostIntersecting }, passedProps);
   const [state, setState] = createStore<DragDropState>({
     draggables: {},
     droppables: {},
@@ -406,7 +394,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   const detectCollisions = (): void => {
     const draggable = activeDraggable();
     if (draggable) {
-      const droppable = props.collisionDetectionAlgorithm(
+      const droppable = props.collisionDetector(
         draggable,
         Object.values(state.droppables),
         {

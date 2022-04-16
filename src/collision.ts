@@ -5,11 +5,13 @@ import {
   transformLayout,
 } from "./layout";
 
-const closestCenter = (
+type CollisionDetector = (
   draggable: Draggable,
   droppables: Droppable[],
   context: { activeDroppableId: string | number | null }
-) => {
+) => Droppable | null;
+
+const closestCenter: CollisionDetector = (draggable, droppables, context) => {
   const draggableLayout = transformLayout(
     draggable.layout,
     draggable.transform
@@ -35,11 +37,7 @@ const closestCenter = (
   return collision.droppable;
 };
 
-const closestCorners = (
-  draggable: Draggable,
-  droppables: Droppable[],
-  context: { activeDroppableId: string | number | null }
-) => {
+const closestCorners: CollisionDetector = (draggable, droppables, context) => {
   const draggableLayout = transformLayout(
     draggable.layout,
     draggable.transform
@@ -82,10 +80,10 @@ const closestCorners = (
   return collision.droppable;
 };
 
-const mostIntersecting = (
-  draggable: Draggable,
-  droppables: Droppable[],
-  context: { activeDroppableId: string | number | null }
+const mostIntersecting: CollisionDetector = (
+  draggable,
+  droppables,
+  context
 ) => {
   const draggableLayout = transformLayout(
     draggable.layout,
@@ -113,3 +111,4 @@ const mostIntersecting = (
 };
 
 export { closestCenter, closestCorners, mostIntersecting };
+export type { CollisionDetector };
