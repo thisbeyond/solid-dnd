@@ -9,12 +9,13 @@ interface HighlighterProps {
   id: string | number;
   layout: Layout;
   transform: Transform;
+  active?: boolean;
   color?: string;
   style?: JSX.CSSProperties;
 }
 
 const Highlighter: Component<HighlighterProps> = (props) => {
-  props = mergeProps({ color: "red" }, props);
+  props = mergeProps({ color: "red", active: false }, props);
   return (
     <div
       style={{
@@ -22,6 +23,7 @@ const Highlighter: Component<HighlighterProps> = (props) => {
         "pointer-events": "none",
         ...layoutStyle(props.layout),
         outline: "1px dashed",
+        "outline-width": props.active ? "4px" : "1px",
         "outline-color": props.color,
         display: "flex",
         color: props.color,
@@ -68,6 +70,7 @@ const DragDropDebugger = () => {
               id={droppable.id}
               layout={droppable.layout}
               transform={droppable.transform}
+              active={droppable.id === state.active.droppable}
             />
           ) : null
         }
@@ -79,6 +82,7 @@ const DragDropDebugger = () => {
               id={draggable.id}
               layout={draggable.layout}
               transform={draggable.transform}
+              active={draggable.id === state.active.draggable}
               color="blue"
               style={{
                 "align-items": "flex-start",
