@@ -21,7 +21,6 @@ const Highlighter: Component<HighlighterProps> = (props) => {
         position: "fixed",
         "pointer-events": "none",
         ...layoutStyle(props.layout),
-        ...transformStyle(props.transform),
         outline: "1px dashed",
         "outline-color": props.color,
         display: "flex",
@@ -84,6 +83,7 @@ const DragDropDebugger = () => {
               style={{
                 "align-items": "flex-start",
                 "justify-content": "flex-start",
+                ...transformStyle(draggable.transform),
               }}
             />
           ) : null
