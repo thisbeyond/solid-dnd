@@ -37,8 +37,8 @@ class Layout {
   }
   get center(): Point {
     return {
-      x: this.right * 0.5,
-      y: this.bottom * 0.5,
+      x: this.x + this.width * 0.5,
+      y: this.y + this.height * 0.5,
     };
   }
   get corners(): {
