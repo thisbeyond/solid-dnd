@@ -165,17 +165,19 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       : undefined;
 
     batch(() => {
-      setState("draggables", id, {
-        id,
-        node,
-        layout,
-        data,
-        transform: noopTransform(),
-        get transformed() {
-          return transformLayout(this.layout, this.transform);
+      setState("draggables", (_) => ({
+        [id]: {
+          id,
+          node,
+          layout,
+          data,
+          transform: noopTransform(),
+          get transformed() {
+            return transformLayout(this.layout, this.transform);
+          },
+          _pendingCleanup: false,
         },
-        _pendingCleanup: false,
-      });
+      }));
       if (existingDraggable) {
         const layoutDelta = {
           x: existingDraggable.layout.x - layout.x,
@@ -255,17 +257,19 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
           }
         : undefined;
 
-    setState("droppables", id, {
-      id,
-      node,
-      layout,
-      data,
-      transform: noopTransform(),
-      get transformed() {
-        return transformLayout(this.layout, this.transform);
+    setState("droppables", (_) => ({
+      [id]: {
+        id,
+        node,
+        layout,
+        data,
+        transform: noopTransform(),
+        get transformed() {
+          return transformLayout(this.layout, this.transform);
+        },
+        _pendingCleanup: false,
       },
-      _pendingCleanup: false,
-    });
+    }));
     if (existingDroppable) {
       displace("droppables", id, existingDroppable.transform);
     }
