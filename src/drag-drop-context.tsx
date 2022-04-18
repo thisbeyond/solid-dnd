@@ -4,6 +4,7 @@ import {
   noopTransform,
   Layout,
   Transform,
+  transformLayout,
 } from "./layout";
 import {
   batch,
@@ -28,6 +29,7 @@ type Draggable = {
   layout: Layout;
   data: Record<string, any>;
   transform: Transform;
+  transformed: Layout;
   _pendingCleanup?: boolean;
 };
 type Droppable = {
@@ -36,6 +38,7 @@ type Droppable = {
   layout: Layout;
   data: Record<string, any>;
   transform: Transform;
+  transformed: Layout;
   _pendingCleanup?: boolean;
 };
 type DragEvent = {
@@ -72,8 +75,8 @@ interface DragDropState {
 }
 interface DragDropActions {
   setUsingDragOverlay(value?: boolean): void;
-  addDraggable(draggable: Omit<Draggable, "transform">): void;
-  addDroppable(droppable: Omit<Droppable, "transform">): void;
+  addDraggable(draggable: Omit<Draggable, "transform" | "transformed">): void;
+  addDroppable(droppable: Omit<Droppable, "transform" | "transformed">): void;
   removeDraggable(id: string | number): void;
   removeDroppable(id: string | number): void;
   addSensor(sensor: Sensor): void;
@@ -168,6 +171,9 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
         layout,
         data,
         transform: noopTransform(),
+        get transformed() {
+          return transformLayout(this.layout, this.transform);
+        },
         _pendingCleanup: false,
       });
       if (existingDraggable) {
@@ -255,6 +261,9 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       layout,
       data,
       transform: noopTransform(),
+      get transformed() {
+        return transformLayout(this.layout, this.transform);
+      },
       _pendingCleanup: false,
     });
     if (existingDroppable) {
