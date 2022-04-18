@@ -198,7 +198,6 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
 
     if (anyDraggableActive()) {
       recomputeLayouts();
-      detectCollisions();
     }
   };
   const removeDraggable = (id: string | number): void => {
@@ -264,7 +263,6 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
 
     if (anyDraggableActive()) {
       recomputeLayouts();
-      detectCollisions();
     }
   };
   const removeDroppable = (id: string | number): void => {
