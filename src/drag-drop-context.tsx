@@ -373,9 +373,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
             const currentLayout = draggable.layout;
             const layout = elementLayout(draggable.node);
             if (!layoutsAreEqual(currentLayout, layout)) {
-              setState("draggables", draggable.id, (value) => {
-                return value ? { ...value, layout } : value;
-              });
+              setState("draggables", draggable.id, "layout", layout);
               anyLayoutChanged = true;
             }
           }
@@ -388,9 +386,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
             const currentLayout = droppable.layout;
             const layout = elementLayout(droppable.node);
             if (!layoutsAreEqual(currentLayout, layout)) {
-              setState("droppables", droppable.id, (value) => {
-                return value ? { ...value, layout } : value;
-              });
+              setState("droppables", droppable.id, "layout", layout);
               anyLayoutChanged = true;
             }
           }
@@ -446,14 +442,12 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   ): void => {
     untrack(() => {
       if (state[type][id]) {
-        setState(type, id, (value) => {
-          return value
-            ? {
-                ...value,
-                transform: applyTransformers(transform, { type, id }),
-              }
-            : value;
-        });
+        setState(
+          type,
+          id,
+          "transform",
+          applyTransformers(transform, { type, id })
+        );
       }
     });
   };
