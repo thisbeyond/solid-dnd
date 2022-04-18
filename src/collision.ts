@@ -1,9 +1,5 @@
 import { Draggable, Droppable } from "./drag-drop-context";
-import {
-  distanceBetweenPoints,
-  intersectionRatioOfLayouts,
-  transformLayout,
-} from "./layout";
+import { distanceBetweenPoints, intersectionRatioOfLayouts } from "./layout";
 
 type CollisionDetector = (
   draggable: Draggable,
@@ -12,12 +8,7 @@ type CollisionDetector = (
 ) => Droppable | null;
 
 const closestCenter: CollisionDetector = (draggable, droppables, context) => {
-  const draggableLayout = transformLayout(
-    draggable.layout,
-    draggable.transform
-  );
-
-  const point1 = draggableLayout.center;
+  const point1 = draggable.transformed.center;
   const collision = { distance: Infinity, droppable: null as Droppable | null };
 
   for (const droppable of droppables) {
@@ -38,12 +29,7 @@ const closestCenter: CollisionDetector = (draggable, droppables, context) => {
 };
 
 const closestCorners: CollisionDetector = (draggable, droppables, context) => {
-  const draggableLayout = transformLayout(
-    draggable.layout,
-    draggable.transform
-  );
-
-  const draggableCorners = draggableLayout.corners;
+  const draggableCorners = draggable.transformed.corners;
   const collision = { distance: Infinity, droppable: null as Droppable | null };
 
   for (const droppable of droppables) {
@@ -85,10 +71,7 @@ const mostIntersecting: CollisionDetector = (
   droppables,
   context
 ) => {
-  const draggableLayout = transformLayout(
-    draggable.layout,
-    draggable.transform
-  );
+  const draggableLayout = draggable.transformed;
 
   const collision = { ratio: 0, droppable: null as Droppable | null };
 
