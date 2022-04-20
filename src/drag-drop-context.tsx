@@ -174,6 +174,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
         get transformed() {
           return transformLayout(this.layout, this.transform);
         },
+        set transformed(_) {},
         _pendingCleanup: false,
       });
       if (existingDraggable) {
@@ -264,6 +265,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       get transformed() {
         return transformLayout(this.layout, this.transform);
       },
+      set transformed(_) {},
       _pendingCleanup: false,
     });
     if (existingDroppable) {
