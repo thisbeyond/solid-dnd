@@ -177,7 +177,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
         set transformed(_) {},
         _pendingCleanup: false,
       });
-      if (existingDraggable) {
+      if (existingDraggable && state.active.draggable === id) {
         const layoutDelta = {
           x: existingDraggable.layout.x - layout.x,
           y: existingDraggable.layout.y - layout.y,
