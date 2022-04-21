@@ -52,10 +52,10 @@ interface Sensor {
   activators: { [K in keyof HTMLElementEventMap]?: SensorActivator<K> };
 }
 
-type Transformer = (
+type Transformer = ((
   transform: Transform,
   context: { type: "draggables" | "droppables"; id: string | number }
-) => Transform;
+) => Transform) & { draggableId: string | number };
 
 interface DragDropState {
   draggables: Record<string | number, Draggable>;
