@@ -52,10 +52,14 @@ interface Sensor {
   activators: { [K in keyof HTMLElementEventMap]?: SensorActivator<K> };
 }
 
-type Transformer = ((
+type Transformer = (
   transform: Transform,
   context: { type: "draggables" | "droppables"; id: string | number }
-) => Transform) & { draggableId: string | number };
+) => Transform;
+
+type ActiveDraggableOffsetTransformer = Transformer & {
+  draggableId?: string | number;
+};
 
 interface DragDropState {
   draggables: Record<string | number, Draggable>;
@@ -183,7 +187,10 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
           y: existingDraggable.layout.y - layout.y,
         };
 
-        const transformer: Transformer = (transform, { type, id: itemId }) => {
+        const transformer: ActiveDraggableOffsetTransformer = (
+          transform,
+          { type, id: itemId }
+        ) => {
           if (type === "draggables" && itemId === id) {
             return {
               x: transform.x + layoutDelta.x,
@@ -215,7 +222,11 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     batch(() => {
       if (state.draggables[id]?._pendingCleanup) {
         setState("transformers", (transformers) =>
-          transformers.filter((transformer) => transformer.draggableId !== id)
+          transformers.filter(
+            (transformer) =>
+              (transformer as ActiveDraggableOffsetTransformer).draggableId !==
+              id
+          )
         );
         setState("draggables", id, undefined!);
         if (state.active.draggable === id) {
@@ -476,7 +487,9 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       if (state.active.draggable) {
         setState("transformers", (transformers) =>
           transformers.filter(
-            (transformer) => transformer.draggableId !== state.active.draggable
+            (transformer) =>
+              (transformer as ActiveDraggableOffsetTransformer).draggableId !==
+              state.active.draggable
           )
         );
         displace("draggables", state.active.draggable, noopTransform());
