@@ -11,7 +11,6 @@ import {
   Component,
   createContext,
   createEffect,
-  createMemo,
   mergeProps,
   PropsWithChildren,
   untrack,
@@ -229,18 +228,18 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     });
   };
 
-  const activeDraggable = createMemo((): Draggable | null => {
+  const activeDraggable = (): Draggable | null => {
     if (state.active.draggable) {
-      return state.draggables[state.active.draggable] || null;
+      return untrack(() => state.draggables)[state.active.draggable] || null;
     }
     return null;
-  });
-  const previousDraggable = createMemo((): Draggable | null => {
+  };
+  const previousDraggable = (): Draggable | null => {
     if (state.previous.draggable) {
-      return state.draggables[state.previous.draggable] || null;
+      return untrack(() => state.draggables)[state.previous.draggable] || null;
     }
     return null;
-  });
+  };
   const anyDraggableActive = (): boolean => state.active.draggable !== null;
   const addDroppable = ({
     id,
@@ -295,18 +294,18 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       }
     });
   };
-  const activeDroppable = createMemo((): Droppable | null => {
+  const activeDroppable = (): Droppable | null => {
     if (state.active.droppable) {
-      return state.droppables[state.active.droppable] || null;
+      return untrack(() => state.droppables)[state.active.droppable] || null;
     }
     return null;
-  });
-  const previousDroppable = createMemo((): Droppable | null => {
+  };
+  const previousDroppable = (): Droppable | null => {
     if (state.previous.droppable) {
-      return state.droppables[state.previous.droppable] || null;
+      return untrack(() => state.droppables)[state.previous.droppable] || null;
     }
     return null;
-  });
+  };
   const anyDroppableActive = (): boolean => state.active.droppable !== null;
   const addSensor = ({ id, activators }: Sensor): void => {
     setState("sensors", id, { id, activators });
