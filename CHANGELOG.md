@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.5.0] - 2022-04-30
 
 A significant update with multiple improvements and some breaking changes. Most
 notably, provides better support for multi-sortable-list use cases.
@@ -357,7 +357,8 @@ sortable lists.
   from each other.
 
 <!-- prettier-ignore -->
-[Unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.4.2...HEAD
+[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/thisbeyond/solid-dnd/compare/0.4.2...0.5.0
 [0.4.2]: https://github.com/thisbeyond/solid-dnd/compare/0.4.1...0.4.2
 [0.4.1]: https://github.com/thisbeyond/solid-dnd/compare/0.4.0...0.4.1
 [0.4.0]: https://github.com/thisbeyond/solid-dnd/compare/0.3.3...0.4.0
