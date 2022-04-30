@@ -27,6 +27,7 @@
       "default": "./dist/esm/index.js"
     }
   },
+  "sideEffects": false,
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "npm run build",
