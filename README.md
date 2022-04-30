@@ -35,7 +35,6 @@ import {
   useDragDropContext,
   createDraggable,
   createDroppable,
-  transformStyle,
 } from "@thisbeyond/solid-dnd";
 
 const Draggable = (props) => {
@@ -92,8 +91,9 @@ See more examples at https://solid-dnd.com
       that is removed from the normal flow.
 - [x] Support for different sensors to detect and manage dragging (pointer
       sensor provided by default).
-- [x] Layout collision detection algorithms (`mostIntersectingLayout` and
-      `closestLayoutCenter`) for common usage. You can also add your own.
+- [x] Layout collision detection algorithms (`mostIntersecting`,
+      `closestCorners` and `closestCenter`) for common usage. You can also add
+      your own.
 - [x] Sortable list primitives for drag and drop list reordering (currently only
       vertical sorting supported).
 - [x] Use multiple (or nested) `DragDropProvider` for containers isolated from
