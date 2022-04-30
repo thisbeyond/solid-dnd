@@ -1,5 +1,141 @@
 # Changelog
 
+## [Unreleased]
+
+A significant update with multiple improvements and some breaking changes. Most
+notably, provides better support for multi-sortable-list use cases.
+
+### Added
+
+- Seamlessly handle re-creation of draggables and droppables during active drag.
+
+  In some use cases (such as a kanban board), an item may be moved from one
+  container to another during an active drag. In turn this could cause related
+  draggables and droppables to be removed and re-added. Previously this would
+  just break (with the active draggable disappearing on its removal). Now, it is
+  handled by deferring the cleanup of removed draggables and droppables with a
+  queued microtask. If a draggable/droppable with matching `id` is added before
+  the microtask is called, then it will not clean up and instead persist
+  naturally with the new layout and node information.
+
+  As part of this, the active draggable's transform is automatically adjusted by
+  a temporary internal modifier to account for any difference between the
+  previous node layout and the new node layout. This avoids jumping or
+  misalignment during the drag that would otherwise be caused by the change in
+  underlying node layout. In future this modifier interface may be exposed for
+  other use cases.
+
+  All layouts are also recomputed if any draggable is active when a new item is
+  added.
+
+- Add a basic debugger to help visualise draggable and droppable positions.
+  Emphasise active items in debugger. To use, place `<DragDropDebugger>` within
+  a `<DragDropProvider>` hierarchy.
+
+  Note: droppable positions are rendered untransformed to better reflect
+  underlying logic (as droppable transforms are not currently considered in the
+  collision detectors).
+
+- Add `transformed` helper property on items. Rather than calling
+  `transformLayout(layout, transform)` explicitly, it is now possible to do
+  `draggable.transformed` (or `droppable.transformed`) for the same computation.
+
+- Add a closest corners collision detector (`closestCorners`) to provide a more
+  natural collision match when droppables are nested.
+
+- Add style helper (`maybeTransformStyle`) that only returns transform style
+  when it will have an effect. This helps avoid affecting other styling (e.g.
+  z-index) unintentionally. The directive form already uses this approach, and
+  now manual setups can have this behaviour more easily too.
+
+### Changed
+
+- **Breaking Change** Refactor collision detection to be more context aware.
+
+  Whilst it originally felt better to have collision detection abstracted into
+  considering just layouts, in practice it limits smarter handling such as tie
+  breaking on active droppable or types.
+
+  Now, the active draggable and list of droppables is passed directly to the
+  collision detection algorithm along with some additional useful context (such
+  as the active droppable id). A new `CollisionDetector` type is also available
+  for use when writing custom collision detectors.
+
+  ```js
+  type CollisionDetector = (
+    draggable: Draggable,
+    droppables: Droppable[],
+    context: { activeDroppableId: string | number | null }
+  ) => Droppable | null;
+  ```
+
+- **Breaking Change** As part of the changes to the collision detection
+  interface, update the existing algorithms and rename to drop "layout" from
+  their names:
+
+  * `closestLayoutCenter` -> `closestCenter`
+  * `mostIntersectingLayout` -> `mostIntersecting`
+
+- **Breaking Change** Rename `collisionDetectionAlgorithm` prop of
+  `DragDropProvider` to the simpler `collisionDetector`.
+
+- Compute and apply appropriate transform for sortables explicitly, rather than
+  rely on delegation to underlying draggable/droppable transforms.
+
+  A sortable can be transformed either as the active draggable transform (when
+  no drag overlay is used) or as a droppable transform caused by the sorting of
+  the list. Correctly compute the correct transform and ensure it is used both
+  in directive form and as the returned transform for the sortable interface.
+
+  As part of this, always store the computed sortable transform against the
+  droppable entry regardless of whether directive used or not. This ensures
+  consistency in the data (and helps debuggers visualise the information
+  accurately).
+
+- Include `transform` in returned `Droppable` interface for consistency.
+
+- Simplify typings for state. Whilst technically correct, the presence of
+  `undefined` in the typing for state like `droppables` makes it more awkward
+  for consumers of that state. This is because they have to account for
+  `undefined` value even though it will never actually be present (because
+  setting state to `undefined` removes it from the state). So simplify the
+  typing and override where necessary (such as when removing values).
+
+- Use `createEffect` consistently throughout for a clearer mental model. There
+  is currently no clear need for more immediate effects as provided by
+  `createRenderEffect` and `createComputed`.
+
+- Encapsulate layout inteface in a `Layout` class to avoid repeated definition
+  of getter properties. As part of this, remove the standalone function for
+  calculating layout center in favour of a computed property (`center`) on the
+  layout itself.
+
+### Fixed
+
+- Strip translation transform when computing an element's layout. If a draggable
+  is active when its layout is recomputed, its currently applied transform will
+  be evaluated as part of its base layout (by `getBoundingClientRect`). This
+  results in the transforms effectively stacking over time and the item being
+  misplaced. To prevent this, strip any translation transform that is applied on
+  the element.
+
+- Reset sortable positions when indices are invalid. Prevent confusing behaviour
+  caused by stale sort order when indices become invalid, but a drag is still
+  active. This can happen when sorting across multiple containers for example.
+
+- Ensure item accessors only re-evaluate when the active/previous id value
+  changes. Previously, these accessors re-evaluated (when used in an effect)
+  whenever the referenced item object itself had changes, leading to confusing
+  behaviour. For example, `onDragEnd` firing again when adding new droppables.
+
+- Built-in collision detection now tie-breaks on the active droppable to prevent
+  potential flipping situations. When two droppables were equidistant candidates
+  for collision, their naive ordering would decide which was returned as the
+  match. Due to subsequent sorting, that ordering could change and the very next
+  move would result in the alternative candidate matching, resulting in constant
+  flipping. By tie-breaking on the active droppable this is avoided in the
+  common case.
+
 ## [0.4.2] - 2022-02-06
 
 ### Fixed
