@@ -21,7 +21,7 @@ const createSortable = (
   id: string | number,
   data: Record<string, any> = {}
 ): Sortable => {
-  const [dndState, { anyDraggableActive, displace }] = useDragDropContext()!;
+  const [dndState, { displace }] = useDragDropContext()!;
   const [sortableState] = useSortableContext()!;
   const draggable = createDraggable(id, data);
   const droppable = createDroppable(id, data);
@@ -37,36 +37,15 @@ const createSortable = (
     const resolvedInitialIndex = initialIndex();
     const resolvedCurrentIndex = currentIndex();
 
-    if (
-      !anyDraggableActive() ||
-      resolvedCurrentIndex === resolvedInitialIndex
-    ) {
-      return delta;
-    }
+    if (resolvedCurrentIndex !== resolvedInitialIndex) {
+      const currentLayout = layoutById(id);
+      const targetLayout = layoutById(
+        sortableState.initialIds[resolvedCurrentIndex]
+      );
 
-    const draggableId = dndState.active.draggable!;
-    const draggableInitialIndex = sortableState.initialIds.indexOf(draggableId);
-    const draggableLayout = layoutById(draggableId)!;
-
-    if (draggable.isActiveDraggable) {
-      const droppableId = dndState.active.droppable!;
-      const droppableLayout = layoutById(droppableId)!;
-      if (resolvedCurrentIndex > resolvedInitialIndex) {
-        delta.y = droppableLayout.bottom - draggableLayout.bottom;
-      } else {
-        delta.y = droppableLayout.top - draggableLayout.top;
-      }
-    } else {
-      if (resolvedCurrentIndex > resolvedInitialIndex) {
-        const leadingId = sortableState.initialIds[draggableInitialIndex - 1];
-        const leadingLayout = layoutById(leadingId)!;
-        const leadingGap = draggableLayout.top - leadingLayout.bottom;
-        delta.y += draggableLayout.height + leadingGap;
-      } else {
-        const trailingId = sortableState.initialIds[draggableInitialIndex + 1];
-        const trailingLayout = layoutById(trailingId)!;
-        const trailingGap = trailingLayout.top - draggableLayout.bottom;
-        delta.y -= draggableLayout.height + trailingGap;
+      if (currentLayout && targetLayout) {
+        delta.x = targetLayout.x - currentLayout.x;
+        delta.y = targetLayout.y - currentLayout.y;
       }
     }
 
@@ -125,6 +104,6 @@ const createSortable = (
   ) as unknown as Sortable;
 
   return sortable;
-};
+};;;;;;;
 
 export { createSortable };

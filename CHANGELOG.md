@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Support horizontal sorting in sortable transform algorithm. The new approach
+  directly uses target droppable layout positions in order to calculate sorted
+  transforms (which is more flexible and simpler).
+
+  Note: Requires sorted items to be the same size to avoid odd visual behaviour
+  as items are not currently scaled at all (though that may be implemented in
+  future). This was also true of the previous algorithm.
+
 ## [0.5.0] - 2022-04-30
 
 A significant update with multiple improvements and some breaking changes. Most
