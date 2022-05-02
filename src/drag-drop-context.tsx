@@ -509,7 +509,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     createEffect(() => {
       const draggable = activeDraggable();
       if (draggable) {
-        draggable.transform;
+        Object.values(draggable.transform);
         untrack(() => handler({ draggable }));
       }
     });

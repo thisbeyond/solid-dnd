@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Ensure `onDragMove` is called for every move update (rather than just once).
+  To do this, ensure that the relevant properties of the transform are accessed
+  to set up the effect reactivity correctly. Before, only the top level
+  transform object was accessed, but that is unchanging on move.
+
 ## [0.6.0] - 2022-05-01
 
 ### Added
