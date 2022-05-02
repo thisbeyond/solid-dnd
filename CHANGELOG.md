@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.6.1] - 2022-05-02
 
 ### Fixed
 
@@ -378,7 +378,8 @@ sortable lists.
   from each other.
 
 <!-- prettier-ignore -->
-[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.6.0...HEAD
+[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.6.1...HEAD
+[0.6.1]: https://github.com/thisbeyond/solid-dnd/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/thisbeyond/solid-dnd/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/thisbeyond/solid-dnd/compare/0.4.2...0.5.0
 [0.4.2]: https://github.com/thisbeyond/solid-dnd/compare/0.4.1...0.4.2
