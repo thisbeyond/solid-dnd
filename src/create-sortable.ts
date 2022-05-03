@@ -104,6 +104,6 @@ const createSortable = (
   ) as unknown as Sortable;
 
   return sortable;
-};;;;;;;
+};
 
 export { createSortable };
