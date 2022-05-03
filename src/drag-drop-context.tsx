@@ -578,4 +578,4 @@ const useDragDropContext = (): DragDropContext | null => {
 };
 
 export { Context, DragDropProvider, useDragDropContext };
-export type { Listeners, DragEventHandler, Draggable, Droppable };
+export type { Listeners, DragEventHandler, DragEvent, Draggable, Droppable };

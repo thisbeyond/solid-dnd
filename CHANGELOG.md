@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Export DragEvent type for external use in order to avoid consumers having to
+  redefine this type for custom handlers.
+
 ## [0.6.1] - 2022-05-02
 
 ### Fixed

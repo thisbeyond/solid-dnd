@@ -11,6 +11,7 @@ export { closestCenter, closestCorners, mostIntersecting } from "./collision";
 export { DragDropDebugger } from "./drag-drop-debugger";
 export type {
   DragEventHandler,
+  DragEvent,
   Draggable,
   Droppable,
 } from "./drag-drop-context";
