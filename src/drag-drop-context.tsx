@@ -352,7 +352,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   const sensorEnd = (): void => setState("active", "sensor", null);
   const activeSensor = (): Sensor | null => {
     if (state.active.sensor) {
-      return state.sensors[state.active.sensor] || null;
+      return untrack(() => state.sensors)[state.active.sensor] || null;
     }
     return null;
   };
