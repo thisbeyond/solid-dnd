@@ -181,50 +181,32 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
         set transformed(_) {},
         _pendingCleanup: false,
       });
-      if (existingDraggable) {
-        if (state.active.draggable === id) {
-          const layoutDelta = {
-            x: existingDraggable.layout.x - layout.x,
-            y: existingDraggable.layout.y - layout.y,
-          };
+      if (existingDraggable && state.active.draggable === id) {
+        const layoutDelta = {
+          x: existingDraggable.layout.x - layout.x,
+          y: existingDraggable.layout.y - layout.y,
+        };
 
-          const transformer: ActiveDraggableOffsetTransformer = (
-            transform,
-            { type, id: itemId }
-          ) => {
-            if (type === "draggables" && itemId === id) {
-              return {
-                x: transform.x + layoutDelta.x,
-                y: transform.y + layoutDelta.y,
-              };
-            }
-            return transform;
-          };
-          transformer.draggableId = id;
+        const transformer: ActiveDraggableOffsetTransformer = (
+          transform,
+          { type, id: itemId }
+        ) => {
+          if (type === "draggables" && itemId === id) {
+            return {
+              x: transform.x + layoutDelta.x,
+              y: transform.y + layoutDelta.y,
+            };
+          }
+          return transform;
+        };
+        transformer.draggableId = id;
 
-          setState("transformers", (transformers) => [
-            transformer,
-            ...transformers,
-          ]);
+        setState("transformers", (transformers) => [
+          transformer,
+          ...transformers,
+        ]);
 
-          displace("draggables", id, existingDraggable.transform);
-        } else if (state.previous.draggable === id) {
-          queueMicrotask(() =>
-            node.getAnimations().map((animation) => animation.cancel())
-          );
-
-          const layoutDelta = {
-            x: existingDraggable.layout.x - layout.x,
-            y: existingDraggable.layout.y - layout.y,
-          };
-
-          const transform = {
-            x: existingDraggable.transform.x + layoutDelta.x,
-            y: existingDraggable.transform.y + layoutDelta.y,
-          };
-
-          displace("draggables", id, transform);
-        }
+        displace("draggables", id, existingDraggable.transform);
       }
     });
 
@@ -502,18 +484,15 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     batch(() => {
       setState("previous", "draggable", state.active.draggable);
       setState("previous", "droppable", state.active.droppable);
-      const activeDraggable = state.active.draggable;
-      if (activeDraggable) {
+      if (state.active.draggable) {
         setState("transformers", (transformers) =>
           transformers.filter(
             (transformer) =>
               (transformer as ActiveDraggableOffsetTransformer).draggableId !==
-              activeDraggable
+              state.active.draggable
           )
         );
-        requestAnimationFrame(() =>
-          displace("draggables", activeDraggable, noopTransform())
-        );
+        displace("draggables", state.active.draggable, noopTransform());
       }
       setState("active", ["draggable", "droppable"], null);
     });
