@@ -5,6 +5,7 @@ import {
   Layout,
   Transform,
   transformLayout,
+  layoutsDelta,
 } from "./layout";
 import {
   batch,
@@ -223,20 +224,14 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
         _pendingCleanup: false,
       });
       if (existingDraggable && state.active.draggableId === id) {
-        const layoutDelta = {
-          x: existingDraggable.layout.x - layout.x,
-          y: existingDraggable.layout.y - layout.y,
-        };
+        const delta = layoutsDelta(layout, existingDraggable.layout);
 
         const transformer: ActiveDraggableOffsetTransformer = (
           transform,
           { type, id: itemId }
         ) => {
           if (type === "draggables" && itemId === id) {
-            return {
-              x: transform.x + layoutDelta.x,
-              y: transform.y + layoutDelta.y,
-            };
+            return { x: transform.x + delta.x, y: transform.y + delta.y };
           }
           return transform;
         };

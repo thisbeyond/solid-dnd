@@ -154,6 +154,12 @@ const layoutsAreEqual = (
     firstLayout.height === secondLayout.height
   );
 };
+
+const layoutsDelta = (firstLayout: Layout, secondLayout: Layout) => ({
+  x: secondLayout.x - firstLayout.x,
+  y: secondLayout.y - firstLayout.y,
+});
+
 const layoutContainsPoint = (layout: Layout, point: Point): boolean => {
   return !(
     point.x < layout.left ||
@@ -173,6 +179,7 @@ export {
   distanceBetweenPoints,
   intersectionRatioOfLayouts,
   layoutsAreEqual,
+  layoutsDelta,
   layoutContainsPoint,
 };
 export type { Transform };
