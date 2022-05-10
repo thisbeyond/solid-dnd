@@ -1,17 +1,21 @@
 import { Listeners, useDragDropContext } from "./drag-drop-context";
 import {
   elementLayout,
+  layoutsAreEqual,
+  layoutsDelta,
   noopTransform,
   Transform,
   transformsAreEqual,
 } from "./layout";
 import { transformStyle } from "./style";
 import {
+  createComputed,
   createEffect,
   createSignal,
   onCleanup,
   onMount,
   Setter,
+  untrack,
 } from "solid-js";
 
 interface Draggable {
@@ -21,6 +25,8 @@ interface Draggable {
   get dragActivators(): Listeners;
   get transform(): Transform;
 }
+
+const DEFER_TRANSFORM_PERIOD = 15;
 
 const createDraggable = (
   id: string | number,
@@ -45,8 +51,55 @@ const createDraggable = (
   onCleanup(() => removeDraggable(id));
 
   const isActiveDraggable = () => state.active.draggableId === id;
+  const wasActiveDraggable = () => state.previous.draggableId === id;
+
+  const [deferTransform, setDeferTransform] = createSignal(false);
+
+  createComputed(() => {
+    if (wasActiveDraggable()) {
+      setDeferTransform(true);
+      setTimeout(setDeferTransform, DEFER_TRANSFORM_PERIOD, false);
+    }
+  });
+
+  const isTransitioning = () => {
+    if (deferTransform()) {
+      return false;
+    }
+
+    if (!state.usingDragOverlay && isActiveDraggable()) {
+      return false;
+    }
+
+    return true;
+  };
+
   const transform = () => {
-    return state.draggables[id]?.transform || noopTransform();
+    let transform = noopTransform();
+    const current = state.draggables[id];
+    if (current) {
+      transform = current.transform;
+
+      if (deferTransform()) {
+        untrack(() => {
+          const previous = state.previous.draggable;
+          if (previous && previous.id === id) {
+            transform = previous.transform;
+
+            if (!layoutsAreEqual(previous.layout, current.layout)) {
+              const delta = layoutsDelta(current.layout, previous.layout);
+
+              transform = {
+                x: transform.x + delta.x,
+                y: transform.y + delta.y,
+              };
+            }
+          }
+        });
+      }
+    }
+
+    return transform;
   };
 
   const draggable = Object.defineProperties(
@@ -97,6 +150,10 @@ const createDraggable = (
       isActiveDraggable: {
         enumerable: true,
         get: isActiveDraggable,
+      },
+      isTransitioning: {
+        enumerable: true,
+        get: isTransitioning,
       },
       dragActivators: {
         enumerable: true,
