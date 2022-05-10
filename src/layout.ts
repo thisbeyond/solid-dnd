@@ -23,6 +23,9 @@ class Layout {
     this.height = rect.height;
   }
 
+  get rect() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height };
+  }
   get left() {
     return this.x;
   }
@@ -161,6 +164,7 @@ const layoutContainsPoint = (layout: Layout, point: Point): boolean => {
 };
 
 export {
+  Layout,
   elementLayout,
   noopTransform,
   transformsAreEqual,
@@ -171,4 +175,4 @@ export {
   layoutsAreEqual,
   layoutContainsPoint,
 };
-export type { Layout, Transform };
+export type { Transform };

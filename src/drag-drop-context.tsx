@@ -127,6 +127,20 @@ type Listeners = Record<
 >;
 type DragEventHandler = (event: DragEvent) => void;
 
+const snapshotDraggable = (draggable: Draggable) => {
+  return {
+    ...draggable,
+    transform: {
+      ...(draggable.transform.base ?? draggable.transform),
+    },
+    layout: new Layout(draggable.layout.rect),
+    get transformed(): Layout {
+      return transformLayout(this.layout, this.transform);
+    },
+    set transformed(_) {},
+  };
+};
+
 const Context = createContext<DragDropContext>();
 
 const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
@@ -159,13 +173,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     data,
   }: Omit<Draggable, "transform">): void => {
     const existingDraggable = state.draggables[id]
-      ? {
-          transform: {
-            ...(state.draggables[id]!.transform.base ??
-              state.draggables[id]!.transform),
-          },
-          layout: { ...state.draggables[id]!.layout },
-        }
+      ? snapshotDraggable(state.draggables[id])
       : undefined;
 
     batch(() => {
