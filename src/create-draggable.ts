@@ -9,7 +9,6 @@ import {
 } from "./layout";
 import { transformStyle } from "./style";
 import {
-  createComputed,
   createEffect,
   createSignal,
   onCleanup,
@@ -32,8 +31,10 @@ const createDraggable = (
   id: string | number,
   data: Record<string, any> = {}
 ): Draggable => {
-  const [state, { addDraggable, removeDraggable, draggableActivators }] =
-    useDragDropContext()!;
+  const [
+    state,
+    { addDraggable, removeDraggable, draggableActivators, onDragEnd },
+  ] = useDragDropContext()!;
   const [node, setNode] = createSignal<HTMLElement | null>(null);
 
   onMount(() => {
@@ -51,12 +52,11 @@ const createDraggable = (
   onCleanup(() => removeDraggable(id));
 
   const isActiveDraggable = () => state.active.draggableId === id;
-  const wasActiveDraggable = () => state.previous.draggableId === id;
 
   const [deferTransform, setDeferTransform] = createSignal(false);
 
-  createComputed(() => {
-    if (wasActiveDraggable()) {
+  onDragEnd(({ draggable }) => {
+    if (draggable?.id === id) {
       setDeferTransform(true);
       setTimeout(setDeferTransform, DEFER_TRANSFORM_PERIOD, false);
     }
