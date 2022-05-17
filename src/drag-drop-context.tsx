@@ -138,7 +138,8 @@ const snapshotItem = (item: Draggable | Droppable | null | undefined) => {
     ? {
         ...item,
         transform: {
-          ...(item.transform.base ?? item.transform),
+          ...item.transform,
+          ...(item.transform.base ? { base: item.transform.base } : {}),
         },
         layout: new Layout(item.layout.rect),
         get transformed(): Layout {
@@ -242,7 +243,13 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
           ...transformers,
         ]);
 
-        displace("draggables", id, existingDraggable.transform);
+        displace(
+          "draggables",
+          id,
+          existingDraggable.transform.base
+            ? existingDraggable.transform.base
+            : existingDraggable.transform
+        );
       }
     });
 
@@ -299,7 +306,13 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       _pendingCleanup: false,
     });
     if (existingDroppable) {
-      displace("droppables", id, existingDroppable.transform);
+      displace(
+        "droppables",
+        id,
+        existingDroppable.transform.base
+          ? existingDroppable.transform.base
+          : existingDroppable.transform
+      );
     }
 
     if (anyDraggableActive()) {
