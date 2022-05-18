@@ -398,32 +398,34 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
   const recomputeLayouts = (filter: RecomputeFilter = "all"): boolean => {
     let anyLayoutChanged = false;
-    batch(() => {
-      if (filter === "all" || filter === "draggable") {
-        for (const draggable of Object.values(state.draggables)) {
-          if (draggable) {
-            const currentLayout = draggable.layout;
-            const layout = elementLayout(draggable.node);
-            if (!layoutsAreEqual(currentLayout, layout)) {
-              setState("draggables", draggable.id, "layout", layout);
-              anyLayoutChanged = true;
+    untrack(() => {
+      batch(() => {
+        if (filter === "all" || filter === "draggable") {
+          for (const draggable of Object.values(state.draggables)) {
+            if (draggable && !draggable._pendingCleanup) {
+              const currentLayout = draggable.layout;
+              const layout = elementLayout(draggable.node);
+              if (!layoutsAreEqual(currentLayout, layout)) {
+                setState("draggables", draggable.id, "layout", layout);
+                anyLayoutChanged = true;
+              }
             }
           }
         }
-      }
 
-      if (filter === "all" || filter === "droppable") {
-        for (const droppable of Object.values(state.droppables)) {
-          if (droppable) {
-            const currentLayout = droppable.layout;
-            const layout = elementLayout(droppable.node);
-            if (!layoutsAreEqual(currentLayout, layout)) {
-              setState("droppables", droppable.id, "layout", layout);
-              anyLayoutChanged = true;
+        if (filter === "all" || filter === "droppable") {
+          for (const droppable of Object.values(state.droppables)) {
+            if (droppable && !droppable._pendingCleanup) {
+              const currentLayout = droppable.layout;
+              const layout = elementLayout(droppable.node);
+              if (!layoutsAreEqual(currentLayout, layout)) {
+                setState("droppables", droppable.id, "layout", layout);
+                anyLayoutChanged = true;
+              }
             }
           }
         }
-      }
+      });
     });
 
     return anyLayoutChanged;

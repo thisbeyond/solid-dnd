@@ -4,6 +4,7 @@ import {
   Component,
   createContext,
   createEffect,
+  on,
   untrack,
   useContext,
 } from "solid-js";
@@ -21,7 +22,7 @@ type SortableContext = [Store<SortableContextState>, {}];
 
 const Context = createContext<SortableContext>();
 const SortableProvider: Component<SortableContextProps> = (props) => {
-  const [dndState] = useDragDropContext()!;
+  const [dndState, { recomputeLayouts }] = useDragDropContext()!;
 
   const [state, setState] = createStore<SortableContextState>({
     initialIds: [],
@@ -36,6 +37,13 @@ const SortableProvider: Component<SortableContextProps> = (props) => {
     setState("initialIds", [...props.ids]);
     setState("sortedIds", [...props.ids]);
   });
+
+  createEffect(
+    on(
+      () => state.initialIds,
+      () => recomputeLayouts()
+    )
+  );
 
   createEffect(() => {
     if (dndState.active.draggableId && dndState.active.droppableId) {
