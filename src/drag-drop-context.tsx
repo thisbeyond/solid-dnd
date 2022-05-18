@@ -559,6 +559,8 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     });
   };
 
+  onDragEnd(() => recomputeLayouts());
+
   props.onDragStart && onDragStart(props.onDragStart);
   props.onDragMove && onDragMove(props.onDragMove);
   props.onDragOver && onDragOver(props.onDragOver);
