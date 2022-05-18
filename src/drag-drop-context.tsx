@@ -551,9 +551,8 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     createEffect(() => {
       const currentDraggable = activeDraggable();
       const draggable = previousDraggable();
-      const droppable = previousDroppable();
       if (draggable && !currentDraggable) {
-        untrack(() => handler({ draggable, droppable }));
+        untrack(() => handler({ draggable, droppable: previousDroppable() }));
       }
     });
   };
