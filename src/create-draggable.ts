@@ -1,8 +1,6 @@
 import { Listeners, useDragDropContext } from "./drag-drop-context";
 import {
   elementLayout,
-  layoutsAreEqual,
-  layoutsDelta,
   noopTransform,
   Transform,
   transformsAreEqual,
@@ -53,54 +51,9 @@ const createDraggable = (
 
   const isActiveDraggable = () => state.active.draggableId === id;
 
-  const [deferTransform, setDeferTransform] = createSignal(false);
+  const transform = () => state.draggables[id]?.transform || noopTransform();
 
-  onDragEnd(({ draggable }) => {
-    if (draggable?.id === id) {
-      setDeferTransform(true);
-      setTimeout(setDeferTransform, DEFER_TRANSFORM_PERIOD, false);
-    }
-  });
-
-  const isTransitioning = () => {
-    if (deferTransform()) {
-      return false;
-    }
-
-    if (!state.usingDragOverlay && isActiveDraggable()) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const transform = () => {
-    let transform = noopTransform();
-    const current = state.draggables[id];
-    if (current) {
-      transform = current.transform;
-
-      if (deferTransform()) {
-        untrack(() => {
-          const previous = state.previous.draggable;
-          if (previous && previous.id === id) {
-            transform = previous.transform;
-
-            if (!layoutsAreEqual(previous.layout, current.layout)) {
-              const delta = layoutsDelta(current.layout, previous.layout);
-
-              transform = {
-                x: transform.x + delta.x,
-                y: transform.y + delta.y,
-              };
-            }
-          }
-        });
-      }
-    }
-
-    return transform;
-  };
+  const transition = () => state.draggables[id]?.transition;
 
   const draggable = Object.defineProperties(
     (element: HTMLElement, accessor?: () => { skipTransform?: boolean }) => {
@@ -151,10 +104,6 @@ const createDraggable = (
         enumerable: true,
         get: isActiveDraggable,
       },
-      isTransitioning: {
-        enumerable: true,
-        get: isTransitioning,
-      },
       dragActivators: {
         enumerable: true,
         get: () => {
@@ -164,6 +113,10 @@ const createDraggable = (
       transform: {
         enumerable: true,
         get: transform,
+      },
+      transition: {
+        enumerable: true,
+        get: transition,
       },
     }
   ) as Draggable;
