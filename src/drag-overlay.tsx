@@ -27,7 +27,14 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
 
     queueMicrotask(() => {
       if (node) {
-        setOverlay({ node, layout: elementLayout(node) });
+        const layout = elementLayout(node);
+        const delta = {
+          x: (draggable.layout.width - layout.width) / 2,
+          y: (draggable.layout.height - layout.height) / 2,
+        };
+        layout.x += delta.x;
+        layout.y += delta.y;
+        setOverlay({ node, layout });
       }
     });
   });
