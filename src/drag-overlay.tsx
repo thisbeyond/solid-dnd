@@ -27,7 +27,7 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
 
     queueMicrotask(() => {
       if (node) {
-      setOverlay({ node, layout: elementLayout(node) });
+        setOverlay({ node, layout: elementLayout(node) });
       }
     });
   });
@@ -54,7 +54,9 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
     <Portal mount={document.body}>
       <Show when={activeDraggable()}>
         <div ref={node} class={props.class} style={style()}>
-          {props.children}
+          {typeof props.children === "function"
+            ? props.children(activeDraggable())
+            : props.children}
         </div>
       </Show>
     </Portal>
