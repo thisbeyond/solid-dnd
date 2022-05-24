@@ -14,14 +14,7 @@ interface DragOverlayProps {
 const DragOverlay: Component<DragOverlayProps> = (props) => {
   const [
     state,
-    {
-      activeDraggable,
-      onDragStart,
-      onDragEnd,
-      setOverlay,
-      clearOverlay,
-      setState,
-    },
+    { activeDraggable, onDragStart, onDragEnd, setOverlay, clearOverlay },
   ] = useDragDropContext()!;
 
   let node: HTMLDivElement | undefined;
