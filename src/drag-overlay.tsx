@@ -43,8 +43,6 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
       transition: "transform 0s",
       top: `${overlay.layout.top}px`,
       left: `${overlay.layout.left}px`,
-      width: "auto",
-      height: "auto",
       ...transformStyle(overlay.transform),
       ...props.style,
     };
