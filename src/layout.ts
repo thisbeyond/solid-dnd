@@ -5,10 +5,6 @@ interface Point {
 interface Transform {
   x: number;
   y: number;
-  base?: {
-    x: number;
-    y: number;
-  };
 }
 class Layout {
   x;
@@ -182,4 +178,4 @@ export {
   layoutsDelta,
   layoutContainsPoint,
 };
-export type { Transform };
+export type { Point, Transform };

@@ -1,11 +1,3 @@
-import { Listeners, useDragDropContext } from "./drag-drop-context";
-import {
-  elementLayout,
-  noopTransform,
-  Transform,
-  transformsAreEqual,
-} from "./layout";
-import { transformStyle } from "./style";
 import {
   createEffect,
   createSignal,
@@ -15,6 +7,20 @@ import {
   untrack,
 } from "solid-js";
 
+import {
+  GetDraggableInfo,
+  Listeners,
+  useDragDropContext,
+} from "./drag-drop-context";
+import {
+  elementLayout,
+  layoutsDelta,
+  noopTransform,
+  Transform,
+  transformsAreEqual,
+} from "./layout";
+import { transformStyle } from "./style";
+
 interface Draggable {
   (element: HTMLElement, accessor?: () => { skipTransform?: boolean }): void;
   ref: Setter<HTMLElement | null>;
@@ -23,37 +29,54 @@ interface Draggable {
   get transform(): Transform;
 }
 
-const DEFER_TRANSFORM_PERIOD = 15;
-
 const createDraggable = (
   id: string | number,
   data: Record<string, any> = {}
 ): Draggable => {
-  const [
-    state,
-    { addDraggable, removeDraggable, draggableActivators, onDragEnd },
-  ] = useDragDropContext()!;
+  const [state, { setState, draggableActivators }] = useDragDropContext()!;
   const [node, setNode] = createSignal<HTMLElement | null>(null);
 
   onMount(() => {
-    const resolvedNode = node();
+    if (isActiveDraggable()) {
+      const draggable = state.active.draggable;
+      const resolvedNode = node();
+      if (draggable && resolvedNode) {
+        const previousLayout = draggable.layout;
+        const layout = elementLayout(resolvedNode);
 
-    if (resolvedNode) {
-      addDraggable({
-        id,
-        node: resolvedNode,
-        layout: elementLayout(resolvedNode),
-        data,
-      });
+        if (!state.active.overlay && state.coordinates.origin) {
+          const delta = layoutsDelta(previousLayout, layout);
+          const origin = { ...state.coordinates.origin };
+          origin.x += delta.x;
+          origin.y += delta.y;
+          setState("coordinates", "origin", origin);
+        }
+
+        setState("active", "draggable", { node: resolvedNode, layout, data });
+      }
     }
   });
-  onCleanup(() => removeDraggable(id));
+
+  const getDraggableInfo: GetDraggableInfo = () => {
+    const resolvedNode = untrack(() => node());
+    if (!resolvedNode) throw new Error(`No node resolved for draggable ${id}`);
+
+    return {
+      id,
+      node: resolvedNode,
+      layout: elementLayout(resolvedNode),
+      data,
+    };
+  };
 
   const isActiveDraggable = () => state.active.draggableId === id;
 
-  const transform = () => state.draggables[id]?.transform || noopTransform();
+  const transform = () =>
+    (isActiveDraggable() && state.active.draggable?.transform) ||
+    noopTransform();
 
-  const transition = () => state.draggables[id]?.transition;
+  const transition = () =>
+    isActiveDraggable() && state.active.draggable?.transition;
 
   const draggable = Object.defineProperties(
     (element: HTMLElement, accessor?: () => { skipTransform?: boolean }) => {
@@ -61,7 +84,7 @@ const createDraggable = (
 
       createEffect(() => {
         const resolvedNode = node();
-        const activators = draggableActivators(id);
+        const activators = draggableActivators(getDraggableInfo);
 
         if (resolvedNode) {
           for (const key in activators) {
@@ -82,15 +105,13 @@ const createDraggable = (
 
       if (!config.skipTransform) {
         createEffect(() => {
-          if (!state.usingDragOverlay) {
-            const resolvedTransform = transform();
+          const resolvedTransform = transform();
 
-            if (!transformsAreEqual(resolvedTransform, noopTransform())) {
-              const style = transformStyle(transform());
-              element.style.setProperty("transform", style.transform);
-            } else {
-              element.style.removeProperty("transform");
-            }
+          if (!transformsAreEqual(resolvedTransform, noopTransform())) {
+            const style = transformStyle(transform());
+            element.style.setProperty("transform", style.transform);
+          } else {
+            element.style.removeProperty("transform");
           }
         });
       }
@@ -106,9 +127,7 @@ const createDraggable = (
       },
       dragActivators: {
         enumerable: true,
-        get: () => {
-          return draggableActivators(id, true);
-        },
+        get: () => draggableActivators(getDraggableInfo, true),
       },
       transform: {
         enumerable: true,

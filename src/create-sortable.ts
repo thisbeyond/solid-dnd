@@ -21,7 +21,7 @@ const createSortable = (
   id: string | number,
   data: Record<string, any> = {}
 ): Sortable => {
-  const [dndState, { displace }] = useDragDropContext()!;
+  const [dndState, { displaceDroppable }] = useDragDropContext()!;
   const [sortableState] = useSortableContext()!;
   const draggable = createDraggable(id, data);
   const droppable = createDroppable(id, data);
@@ -53,13 +53,13 @@ const createSortable = (
   };
 
   createEffect(() => {
-    displace("droppables", id, sortedTransform());
+    displaceDroppable(id, sortedTransform());
   });
 
   const transform = (): Transform => {
     return (
-      (id === dndState.active.draggableId && !dndState.usingDragOverlay
-        ? dndState.draggables[id]?.transform
+      (id === dndState.active.draggable?.id && !dndState.active.overlay?.id
+        ? dndState.active.draggable.transform
         : dndState.droppables[id]?.transform) || noopTransform()
     );
   };

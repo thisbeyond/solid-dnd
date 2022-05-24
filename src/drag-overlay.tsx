@@ -1,16 +1,9 @@
 import { Portal } from "solid-js/web";
-import {
-  Component,
-  createEffect,
-  createSignal,
-  JSX,
-  onCleanup,
-  Show,
-} from "solid-js";
+import { Component, JSX, Show } from "solid-js";
 
-import { Draggable, useDragDropContext } from "./drag-drop-context";
-import { layoutStyle, transformStyle } from "./style";
-import { layoutsDelta } from "./layout";
+import { useDragDropContext } from "./drag-drop-context";
+import { transformStyle } from "./style";
+import { elementLayout } from "./layout";
 
 interface DragOverlayProps {
   class?: string;
@@ -18,98 +11,54 @@ interface DragOverlayProps {
   activeDraggableClass?: string;
 }
 
-type Id = string | number | null;
-
-const DEFER_TRANSFORM_PERIOD = 15;
-const TRANSITION_PERIOD = 150;
-
 const DragOverlay: Component<DragOverlayProps> = (props) => {
   const [
     state,
-    { setUsingDragOverlay, onDragStart, onDragEnd, anyDraggableActive },
+    {
+      activeDraggable,
+      onDragStart,
+      onDragEnd,
+      setOverlay,
+      clearOverlay,
+      setState,
+    },
   ] = useDragDropContext()!;
 
-  setUsingDragOverlay(true);
-
-  const [referenceDraggableId, setReferenceDraggableId] =
-    createSignal<Id>(null);
-
-  const [referenceSnapshot, setReferenceSnapshot] =
-    createSignal<Draggable | null>(null);
+  let node: HTMLDivElement | undefined;
 
   onDragStart(({ draggable }) => {
-    setReferenceDraggableId<Id>(draggable.id);
-  });
+    setOverlay({
+      node: draggable.node,
+      layout: draggable.layout,
+    });
 
-  onDragEnd(({ draggable }) => {
-    setReferenceSnapshot(draggable);
-
-    setTimeout(setReferenceSnapshot, DEFER_TRANSFORM_PERIOD, null);
-
-    setTimeout(() => {
-      if (props.activeDraggableClass) {
-        state.draggables[draggable.id]?.node.classList.remove(
-          props.activeDraggableClass
-        );
-      }
-      setReferenceDraggableId(null);
-    }, TRANSITION_PERIOD);
-  });
-
-  createEffect(() => {
-    const node = referenceDraggable()?.node;
-
-    if (props.activeDraggableClass) {
-      node?.classList.add(props.activeDraggableClass);
-    }
-
-    onCleanup(() => {
-      if (props.activeDraggableClass) {
-        node?.classList.remove(props.activeDraggableClass);
-      }
+    queueMicrotask(() => {
+      setOverlay({ node, layout: elementLayout(node) });
     });
   });
 
-  const referenceDraggable = () => {
-    const id = referenceDraggableId();
-    return id !== null ? state.draggables[id] || null : null;
-  };
-
-  const isTransitioning = () => {
-    if (anyDraggableActive()) return false;
-    if (referenceSnapshot() !== null) return false;
-    return true;
-  };
+  onDragEnd(() => clearOverlay());
 
   const style = (): JSX.CSSProperties => {
-    const draggable = referenceDraggable();
-    const draggableSnapshot = referenceSnapshot();
-    if (!draggable) return {};
-
-    let transform = draggable.transform;
-    if (draggableSnapshot !== null) {
-      const delta = layoutsDelta(draggable.layout, draggableSnapshot.layout);
-      transform = {
-        x: draggableSnapshot.transform.x + delta.x,
-        y: draggableSnapshot.transform.y + delta.y,
-      };
-    }
+    const overlay = state.active.overlay;
+    if (!overlay) return {};
 
     return {
       position: "fixed",
-      transition: isTransitioning()
-        ? `transform ${TRANSITION_PERIOD}ms`
-        : "transform 0s",
-      ...layoutStyle(draggable.layout),
-      ...transformStyle(transform),
+      transition: "transform 0s",
+      top: `${overlay.layout.top}px`,
+      left: `${overlay.layout.left}px`,
+      width: "auto",
+      height: "auto",
+      ...transformStyle(overlay.transform),
       ...props.style,
     };
   };
 
   return (
     <Portal mount={document.body}>
-      <Show when={referenceDraggable()}>
-        <div class={props.class} style={style()}>
+      <Show when={activeDraggable()}>
+        <div ref={node} class={props.class} style={style()}>
           {props.children}
         </div>
       </Show>

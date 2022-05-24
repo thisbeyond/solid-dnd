@@ -1,4 +1,12 @@
-import { Component, For, JSX, mergeProps, onCleanup, onMount } from "solid-js";
+import {
+  Component,
+  For,
+  JSX,
+  mergeProps,
+  onCleanup,
+  onMount,
+  Show,
+} from "solid-js";
 import { Portal } from "solid-js/web";
 
 import { useDragDropContext } from "./drag-drop-context";
@@ -22,6 +30,7 @@ const Highlighter: Component<HighlighterProps> = (props) => {
         position: "fixed",
         "pointer-events": "none",
         ...layoutStyle(props.layout),
+        ...(props.transform ? transformStyle(props.transform) : {}),
         outline: "1px dashed",
         "outline-width": props.active ? "4px" : "1px",
         "outline-color": props.color,
@@ -38,7 +47,7 @@ const Highlighter: Component<HighlighterProps> = (props) => {
 };
 
 const DragDropDebugger = () => {
-  const [state, { recomputeLayouts }] = useDragDropContext()!;
+  const [state, { activeDraggable, recomputeLayouts }] = useDragDropContext()!;
 
   let ticking = false;
 
@@ -69,30 +78,41 @@ const DragDropDebugger = () => {
             <Highlighter
               id={droppable.id}
               layout={droppable.layout}
-              transform={droppable.transform}
               active={droppable.id === state.active.droppableId}
             />
           ) : null
         }
       </For>
-      <For each={Object.values(state.draggables)}>
-        {(draggable) =>
-          draggable ? (
-            <Highlighter
-              id={draggable.id}
-              layout={draggable.layout}
-              transform={draggable.transform}
-              active={draggable.id === state.active.draggableId}
-              color="blue"
-              style={{
-                "align-items": "flex-start",
-                "justify-content": "flex-start",
-                ...transformStyle(draggable.transform),
-              }}
-            />
-          ) : null
-        }
-      </For>
+      <Show when={activeDraggable()}>
+        {(draggable) => (
+          <Highlighter
+            id={draggable.id}
+            layout={draggable.layout}
+            transform={draggable.transform}
+            active={true}
+            color="blue"
+            style={{
+              "align-items": "flex-start",
+              "justify-content": "flex-start",
+            }}
+          />
+        )}
+      </Show>
+      <Show when={state.active.overlay}>
+        {(overlay) => (
+          <Highlighter
+            id={"overlay"}
+            layout={overlay.layout}
+            transform={overlay.transform}
+            active={true}
+            color="lime"
+            style={{
+              "align-items": "flex-start",
+              "justify-content": "flex-start",
+            }}
+          />
+        )}
+      </Show>
     </Portal>
   );
 };
