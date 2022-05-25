@@ -2,7 +2,7 @@ import { Portal } from "solid-js/web";
 import { Component, JSX, Show } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { transformStyle } from "./style";
+import { layoutStyle, transformStyle } from "./style";
 import { elementLayout } from "./layout";
 
 interface DragOverlayProps {
@@ -43,13 +43,16 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
 
   const style = (): JSX.CSSProperties => {
     const overlay = state.active.overlay;
-    if (!overlay) return {};
+    const draggable = state.active.draggable;
+    if (!overlay || !draggable) return {};
 
     return {
       position: "fixed",
       transition: "transform 0s",
       top: `${overlay.layout.top}px`,
       left: `${overlay.layout.left}px`,
+      "min-width": `${draggable.layout.width}px`,
+      "min-height": `${draggable.layout.height}px`,
       ...transformStyle(overlay.transform),
       ...props.style,
     };
