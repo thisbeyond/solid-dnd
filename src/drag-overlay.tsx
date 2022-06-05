@@ -2,7 +2,7 @@ import { Portal } from "solid-js/web";
 import { Component, JSX, Show } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { layoutStyle, transformStyle } from "./style";
+import { transformStyle } from "./style";
 import { elementLayout } from "./layout";
 
 interface DragOverlayProps {
@@ -12,10 +12,8 @@ interface DragOverlayProps {
 }
 
 const DragOverlay: Component<DragOverlayProps> = (props) => {
-  const [
-    state,
-    { activeDraggable, onDragStart, onDragEnd, setOverlay, clearOverlay },
-  ] = useDragDropContext()!;
+  const [state, { onDragStart, onDragEnd, setOverlay, clearOverlay }] =
+    useDragDropContext()!;
 
   let node: HTMLDivElement | undefined;
 
@@ -60,10 +58,10 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
 
   return (
     <Portal mount={document.body}>
-      <Show when={activeDraggable()}>
+      <Show when={state.active.draggable}>
         <div ref={node} class={props.class} style={style()}>
           {typeof props.children === "function"
-            ? props.children(activeDraggable())
+            ? props.children(state.active.draggable)
             : props.children}
         </div>
       </Show>

@@ -2,24 +2,14 @@ import { onCleanup, onMount } from "solid-js";
 
 import {
   DraggableInfo,
+  Id,
   SensorActivator,
   useDragDropContext,
 } from "./drag-drop-context";
 
-const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
-  const [
-    state,
-    {
-      addSensor,
-      removeSensor,
-      sensorStart,
-      sensorEnd,
-      dragStart,
-      dragMove,
-      dragEnd,
-      anySensorActive,
-    },
-  ] = useDragDropContext()!;
+const createPointerSensor = (id: Id = "pointer-sensor"): void => {
+  const [state, { addSensor, removeSensor, dragStart, dragMove, dragEnd }] =
+    useDragDropContext()!;
   const activationDelay = 250; // milliseconds
   const activationDistance = 10; // pixels
 
@@ -63,9 +53,8 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
   };
 
   const onActivate = (): void => {
-    if (!anySensorActive()) {
-      sensorStart(id);
-      dragStart(initialCoordinates, activationDraggableInfo!);
+    if (!state.active.sensor) {
+      dragStart(id, initialCoordinates, activationDraggableInfo!);
 
       clearSelection();
       document.addEventListener("selectionchange", clearSelection);
@@ -82,7 +71,7 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
       y: coordinates.y - initialCoordinates.y,
     };
 
-    if (!anySensorActive()) {
+    if (!state.active.sensor) {
       if (Math.sqrt(transform.x ** 2 + transform.y ** 2) > activationDistance) {
         onActivate();
       }
@@ -98,7 +87,6 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
     detach();
     if (isActiveSensor()) {
       event.preventDefault();
-      sensorEnd();
       dragEnd();
     }
   };

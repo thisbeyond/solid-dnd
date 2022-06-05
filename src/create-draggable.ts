@@ -9,6 +9,7 @@ import {
 
 import {
   GetDraggableInfo,
+  Id,
   Listeners,
   useDragDropContext,
 } from "./drag-drop-context";
@@ -29,10 +30,7 @@ interface Draggable {
   get transform(): Transform;
 }
 
-const createDraggable = (
-  id: string | number,
-  data: Record<string, any> = {}
-): Draggable => {
+const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
   const [state, { setState, draggableActivators }] = useDragDropContext()!;
   const [node, setNode] = createSignal<HTMLElement | null>(null);
 
@@ -44,15 +42,21 @@ const createDraggable = (
         const previousLayout = draggable.layout;
         const layout = elementLayout(resolvedNode);
 
-        if (!state.active.overlay && state.coordinates.origin) {
-          const delta = layoutsDelta(previousLayout, layout);
-          const origin = { ...state.coordinates.origin };
-          origin.x += delta.x;
-          origin.y += delta.y;
-          setState("coordinates", "origin", origin);
+        const draggableInfo = {
+          node: resolvedNode,
+          layout,
+          data,
+        };
+
+        if (!state.active.overlay) {
+          const delta = layoutsDelta(layout, previousLayout);
+          draggableInfo.offset = {
+            x: draggable.offset.x + delta.x,
+            y: draggable.offset.y + delta.y,
+          };
         }
 
-        setState("active", "draggable", { node: resolvedNode, layout, data });
+        setState("active", "draggable", draggableInfo);
       }
     }
   });

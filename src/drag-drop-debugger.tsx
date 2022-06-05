@@ -9,14 +9,14 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 
-import { useDragDropContext } from "./drag-drop-context";
+import { Id, useDragDropContext } from "./drag-drop-context";
 import { Layout, Transform } from "./layout";
 import { layoutStyle, transformStyle } from "./style";
 
 interface HighlighterProps {
-  id: string | number;
+  id: Id;
   layout: Layout;
-  transform: Transform;
+  transform?: Transform;
   active?: boolean;
   color?: string;
   style?: JSX.CSSProperties;
@@ -47,7 +47,7 @@ const Highlighter: Component<HighlighterProps> = (props) => {
 };
 
 const DragDropDebugger = () => {
-  const [state, { activeDraggable, recomputeLayouts }] = useDragDropContext()!;
+  const [state, { recomputeLayouts }] = useDragDropContext()!;
 
   let ticking = false;
 
@@ -83,7 +83,7 @@ const DragDropDebugger = () => {
           ) : null
         }
       </For>
-      <Show when={activeDraggable()}>
+      <Show when={state.active.draggable}>
         {(draggable) => (
           <Highlighter
             id={draggable.id}

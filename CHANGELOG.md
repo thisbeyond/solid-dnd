@@ -93,7 +93,7 @@ notably, provides better support for multi-sortable-list use cases.
   type CollisionDetector = (
     draggable: Draggable,
     droppables: Droppable[],
-    context: { activeDroppableId: string | number | null }
+    context: { activeDroppableId: Id | null }
   ) => Droppable | null;
   ```
 

@@ -4,7 +4,7 @@ import { createDraggable } from "./create-draggable";
 import { createDroppable } from "./create-droppable";
 import { RefSetter, combineRefs } from "./combine-refs";
 import { useSortableContext } from "./sortable-context";
-import { Listeners, useDragDropContext } from "./drag-drop-context";
+import { Id, Listeners, useDragDropContext } from "./drag-drop-context";
 import { Layout, noopTransform, Transform, transformsAreEqual } from "./layout";
 import { transformStyle } from "./style";
 
@@ -17,10 +17,7 @@ interface Sortable {
   get isActiveDroppable(): boolean;
 }
 
-const createSortable = (
-  id: string | number,
-  data: Record<string, any> = {}
-): Sortable => {
+const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
   const [dndState, { displaceDroppable }] = useDragDropContext()!;
   const [sortableState] = useSortableContext()!;
   const draggable = createDraggable(id, data);
@@ -29,7 +26,7 @@ const createSortable = (
 
   const initialIndex = (): number => sortableState.initialIds.indexOf(id);
   const currentIndex = (): number => sortableState.sortedIds.indexOf(id);
-  const layoutById = (id: string | number): Layout | null =>
+  const layoutById = (id: Id): Layout | null =>
     dndState.droppables[id]?.layout || null;
 
   const sortedTransform = (): Transform => {

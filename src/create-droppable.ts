@@ -1,4 +1,4 @@
-import { useDragDropContext } from "./drag-drop-context";
+import { Id, useDragDropContext } from "./drag-drop-context";
 import {
   elementLayout,
   noopTransform,
@@ -21,10 +21,7 @@ interface Droppable {
   get transform(): Transform;
 }
 
-const createDroppable = (
-  id: string | number,
-  data: Record<string, any> = {}
-): Droppable => {
+const createDroppable = (id: Id, data: Record<string, any> = {}): Droppable => {
   const [state, { addDroppable, removeDroppable }] = useDragDropContext()!;
   const [node, setNode] = createSignal<HTMLElement | null>(null);
 

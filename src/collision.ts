@@ -1,10 +1,10 @@
-import { Draggable, Droppable } from "./drag-drop-context";
+import { Draggable, Droppable, Id } from "./drag-drop-context";
 import { distanceBetweenPoints, intersectionRatioOfLayouts } from "./layout";
 
 type CollisionDetector = (
   draggable: Draggable,
   droppables: Droppable[],
-  context: { activeDroppableId: string | number | null }
+  context: { activeDroppableId: Id | null }
 ) => Droppable | null;
 
 const closestCenter: CollisionDetector = (draggable, droppables, context) => {

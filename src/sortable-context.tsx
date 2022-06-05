@@ -1,4 +1,4 @@
-import { useDragDropContext } from "./drag-drop-context";
+import { Id, useDragDropContext } from "./drag-drop-context";
 import { moveArrayItem } from "./move-array-item";
 import {
   Component,
@@ -11,18 +11,19 @@ import {
 import { createStore, Store } from "solid-js/store";
 
 interface SortableContextState {
-  initialIds: Array<string | number>;
-  sortedIds: Array<string | number>;
+  initialIds: Array<Id>;
+  sortedIds: Array<Id>;
 }
 interface SortableContextProps {
-  ids: Array<string | number>;
+  ids: Array<Id>;
 }
 
 type SortableContext = [Store<SortableContextState>, {}];
 
 const Context = createContext<SortableContext>();
 const SortableProvider: Component<SortableContextProps> = (props) => {
-  const [dndState, { recomputeLayouts }] = useDragDropContext()!;
+  const [dndState, { recomputeLayouts, detectCollisions }] =
+    useDragDropContext()!;
 
   const [state, setState] = createStore<SortableContextState>({
     initialIds: [],
@@ -41,7 +42,10 @@ const SortableProvider: Component<SortableContextProps> = (props) => {
   createEffect(
     on(
       () => state.initialIds,
-      () => recomputeLayouts()
+      () => {
+        recomputeLayouts();
+        detectCollisions();
+      }
     )
   );
 
