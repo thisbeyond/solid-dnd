@@ -109,7 +109,7 @@ interface DragDropActions {
     droppable: Omit<Droppable, "transform" | "transformed" | "transition">
   ): void;
   removeDroppable(id: Id): void;
-  addSensor(sensor: Sensor): void;
+  addSensor(sensor: Omit<Sensor, "coordinates">): void;
   removeSensor(id: Id): void;
   recomputeLayouts(filter?: RecomputeFilter): boolean;
   detectCollisions(): void;
@@ -186,14 +186,14 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       droppableId: null,
       get droppable(): Droppable | null {
         return state.active.droppableId !== null
-          ? untrack(() => state.droppables)[state.active.droppableId]
+          ? state.droppables[state.active.droppableId]
           : null;
       },
 
       sensorId: null,
       get sensor(): Sensor | null {
         return state.active.sensorId !== null
-          ? untrack(() => state.sensors)[state.active.sensorId]
+          ? state.sensors[state.active.sensorId]
           : null;
       },
     },
@@ -225,26 +225,31 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
 
   const setOverlay: DragDropActions["setOverlay"] = (overlayInfo) => {
-    setState("active", "overlay", {
-      ...overlayInfo,
-      get id() {
-        return state.active.draggable?.id;
-      },
-      get data() {
-        return state.active.draggable?.data;
-      },
-      get transform() {
-        if (state.active.sensor) {
-          return state.active.sensor.coordinates.delta;
-        }
-        return noopTransform();
-      },
-      set transform(_) {},
-      get transformed() {
-        return transformLayout(this.layout, this.transform);
-      },
-      set transformed(_) {},
-    });
+    const existing = untrack(() => state.active.overlay);
+    if (existing) {
+      setState("active", "overlay", { ...overlayInfo });
+    } else {
+      setState("active", "overlay", {
+        ...overlayInfo,
+        get id() {
+          return state.active.draggable?.id;
+        },
+        get data() {
+          return state.active.draggable?.data;
+        },
+        get transform() {
+          if (state.active.sensor) {
+            return state.active.sensor.coordinates.delta;
+          }
+          return noopTransform();
+        },
+        set transform(_) {},
+        get transformed() {
+          return transformLayout(this.layout, this.transform);
+        },
+        set transformed(_) {},
+      });
+    }
   };
 
   const clearOverlay: DragDropActions["clearOverlay"] = () => {
@@ -409,7 +414,6 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     return anyLayoutChanged;
   };
 
-  // setup effect to call this whenever sensor.transform changes and active.draggable?
   const detectCollisions: DragDropActions["detectCollisions"] = () => {
     untrack(() => {
       const draggable = state.active.overlay ?? state.active.draggable;
