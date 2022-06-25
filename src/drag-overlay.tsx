@@ -1,14 +1,14 @@
 import { useDragDropContext } from "./drag-drop-context";
 import { layoutStyle, transformStyle } from "./style";
 import { Portal } from "solid-js/web";
-import { Component, JSX, Show } from "solid-js";
+import { JSX, ParentComponent, Show } from "solid-js";
 
 interface DragOverlayProps {
   class?: string;
   style?: JSX.CSSProperties;
 }
 
-const DragOverlay: Component<DragOverlayProps> = (props) => {
+const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
   const [, { anyDraggableActive, activeDraggable, setUsingDragOverlay }] =
     useDragDropContext()!;
 

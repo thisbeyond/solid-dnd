@@ -8,11 +8,11 @@ import {
 } from "./layout";
 import {
   batch,
-  Component,
   createContext,
   createEffect,
   mergeProps,
-  PropsWithChildren,
+  ParentComponent,
+  ParentProps,
   untrack,
   useContext,
 } from "solid-js";
@@ -129,10 +129,14 @@ type DragEventHandler = (event: DragEvent) => void;
 
 const Context = createContext<DragDropContext>();
 
-const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
+const DragDropProvider: ParentComponent<DragDropContextProps> = (
+  passedProps
+) => {
   const props: Pick<Required<DragDropContextProps>, "collisionDetector"> &
-    Omit<PropsWithChildren<DragDropContextProps>, "collisionDetector"> =
-    mergeProps({ collisionDetector: mostIntersecting }, passedProps);
+    Omit<ParentProps<DragDropContextProps>, "collisionDetector"> = mergeProps(
+    { collisionDetector: mostIntersecting },
+    passedProps
+  );
   const [state, setState] = createStore<DragDropState>({
     draggables: {},
     droppables: {},

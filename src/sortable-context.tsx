@@ -1,9 +1,9 @@
 import { useDragDropContext } from "./drag-drop-context";
 import { moveArrayItem } from "./move-array-item";
 import {
-  Component,
   createContext,
   createEffect,
+  ParentComponent,
   untrack,
   useContext,
 } from "solid-js";
@@ -20,7 +20,7 @@ interface SortableContextProps {
 type SortableContext = [Store<SortableContextState>, {}];
 
 const Context = createContext<SortableContext>();
-const SortableProvider: Component<SortableContextProps> = (props) => {
+const SortableProvider: ParentComponent<SortableContextProps> = (props) => {
   const [dndState] = useDragDropContext()!;
 
   const [state, setState] = createStore<SortableContextState>({
