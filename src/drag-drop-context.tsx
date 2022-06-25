@@ -262,13 +262,13 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
 
   const activeDraggable = (): Draggable | null => {
     if (state.active.draggable) {
-      return untrack(() => state.draggables)[state.active.draggable] || null;
+      return state.draggables[state.active.draggable] || null;
     }
     return null;
   };
   const previousDraggable = (): Draggable | null => {
     if (state.previous.draggable) {
-      return untrack(() => state.draggables)[state.previous.draggable] || null;
+      return state.draggables[state.previous.draggable] || null;
     }
     return null;
   };
@@ -328,13 +328,13 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
   const activeDroppable = (): Droppable | null => {
     if (state.active.droppable) {
-      return untrack(() => state.droppables)[state.active.droppable] || null;
+      return state.droppables[state.active.droppable] || null;
     }
     return null;
   };
   const previousDroppable = (): Droppable | null => {
     if (state.previous.droppable) {
-      return untrack(() => state.droppables)[state.previous.droppable] || null;
+      return state.droppables[state.previous.droppable] || null;
     }
     return null;
   };
@@ -354,7 +354,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   const sensorEnd = (): void => setState("active", "sensor", null);
   const activeSensor = (): Sensor | null => {
     if (state.active.sensor) {
-      return untrack(() => state.sensors)[state.active.sensor] || null;
+      return state.sensors[state.active.sensor] || null;
     }
     return null;
   };
