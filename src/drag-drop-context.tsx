@@ -86,6 +86,7 @@ interface DragDropState {
   droppables: Record<Id, Droppable>;
   sensors: Record<Id, Sensor>;
   active: {
+    drag: boolean;
     draggableId: Id | null;
     draggable: Draggable | null;
     overlay: Draggable | null;
@@ -176,6 +177,8 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     droppables: {},
     sensors: {},
     active: {
+      drag: false,
+
       draggable: null,
       get draggableId(): Id | null {
         return state.active.draggable?.id || null;
@@ -203,6 +206,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     setState("active", "draggable", {
       ...draggableInfo,
       offset: { x: 0, y: 0 },
+      // TODO: add transformers[] and make transform memo of their computation.
       get transform() {
         if (state.active.sensor && !state.active.overlay) {
           const transform = { ...state.active.sensor.coordinates.delta };
@@ -458,6 +462,7 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
       });
       setState("active", "sensorId", sensorId);
       setDraggable(draggableInfo);
+      setState("active", "drag", true);
     });
   };
 
@@ -474,10 +479,14 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
   };
 
   const dragEnd: DragDropActions["dragEnd"] = () => {
+    setState("active", "drag", false);
+
     // TODO: wait for all animation on active draggable node to finish?
     queueMicrotask(() => {
       const sensorId = state.active.sensorId!;
       batch(() => {
+        setState("_dragEnding", false);
+
         setState("sensors", sensorId, "coordinates", {
           origin: { x: 0, y: 0 },
           current: { x: 0, y: 0 },
@@ -516,11 +525,10 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
     });
   };
 
-  // TODO: How to call this?
   const onDragEnd: DragDropActions["onDragEnd"] = (handler) => {
-    createEffect(() => {
-      const sensor = state.active.sensor;
-      if (!sensor) {
+    createEffect((dragWasActive) => {
+      const dragIsActive = state.active.drag;
+      if (dragWasActive && !dragIsActive) {
         untrack(() => {
           const draggable = state.active.draggable;
           const droppable = state.active.droppable;
@@ -529,7 +537,8 @@ const DragDropProvider: Component<DragDropContextProps> = (passedProps) => {
           }
         });
       }
-    });
+      return dragIsActive;
+    }, false);
   };
 
   onDragStart(() => {
