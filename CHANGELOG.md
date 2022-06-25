@@ -7,6 +7,12 @@
 - Export DragEvent type for external use in order to avoid consumers having to
   redefine this type for custom handlers.
 
+### Fixed
+
+- **Breaking Change** Update typings to be compatible with new typing approach
+  in Solid JS 1.4. In addition, make 1.4 the minimum compatible version of Solid
+  as the typings change was backwards incompatible.
+
 ## [0.6.1] - 2022-05-02
 
 ### Fixed
