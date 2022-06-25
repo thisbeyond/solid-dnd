@@ -7,6 +7,8 @@
 - Export DragEvent type for external use in order to avoid consumers having to
   redefine this type for custom handlers.
 
+- Explicitly type `Id` (for `string | number` ids) and export for reuse.
+
 ### Fixed
 
 - **Breaking Change** Update typings to be compatible with new typing approach
@@ -99,7 +101,7 @@ notably, provides better support for multi-sortable-list use cases.
   type CollisionDetector = (
     draggable: Draggable,
     droppables: Droppable[],
-    context: { activeDroppableId: string | number | null }
+    context: { activeDroppableId: Id | null }
   ) => Droppable | null;
   ```
 

@@ -1,7 +1,7 @@
-import { useDragDropContext } from "./drag-drop-context";
+import { Id, useDragDropContext } from "./drag-drop-context";
 import { onCleanup, onMount } from "solid-js";
 
-const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
+const createPointerSensor = (id: Id = "pointer-sensor"): void => {
   const [
     state,
     {
@@ -31,9 +31,9 @@ const createPointerSensor = (id: string | number = "pointer-sensor"): void => {
   const initialCoordinates = { x: 0, y: 0 };
 
   let activationDelayTimeoutId: number | null = null;
-  let activationDraggableId: string | number | null = null;
+  let activationDraggableId: Id | null = null;
 
-  const attach = (event: PointerEvent, draggableId: string | number): void => {
+  const attach = (event: PointerEvent, draggableId: Id): void => {
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
 

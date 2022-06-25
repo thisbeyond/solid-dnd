@@ -1,4 +1,4 @@
-import { Listeners, useDragDropContext } from "./drag-drop-context";
+import { Id, Listeners, useDragDropContext } from "./drag-drop-context";
 import {
   elementLayout,
   noopTransform,
@@ -22,10 +22,7 @@ interface Draggable {
   get transform(): Transform;
 }
 
-const createDraggable = (
-  id: string | number,
-  data: Record<string, any> = {}
-): Draggable => {
+const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
   const [state, { addDraggable, removeDraggable, draggableActivators }] =
     useDragDropContext()!;
   const [node, setNode] = createSignal<HTMLElement | null>(null);

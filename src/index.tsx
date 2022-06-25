@@ -10,6 +10,7 @@ export { layoutStyle, transformStyle, maybeTransformStyle } from "./style";
 export { closestCenter, closestCorners, mostIntersecting } from "./collision";
 export { DragDropDebugger } from "./drag-drop-debugger";
 export type {
+  Id,
   DragEventHandler,
   DragEvent,
   Draggable,

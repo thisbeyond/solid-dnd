@@ -1,4 +1,4 @@
-import { useDragDropContext } from "./drag-drop-context";
+import { Id, useDragDropContext } from "./drag-drop-context";
 import { moveArrayItem } from "./move-array-item";
 import {
   createContext,
@@ -10,11 +10,11 @@ import {
 import { createStore, Store } from "solid-js/store";
 
 interface SortableContextState {
-  initialIds: Array<string | number>;
-  sortedIds: Array<string | number>;
+  initialIds: Array<Id>;
+  sortedIds: Array<Id>;
 }
 interface SortableContextProps {
-  ids: Array<string | number>;
+  ids: Array<Id>;
 }
 
 type SortableContext = [Store<SortableContextState>, {}];

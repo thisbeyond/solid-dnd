@@ -1,12 +1,12 @@
 import { Component, For, JSX, mergeProps, onCleanup, onMount } from "solid-js";
 import { Portal } from "solid-js/web";
 
-import { useDragDropContext } from "./drag-drop-context";
+import { Id, useDragDropContext } from "./drag-drop-context";
 import { Layout, Transform } from "./layout";
 import { layoutStyle, transformStyle } from "./style";
 
 interface HighlighterProps {
-  id: string | number;
+  id: Id;
   layout: Layout;
   transform: Transform;
   active?: boolean;
