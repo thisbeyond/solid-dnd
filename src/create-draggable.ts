@@ -41,7 +41,7 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
   });
   onCleanup(() => removeDraggable(id));
 
-  const isActiveDraggable = () => state.active.draggable === id;
+  const isActiveDraggable = () => state.active.draggableId === id;
   const transform = () => {
     return state.draggables[id]?.transform || noopTransform();
   };

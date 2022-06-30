@@ -9,6 +9,31 @@
 
 - Explicitly type `Id` (for `string | number` ids) and export for reuse.
 
+### Changed
+
+- **Breaking Change** Move 'read state' helpers directly into the state object.
+  This makes a clearer separation between actions that typically modify state vs
+  accessing the state for readonly purposes. It also feels more intuitive.
+
+  As part of this, rename the existing state entries that refer to 'ids' to
+  explicitly reflect this:
+
+  * `state.active.draggable` -> `state.active.draggableId`
+  * `state.active.droppable` -> `state.active.droppableId`
+  * `state.active.sensor` -> `state.active.sensorId`
+  * `state.previous.draggable` -> `state.active.draggableId`
+  * `state.previous.droppable` -> `state.active.droppableId`
+
+  Also, remove all redundant helpers in favour of directly using the state:
+
+  * `activeDraggable()` -> `state.active.draggable`
+  * `previousDraggable()` -> `state.previous.draggable`
+  * `anyDraggableActive()` -> `state.active.draggable`
+  * `activeDroppable()` -> `state.active.droppable`
+  * `previousDroppable()` -> `state.previous.droppable`
+  * `anyDroppableActive()` -> `state.active.droppable`
+  * `activeSensor()` -> `state.active.sensor`
+
 ### Fixed
 
 - **Breaking Change** Update typings to be compatible with new typing approach

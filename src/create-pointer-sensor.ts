@@ -26,7 +26,7 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
     removeSensor(id);
   });
 
-  const isActiveSensor = () => state.active.sensor === id;
+  const isActiveSensor = () => state.active.sensorId === id;
 
   const initialCoordinates = { x: 0, y: 0 };
 

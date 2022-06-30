@@ -38,10 +38,10 @@ const SortableProvider: ParentComponent<SortableContextProps> = (props) => {
   });
 
   createEffect(() => {
-    if (dndState.active.draggable && dndState.active.droppable) {
+    if (dndState.active.draggableId && dndState.active.droppableId) {
       untrack(() => {
-        const fromIndex = state.sortedIds.indexOf(dndState.active.draggable!);
-        const toIndex = state.initialIds.indexOf(dndState.active.droppable!);
+        const fromIndex = state.sortedIds.indexOf(dndState.active.draggableId!);
+        const toIndex = state.initialIds.indexOf(dndState.active.droppableId!);
 
         if (!isValidIndex(fromIndex) || !isValidIndex(toIndex)) {
           setState("sortedIds", [...props.ids]);

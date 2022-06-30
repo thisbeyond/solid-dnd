@@ -70,7 +70,7 @@ const DragDropDebugger = () => {
               id={droppable.id}
               layout={droppable.layout}
               transform={droppable.transform}
-              active={droppable.id === state.active.droppable}
+              active={droppable.id === state.active.droppableId}
             />
           ) : null
         }
@@ -82,7 +82,7 @@ const DragDropDebugger = () => {
               id={draggable.id}
               layout={draggable.layout}
               transform={draggable.transform}
-              active={draggable.id === state.active.draggable}
+              active={draggable.id === state.active.draggableId}
               color="blue"
               style={{
                 "align-items": "flex-start",

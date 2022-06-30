@@ -9,13 +9,12 @@ interface DragOverlayProps {
 }
 
 const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
-  const [, { anyDraggableActive, activeDraggable, setUsingDragOverlay }] =
-    useDragDropContext()!;
+  const [state, { setUsingDragOverlay }] = useDragDropContext()!;
 
   setUsingDragOverlay(true);
 
   const style = (): JSX.CSSProperties => {
-    const draggable = activeDraggable()!;
+    const draggable = state.active.draggable!;
     return {
       position: "fixed",
       transition: "transform 0s",
@@ -27,7 +26,7 @@ const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
 
   return (
     <Portal mount={document.body}>
-      <Show when={anyDraggableActive()}>
+      <Show when={state.active.draggable}>
         <div class={props.class} style={style()}>
           {props.children}
         </div>

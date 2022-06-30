@@ -68,13 +68,18 @@ interface DragDropState {
   droppables: Record<Id, Droppable>;
   sensors: Record<Id, Sensor>;
   active: {
-    draggable: Id | null;
-    droppable: Id | null;
-    sensor: Id | null;
+    draggableId: Id | null;
+    draggable: Draggable | null;
+    droppableId: Id | null;
+    droppable: Droppable | null;
+    sensorId: Id | null;
+    sensor: Sensor | null;
   };
   previous: {
-    draggable: Id | null;
-    droppable: Id | null;
+    draggableId: Id | null;
+    draggable: Draggable | null;
+    droppableId: Id | null;
+    droppable: Droppable | null;
   };
   transformers: Transformer[];
   usingDragOverlay: boolean;
@@ -96,13 +101,7 @@ interface DragDropActions {
     id: Id,
     transform: Transform
   ): void;
-  activeDraggable(): Draggable | null;
-  activeDroppable(): Droppable | null;
-  activeSensor(): Sensor | null;
   draggableActivators(draggableId: Id, asHandlers?: boolean): Listeners;
-  anyDraggableActive(): boolean;
-  anyDroppableActive(): boolean;
-  anySensorActive(): boolean;
   dragStart(draggableId: Id): void;
   dragMove(transform: Transform): void;
   dragEnd(): void;
@@ -141,13 +140,38 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     droppables: {},
     sensors: {},
     active: {
-      draggable: null,
-      droppable: null,
-      sensor: null,
+      draggableId: null,
+      get draggable(): Draggable | null {
+        return state.active.draggableId !== null
+          ? state.draggables[state.active.draggableId]
+          : null;
+      },
+      droppableId: null,
+      get droppable(): Droppable | null {
+        return state.active.droppableId !== null
+          ? state.droppables[state.active.droppableId]
+          : null;
+      },
+      sensorId: null,
+      get sensor(): Sensor | null {
+        return state.active.sensorId !== null
+          ? state.sensors[state.active.sensorId]
+          : null;
+      },
     },
     previous: {
-      draggable: null,
-      droppable: null,
+      draggableId: null,
+      get draggable(): Draggable | null {
+        return state.previous.draggableId !== null
+          ? state.draggables[state.previous.draggableId]
+          : null;
+      },
+      droppableId: null,
+      get droppable(): Droppable | null {
+        return state.previous.droppableId !== null
+          ? state.droppables[state.previous.droppableId]
+          : null;
+      },
     },
     transformers: [],
     usingDragOverlay: false,
@@ -185,7 +209,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
         _pendingCleanup: false,
       });
       if (existingDraggable) {
-        if (state.active.draggable === id) {
+        if (state.active.draggableId === id) {
           const layoutDelta = {
             x: existingDraggable.layout.x - layout.x,
             y: existingDraggable.layout.y - layout.y,
@@ -211,7 +235,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           ]);
 
           displace("draggables", id, existingDraggable.transform);
-        } else if (state.previous.draggable === id) {
+        } else if (state.previous.draggableId === id) {
           queueMicrotask(() =>
             node.getAnimations().map((animation) => animation.cancel())
           );
@@ -231,7 +255,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
     });
 
-    if (anyDraggableActive()) {
+    if (state.active.draggable) {
       recomputeLayouts();
     }
   };
@@ -250,29 +274,16 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           )
         );
         setState("draggables", id, undefined!);
-        if (state.active.draggable === id) {
-          setState("active", "draggable", null);
+        if (state.active.draggableId === id) {
+          setState("active", "draggableId", null);
         }
-        if (state.previous.draggable === id) {
-          setState("previous", "draggable", null);
+        if (state.previous.draggableId === id) {
+          setState("previous", "draggableId", null);
         }
       }
     });
   };
 
-  const activeDraggable = (): Draggable | null => {
-    if (state.active.draggable) {
-      return state.draggables[state.active.draggable] || null;
-    }
-    return null;
-  };
-  const previousDraggable = (): Draggable | null => {
-    if (state.previous.draggable) {
-      return state.draggables[state.previous.draggable] || null;
-    }
-    return null;
-  };
-  const anyDraggableActive = (): boolean => state.active.draggable !== null;
   const addDroppable = ({
     id,
     node,
@@ -305,7 +316,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       displace("droppables", id, existingDroppable.transform);
     }
 
-    if (anyDraggableActive()) {
+    if (state.active.draggable) {
       recomputeLayouts();
     }
   };
@@ -317,48 +328,30 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     batch(() => {
       if (state.droppables[id]?._pendingCleanup) {
         setState("droppables", id, undefined!);
-        if (state.active.droppable === id) {
-          setState("active", "droppable", null);
+        if (state.active.droppableId === id) {
+          setState("active", "droppableId", null);
         }
-        if (state.previous.droppable === id) {
-          setState("previous", "droppable", null);
+        if (state.previous.droppableId === id) {
+          setState("previous", "droppableId", null);
         }
       }
     });
   };
-  const activeDroppable = (): Droppable | null => {
-    if (state.active.droppable) {
-      return state.droppables[state.active.droppable] || null;
-    }
-    return null;
-  };
-  const previousDroppable = (): Droppable | null => {
-    if (state.previous.droppable) {
-      return state.droppables[state.previous.droppable] || null;
-    }
-    return null;
-  };
-  const anyDroppableActive = (): boolean => state.active.droppable !== null;
+
   const addSensor = ({ id, activators }: Sensor): void => {
     setState("sensors", id, { id, activators });
   };
   const removeSensor = (id: Id): void => {
     batch(() => {
       setState("sensors", id, undefined!);
-      if (state.active.sensor === id) {
-        setState("active", "sensor", null);
+      if (state.active.sensorId === id) {
+        setState("active", "sensorId", null);
       }
     });
   };
-  const sensorStart = (id: Id): void => setState("active", "sensor", id);
-  const sensorEnd = (): void => setState("active", "sensor", null);
-  const activeSensor = (): Sensor | null => {
-    if (state.active.sensor) {
-      return state.sensors[state.active.sensor] || null;
-    }
-    return null;
-  };
-  const anySensorActive = (): boolean => state.active.sensor !== null;
+  const sensorStart = (id: Id): void => setState("active", "sensorId", id);
+  const sensorEnd = (): void => setState("active", "sensorId", null);
+
   const draggableActivators = (draggableId: Id, asHandlers?: boolean) => {
     const eventMap: Record<
       string,
@@ -386,7 +379,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
       listeners[handlerKey] = (event) => {
         for (const { activator } of eventMap[key]) {
-          if (anySensorActive()) {
+          if (state.active.sensor) {
             break;
           }
           activator(event, draggableId);
@@ -428,22 +421,22 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     return anyLayoutChanged;
   };
   const detectCollisions = (): void => {
-    const draggable = activeDraggable();
+    const draggable = state.active.draggable;
     if (draggable) {
       const droppable = props.collisionDetector(
         draggable,
         Object.values(state.droppables),
         {
-          activeDroppableId: state.active.droppable,
+          activeDroppableId: state.active.droppableId,
         }
       );
 
       const droppableId: Id | null = droppable ? droppable.id : null;
 
-      if (state.active.droppable !== droppableId) {
+      if (state.active.droppableId !== droppableId) {
         batch(() => {
-          setState("previous", "droppable", state.active.droppable);
-          setState("active", "droppable", droppableId);
+          setState("previous", "droppableId", state.active.droppableId);
+          setState("active", "droppableId", droppableId);
         });
       }
     }
@@ -483,13 +476,13 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   const dragStart = (draggableId: Id): void => {
     batch(() => {
       displace("draggables", draggableId, noopTransform());
-      setState("active", "draggable", draggableId);
+      setState("active", "draggableId", draggableId);
     });
     recomputeLayouts();
     detectCollisions();
   };
   const dragMove = (transform: Transform): void => {
-    const draggableId = state.active.draggable;
+    const draggableId = state.active.draggableId;
     if (draggableId) {
       displace("draggables", draggableId, transform);
       detectCollisions();
@@ -497,9 +490,9 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
   const dragEnd = (): void => {
     batch(() => {
-      setState("previous", "draggable", state.active.draggable);
-      setState("previous", "droppable", state.active.droppable);
-      const activeDraggable = state.active.draggable;
+      setState("previous", "draggableId", state.active.draggableId);
+      setState("previous", "droppableId", state.active.droppableId);
+      const activeDraggable = state.active.draggableId;
       if (activeDraggable) {
         setState("transformers", (transformers) =>
           transformers.filter(
@@ -512,12 +505,12 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           displace("draggables", activeDraggable, noopTransform())
         );
       }
-      setState("active", ["draggable", "droppable"], null);
+      setState("active", ["draggableId", "droppableId"], null);
     });
   };
   const onDragStart = (handler: DragEventHandler): void => {
     createEffect(() => {
-      const draggable = activeDraggable();
+      const draggable = state.active.draggable;
       if (draggable) {
         untrack(() => handler({ draggable }));
       }
@@ -525,7 +518,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
   const onDragMove = (handler: DragEventHandler): void => {
     createEffect(() => {
-      const draggable = activeDraggable();
+      const draggable = state.active.draggable;
       if (draggable) {
         Object.values(draggable.transform);
         untrack(() => handler({ draggable }));
@@ -534,8 +527,8 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
   const onDragOver = (handler: DragEventHandler): void => {
     createEffect(() => {
-      const draggable = activeDraggable();
-      const droppable = activeDroppable();
+      const draggable = state.active.draggable;
+      const droppable = state.active.droppable;
       if (draggable) {
         untrack(() => handler({ draggable, droppable }));
       }
@@ -543,9 +536,9 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
   const onDragEnd = (handler: DragEventHandler): void => {
     createEffect(() => {
-      const currentDraggable = activeDraggable();
-      const draggable = previousDraggable();
-      const droppable = previousDroppable();
+      const currentDraggable = state.active.draggable;
+      const draggable = state.previous.draggable;
+      const droppable = state.previous.droppable;
       if (draggable && !currentDraggable) {
         untrack(() => handler({ draggable, droppable }));
       }
@@ -570,13 +563,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     recomputeLayouts,
     detectCollisions,
     displace,
-    activeDraggable,
-    activeDroppable,
-    activeSensor,
     draggableActivators,
-    anyDraggableActive,
-    anyDroppableActive,
-    anySensorActive,
     dragStart,
     dragMove,
     dragEnd,

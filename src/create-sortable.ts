@@ -55,7 +55,7 @@ const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
 
   const transform = (): Transform => {
     return (
-      (id === dndState.active.draggable && !dndState.usingDragOverlay
+      (id === dndState.active.draggableId && !dndState.usingDragOverlay
         ? dndState.draggables[id]?.transform
         : dndState.droppables[id]?.transform) || noopTransform()
     );
