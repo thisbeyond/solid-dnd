@@ -13,7 +13,6 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
       dragStart,
       dragMove,
       dragEnd,
-      anySensorActive,
     },
   ] = useDragDropContext()!;
   const activationDelay = 250; // milliseconds
@@ -57,7 +56,7 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
   };
 
   const onActivate = (): void => {
-    if (!anySensorActive()) {
+    if (!state.active.sensor) {
       sensorStart(id);
       dragStart(activationDraggableId!);
 
@@ -74,7 +73,7 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
       y: event.clientY - initialCoordinates.y,
     };
 
-    if (!anySensorActive()) {
+    if (!state.active.sensor) {
       if (Math.sqrt(transform.x ** 2 + transform.y ** 2) > activationDistance) {
         onActivate();
       }
