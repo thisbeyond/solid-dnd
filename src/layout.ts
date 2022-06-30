@@ -2,6 +2,7 @@ interface Point {
   x: number;
   y: number;
 }
+
 interface Transform {
   x: number;
   y: number;
@@ -10,6 +11,7 @@ interface Transform {
     y: number;
   };
 }
+
 class Layout {
   x;
   y;
@@ -26,21 +28,26 @@ class Layout {
   get left() {
     return this.x;
   }
+
   get top() {
     return this.y;
   }
+
   get right() {
     return this.x + this.width;
   }
+
   get bottom() {
     return this.y + this.height;
   }
+
   get center(): Point {
     return {
       x: this.x + this.width * 0.5,
       y: this.y + this.height * 0.5,
     };
   }
+
   get corners(): {
     topLeft: Point;
     topRight: Point;
@@ -55,6 +62,7 @@ class Layout {
     };
   }
 }
+
 const elementLayout = (element: HTMLElement): Layout => {
   let layout = new Layout(element.getBoundingClientRect());
 
@@ -65,6 +73,7 @@ const elementLayout = (element: HTMLElement): Layout => {
 
   return layout;
 };
+
 const stripTransformFromLayout = (
   layout: Layout,
   transform: string
@@ -90,7 +99,9 @@ const stripTransformFromLayout = (
     y: layout.y - translateY,
   });
 };
+
 const noopTransform = (): Transform => ({ x: 0, y: 0 });
+
 const transformsAreEqual = (
   firstTransform: Transform,
   secondTransform: Transform
@@ -100,6 +111,7 @@ const transformsAreEqual = (
     firstTransform.y === secondTransform.y
   );
 };
+
 const transformLayout = (layout: Layout, transform: Transform): Layout => {
   return new Layout({
     ...layout,
@@ -151,6 +163,7 @@ const layoutsAreEqual = (
     firstLayout.height === secondLayout.height
   );
 };
+
 const layoutContainsPoint = (layout: Layout, point: Point): boolean => {
   return !(
     point.x < layout.left ||

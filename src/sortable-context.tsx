@@ -1,5 +1,3 @@
-import { Id, useDragDropContext } from "./drag-drop-context";
-import { moveArrayItem } from "./move-array-item";
 import {
   createContext,
   createEffect,
@@ -9,10 +7,14 @@ import {
 } from "solid-js";
 import { createStore, Store } from "solid-js/store";
 
+import { Id, useDragDropContext } from "./drag-drop-context";
+import { moveArrayItem } from "./move-array-item";
+
 interface SortableContextState {
   initialIds: Array<Id>;
   sortedIds: Array<Id>;
 }
+
 interface SortableContextProps {
   ids: Array<Id>;
 }
@@ -20,6 +22,7 @@ interface SortableContextProps {
 type SortableContext = [Store<SortableContextState>, {}];
 
 const Context = createContext<SortableContext>();
+
 const SortableProvider: ParentComponent<SortableContextProps> = (props) => {
   const [dndState] = useDragDropContext()!;
 
@@ -60,6 +63,7 @@ const SortableProvider: ParentComponent<SortableContextProps> = (props) => {
 
   return <Context.Provider value={context}>{props.children}</Context.Provider>;
 };
+
 const useSortableContext = (): SortableContext | null => {
   return useContext(Context) || null;
 };

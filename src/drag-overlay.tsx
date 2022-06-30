@@ -1,7 +1,8 @@
-import { useDragDropContext } from "./drag-drop-context";
-import { layoutStyle, transformStyle } from "./style";
 import { Portal } from "solid-js/web";
 import { JSX, ParentComponent, Show } from "solid-js";
+
+import { useDragDropContext } from "./drag-drop-context";
+import { layoutStyle, transformStyle } from "./style";
 
 interface DragOverlayProps {
   class?: string;

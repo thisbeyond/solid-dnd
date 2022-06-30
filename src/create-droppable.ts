@@ -1,3 +1,11 @@
+import {
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+  Setter,
+} from "solid-js";
+
 import { Id, useDragDropContext } from "./drag-drop-context";
 import {
   elementLayout,
@@ -6,13 +14,6 @@ import {
   transformsAreEqual,
 } from "./layout";
 import { transformStyle } from "./style";
-import {
-  createEffect,
-  createSignal,
-  onCleanup,
-  onMount,
-  Setter,
-} from "solid-js";
 
 interface Droppable {
   (element: HTMLElement, accessor?: () => { skipTransform?: boolean }): void;

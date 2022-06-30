@@ -1,12 +1,4 @@
 import {
-  layoutsAreEqual,
-  elementLayout,
-  noopTransform,
-  Layout,
-  Transform,
-  transformLayout,
-} from "./layout";
-import {
   batch,
   createContext,
   createEffect,
@@ -17,7 +9,16 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, Store } from "solid-js/store";
+
 import { CollisionDetector, mostIntersecting } from "./collision";
+import {
+  layoutsAreEqual,
+  elementLayout,
+  noopTransform,
+  Layout,
+  Transform,
+  transformLayout,
+} from "./layout";
 
 type Id = string | number;
 
@@ -25,6 +26,7 @@ type SensorActivator<K extends keyof HTMLElementEventMap> = (
   event: HTMLElementEventMap[K],
   draggableId: Id
 ) => void;
+
 type Draggable = {
   id: Id;
   node: HTMLElement;
@@ -34,6 +36,7 @@ type Draggable = {
   transformed: Layout;
   _pendingCleanup?: boolean;
 };
+
 type Droppable = {
   id: Id;
   node: HTMLElement;
@@ -43,10 +46,12 @@ type Droppable = {
   transformed: Layout;
   _pendingCleanup?: boolean;
 };
+
 type DragEvent = {
   draggable: Draggable;
   droppable?: Droppable | null;
 };
+
 type RecomputeFilter = "all" | "draggable" | "droppable";
 
 interface Sensor {
@@ -84,6 +89,7 @@ interface DragDropState {
   transformers: Transformer[];
   usingDragOverlay: boolean;
 }
+
 interface DragDropActions {
   setUsingDragOverlay(value?: boolean): void;
   addDraggable(draggable: Omit<Draggable, "transform" | "transformed">): void;
@@ -110,6 +116,7 @@ interface DragDropActions {
   onDragOver(handler: DragEventHandler): void;
   onDragEnd(handler: DragEventHandler): void;
 }
+
 interface DragDropContextProps {
   onDragStart?: DragEventHandler;
   onDragMove?: DragEventHandler;
@@ -119,10 +126,12 @@ interface DragDropContextProps {
 }
 
 type DragDropContext = [Store<DragDropState>, DragDropActions];
+
 type Listeners = Record<
   string,
   (event: HTMLElementEventMap[keyof HTMLElementEventMap]) => void
 >;
+
 type DragEventHandler = (event: DragEvent) => void;
 
 const Context = createContext<DragDropContext>();
@@ -135,6 +144,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     { collisionDetector: mostIntersecting },
     passedProps
   );
+
   const [state, setState] = createStore<DragDropState>({
     draggables: {},
     droppables: {},
@@ -176,9 +186,11 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     transformers: [],
     usingDragOverlay: false,
   });
+
   const setUsingDragOverlay = (boolean: boolean = true): void => {
     setState("usingDragOverlay", boolean);
   };
+
   const addDraggable = ({
     id,
     node,
@@ -259,10 +271,12 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       recomputeLayouts();
     }
   };
+
   const removeDraggable = (id: Id): void => {
     setState("draggables", id, "_pendingCleanup", true);
     queueMicrotask(() => cleanupDraggable(id));
   };
+
   const cleanupDraggable = (id: Id) => {
     batch(() => {
       if (state.draggables[id]?._pendingCleanup) {
@@ -320,10 +334,12 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       recomputeLayouts();
     }
   };
+
   const removeDroppable = (id: Id): void => {
     setState("droppables", id, "_pendingCleanup", true);
     queueMicrotask(() => cleanupDroppable(id));
   };
+
   const cleanupDroppable = (id: Id) => {
     batch(() => {
       if (state.droppables[id]?._pendingCleanup) {
@@ -341,6 +357,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   const addSensor = ({ id, activators }: Sensor): void => {
     setState("sensors", id, { id, activators });
   };
+
   const removeSensor = (id: Id): void => {
     batch(() => {
       setState("sensors", id, undefined!);
@@ -349,7 +366,9 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
     });
   };
+
   const sensorStart = (id: Id): void => setState("active", "sensorId", id);
+
   const sensorEnd = (): void => setState("active", "sensorId", null);
 
   const draggableActivators = (draggableId: Id, asHandlers?: boolean) => {
@@ -360,6 +379,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
         activator: SensorActivator<keyof HTMLElementEventMap>;
       }>
     > = {};
+
     for (const sensor of Object.values(state.sensors)) {
       if (sensor) {
         for (const [type, activator] of Object.entries(sensor.activators)) {
@@ -371,6 +391,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
         }
       }
     }
+
     const listeners: Listeners = {};
     for (const key in eventMap) {
       let handlerKey = key;
@@ -386,8 +407,10 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
         }
       };
     }
+
     return listeners;
   };
+
   const recomputeLayouts = (filter: RecomputeFilter = "all"): boolean => {
     let anyLayoutChanged = false;
     batch(() => {
@@ -420,6 +443,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
 
     return anyLayoutChanged;
   };
+
   const detectCollisions = (): void => {
     const draggable = state.active.draggable;
     if (draggable) {
@@ -473,6 +497,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
     });
   };
+
   const dragStart = (draggableId: Id): void => {
     batch(() => {
       displace("draggables", draggableId, noopTransform());
@@ -481,6 +506,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     recomputeLayouts();
     detectCollisions();
   };
+
   const dragMove = (transform: Transform): void => {
     const draggableId = state.active.draggableId;
     if (draggableId) {
@@ -488,10 +514,12 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       detectCollisions();
     }
   };
+
   const dragEnd = (): void => {
     batch(() => {
       setState("previous", "draggableId", state.active.draggableId);
       setState("previous", "droppableId", state.active.droppableId);
+
       const activeDraggable = state.active.draggableId;
       if (activeDraggable) {
         setState("transformers", (transformers) =>
@@ -501,13 +529,16 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
               activeDraggable
           )
         );
+
         requestAnimationFrame(() =>
           displace("draggables", activeDraggable, noopTransform())
         );
       }
+
       setState("active", ["draggableId", "droppableId"], null);
     });
   };
+
   const onDragStart = (handler: DragEventHandler): void => {
     createEffect(() => {
       const draggable = state.active.draggable;
@@ -516,6 +547,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
     });
   };
+
   const onDragMove = (handler: DragEventHandler): void => {
     createEffect(() => {
       const draggable = state.active.draggable;
@@ -525,6 +557,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
     });
   };
+
   const onDragOver = (handler: DragEventHandler): void => {
     createEffect(() => {
       const draggable = state.active.draggable;
@@ -534,6 +567,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
     });
   };
+
   const onDragEnd = (handler: DragEventHandler): void => {
     createEffect(() => {
       const currentDraggable = state.active.draggable;

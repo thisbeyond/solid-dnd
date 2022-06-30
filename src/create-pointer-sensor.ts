@@ -1,5 +1,6 @@
-import { Id, useDragDropContext } from "./drag-drop-context";
 import { onCleanup, onMount } from "solid-js";
+
+import { Id, useDragDropContext } from "./drag-drop-context";
 
 const createPointerSensor = (id: Id = "pointer-sensor"): void => {
   const [
