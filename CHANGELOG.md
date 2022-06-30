@@ -42,6 +42,11 @@
 
 - Avoid reacting to irrelevant droppable changes in `onDragEnd`.
 
+- Minimise differences in layout calculations. Due to the way transforms are
+  stripped from layouts, it is possible to end up with small differences in
+  layout values. This is due to precision issues in JS. Attempt to minimise
+  occurences by rounding to nearest whole number (pixel).
+
 ## [0.6.1] - 2022-05-02
 
 ### Fixed

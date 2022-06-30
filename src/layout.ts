@@ -17,10 +17,10 @@ class Layout {
   height;
 
   constructor(rect: { x: number; y: number; width: number; height: number }) {
-    this.x = rect.x;
-    this.y = rect.y;
-    this.width = rect.width;
-    this.height = rect.height;
+    this.x = Math.floor(rect.x);
+    this.y = Math.floor(rect.y);
+    this.width = Math.floor(rect.width);
+    this.height = Math.floor(rect.height);
   }
 
   get left() {
