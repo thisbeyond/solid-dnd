@@ -40,6 +40,8 @@
   in Solid JS 1.4. In addition, make 1.4 the minimum compatible version of Solid
   as the typings change was backwards incompatible.
 
+- Avoid reacting to irrelevant droppable changes in `onDragEnd`.
+
 ## [0.6.1] - 2022-05-02
 
 ### Fixed

@@ -538,9 +538,10 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     createEffect(() => {
       const currentDraggable = state.active.draggable;
       const draggable = state.previous.draggable;
-      const droppable = state.previous.droppable;
       if (draggable && !currentDraggable) {
-        untrack(() => handler({ draggable, droppable }));
+        untrack(() =>
+          handler({ draggable, droppable: state.previous.droppable })
+        );
       }
     });
   };
