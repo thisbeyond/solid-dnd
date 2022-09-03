@@ -2,14 +2,60 @@
 
 ## [Unreleased]
 
+Refactor core to lean more into reactivity.
+
 ### Added
 
-- Export DragEvent type for external use in order to avoid consumers having to
+- Export `DragEvent` type for external use in order to avoid consumers having to
   redefine this type for custom handlers.
 
 - Explicitly type `Id` (for `string | number` ids) and export for reuse.
 
+- Add `rect` getter on `Layout` for ease of use. When duplicating a `Layout`,
+  can now do `new Layout(existingLayout.rect)`.
+
 ### Changed
+
+- **Breaking Change** Refactor core to lean more into reactivity.
+
+  Notably, make transforms a reactive computation of an array of transformers
+  rather than a pre-computed set state. For example, make active draggable
+  transform react to current sensor position rather than have sensor set the
+  draggable position directly.
+
+  To support this reactivity, introduce a `sensorMove` function in place of the
+  previous `dragMove` function, add functions (`addTransformer`,
+  `removeTransformer`) to manage transfomers on draggables and droppables, and
+  remove the now redundant `displace` function.
+
+  Transformers are keyed by id and orderable for ease of use and predictability,
+  and can be accessed via the `transfomers` property on draggables or
+  droppables.
+
+  Transformers also open up opportunity for custom constraints on transforms,
+  such as limiting drag movement to a particular axis by adding an appropriate
+  trasnformer in `onDragStart`:
+
+  ```jsx
+  const transformer = {
+    id: "constrain-x-axis",
+    order: 100,
+    callback: (transform) => ({ ...transform, x: 0 }),
+  };
+
+  onDragStart(({ draggable }) => {
+    addTransformer("draggables", draggable.id, transformer);
+  });
+
+  onDragEnd(({ draggable }) => {
+    removeTransformer("draggables", draggable.id, transformer.id);
+  });
+  ```
+
+- **Breaking Change** Sensors should now pass their initial coordinates to
+  `sensorStart` and updated coordinates to the new `sensorMove` function (which
+  replaces the removed `dragMove` function). The included pointer sensor has
+  been updated accordingly.
 
 - **Breaking Change** Move 'read state' helpers directly into the state object.
   This makes a clearer separation between actions that typically modify state vs
@@ -36,9 +82,9 @@
 
 ### Fixed
 
-- **Breaking Change** Update typings to be compatible with new typing approach
-  in Solid JS 1.4. In addition, make 1.4 the minimum compatible version of Solid
-  as the typings change was backwards incompatible.
+- **Breaking change** Make Solid JS 1.5 the minimum compatible version of Solid
+  and update to support its breaking changes to typings, and the new `batch`
+  behaviour.
 
 - Avoid reacting to irrelevant droppable changes in `onDragEnd`.
 
