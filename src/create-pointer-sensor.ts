@@ -1,6 +1,12 @@
 import { onCleanup, onMount } from "solid-js";
 
-import { Id, useDragDropContext } from "./drag-drop-context";
+import {
+  Coordinates,
+  Id,
+  SensorActivator,
+  useDragDropContext,
+} from "./drag-drop-context";
+import { Transform } from "./layout";
 
 const createPointerSensor = (id: Id = "pointer-sensor"): void => {
   const [
@@ -9,9 +15,9 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
       addSensor,
       removeSensor,
       sensorStart,
+      sensorMove,
       sensorEnd,
       dragStart,
-      dragMove,
       dragEnd,
     },
   ] = useDragDropContext()!;
@@ -28,12 +34,12 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
 
   const isActiveSensor = () => state.active.sensorId === id;
 
-  const initialCoordinates = { x: 0, y: 0 };
+  const initialCoordinates: Coordinates = { x: 0, y: 0 };
 
   let activationDelayTimeoutId: number | null = null;
   let activationDraggableId: Id | null = null;
 
-  const attach = (event: PointerEvent, draggableId: Id): void => {
+  const attach: SensorActivator<"pointerdown"> = (event, draggableId) => {
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
 
@@ -57,7 +63,7 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
 
   const onActivate = (): void => {
     if (!state.active.sensor) {
-      sensorStart(id);
+      sensorStart(id, initialCoordinates);
       dragStart(activationDraggableId!);
 
       clearSelection();
@@ -68,12 +74,14 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
   };
 
   const onPointerMove = (event: PointerEvent): void => {
-    const transform = {
-      x: event.clientX - initialCoordinates.x,
-      y: event.clientY - initialCoordinates.y,
-    };
+    const coordinates: Coordinates = { x: event.clientX, y: event.clientY };
 
     if (!state.active.sensor) {
+      const transform: Transform = {
+        x: coordinates.x - initialCoordinates.x,
+        y: coordinates.y - initialCoordinates.y,
+      };
+
       if (Math.sqrt(transform.x ** 2 + transform.y ** 2) > activationDistance) {
         onActivate();
       }
@@ -81,7 +89,7 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
 
     if (isActiveSensor()) {
       event.preventDefault();
-      dragMove(transform);
+      sensorMove(coordinates);
     }
   };
 

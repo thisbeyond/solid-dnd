@@ -15,5 +15,6 @@ export type {
   DragEvent,
   Draggable,
   Droppable,
+  Transformer,
 } from "./drag-drop-context";
 export type { CollisionDetector } from "./collision";

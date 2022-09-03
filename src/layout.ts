@@ -6,10 +6,6 @@ interface Point {
 interface Transform {
   x: number;
   y: number;
-  base?: {
-    x: number;
-    y: number;
-  };
 }
 
 class Layout {
@@ -23,6 +19,10 @@ class Layout {
     this.y = Math.floor(rect.y);
     this.width = Math.floor(rect.width);
     this.height = Math.floor(rect.height);
+  }
+
+  get rect() {
+    return { x: this.x, y: this.y, width: this.width, height: this.height };
   }
 
   get left() {
@@ -174,6 +174,7 @@ const layoutContainsPoint = (layout: Layout, point: Point): boolean => {
 };
 
 export {
+  Layout,
   elementLayout,
   noopTransform,
   transformsAreEqual,
@@ -184,4 +185,4 @@ export {
   layoutsAreEqual,
   layoutContainsPoint,
 };
-export type { Layout, Transform };
+export type { Point, Transform };
