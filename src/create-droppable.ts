@@ -41,7 +41,7 @@ const createDroppable = (id: Id, data: Record<string, any> = {}): Droppable => {
   onCleanup(() => removeDroppable(id));
 
   const isActiveDroppable = () => state.active.droppableId === id;
-  const transform = (): Transform => {
+  const transform = () => {
     return state.droppables[id]?.transform || noopTransform();
   };
   const droppable = Object.defineProperties(
