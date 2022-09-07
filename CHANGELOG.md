@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-Refactor core to lean more into reactivity.
+Refactor core to lean more into reactivity. Note there are multiple breaking
+changes in this release - see below for details.
 
 ### Added
 
@@ -13,6 +14,26 @@ Refactor core to lean more into reactivity.
 
 - Add `rect` getter on `Layout` for ease of use. When duplicating a `Layout`,
   can now do `new Layout(existingLayout.rect)`.
+
+- Support for custom transformers to refine `Draggable` and `Droppable`
+  transform behaviour. Transformers are specified against an individual item and
+  can be used for things like limiting drag movement to a particular axis:
+
+  ```jsx
+  const transformer = {
+    id: "constrain-x-axis",
+    order: 100,
+    callback: (transform) => ({ ...transform, x: 0 }),
+  };
+
+  onDragStart(({ draggable }) => {
+    addTransformer("draggables", draggable.id, transformer);
+  });
+
+  onDragEnd(({ draggable }) => {
+    removeTransformer("draggables", draggable.id, transformer.id);
+  });
+  ```
 
 ### Changed
 
@@ -31,26 +52,6 @@ Refactor core to lean more into reactivity.
   Transformers are keyed by id and orderable for ease of use and predictability,
   and can be accessed via the `transfomers` property on draggables or
   droppables.
-
-  Transformers also open up opportunity for custom constraints on transforms,
-  such as limiting drag movement to a particular axis by adding an appropriate
-  trasnformer in `onDragStart`:
-
-  ```jsx
-  const transformer = {
-    id: "constrain-x-axis",
-    order: 100,
-    callback: (transform) => ({ ...transform, x: 0 }),
-  };
-
-  onDragStart(({ draggable }) => {
-    addTransformer("draggables", draggable.id, transformer);
-  });
-
-  onDragEnd(({ draggable }) => {
-    removeTransformer("draggables", draggable.id, transformer.id);
-  });
-  ```
 
 - **Breaking Change** Sensors should now pass their initial coordinates to
   `sensorStart` and updated coordinates to the new `sensorMove` function (which
@@ -80,11 +81,24 @@ Refactor core to lean more into reactivity.
   * `anyDroppableActive()` -> `state.active.droppable`
   * `activeSensor()` -> `state.active.sensor`
 
+- **Breaking Change** Remove filter argument from `recomputeLayouts`. Instead,
+  the core will determine which nodes to re-evaluate when called (and will also
+  cache nodes to avoid redundant evaluation of layout when appropriate).
+
 ### Fixed
 
 - **Breaking change** Make Solid JS 1.5 the minimum compatible version of Solid
   and update to support its breaking changes to typings, and the new `batch`
   behaviour.
+
+- **Breaking Change** Use `DragOverlay` layout in collision detection.
+  Previously the `Draggable` layout was used leading to unexpected behaviour
+  collision behaviour (such as a larger overlay not triggering a `Droppable`
+  even when over it). As part of this the `usingDragOverlay` property of dnd
+  state is removed in faviour of tracking `state.active.overlay` data.
+
+- Auto-center `DragOverlay` over its related `Draggable` on drag start for a
+  better experience when the overlay is of differing size to the draggable.
 
 - Avoid reacting to irrelevant droppable changes in `onDragEnd`.
 
