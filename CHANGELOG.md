@@ -56,11 +56,11 @@ changes in this release - see below for details.
 
   To support this reactivity, introduce a `sensorMove` function in place of the
   previous `dragMove` function, add functions (`addTransformer`,
-  `removeTransformer`) to manage transfomers on draggables and droppables, and
+  `removeTransformer`) to manage transformers on draggables and droppables, and
   remove the now redundant `displace` function.
 
   Transformers are keyed by id and orderable for ease of use and predictability,
-  and can be accessed via the `transfomers` property on draggables or
+  and can be accessed via the `transformers` property on draggables or
   droppables.
 
 - **Breaking Change** Sensors should now pass their initial coordinates to
