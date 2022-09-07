@@ -74,15 +74,13 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
 
       if (!config.skipTransform) {
         createEffect(() => {
-          if (!state.usingDragOverlay) {
-            const resolvedTransform = transform();
+          const resolvedTransform = transform();
 
-            if (!transformsAreEqual(resolvedTransform, noopTransform())) {
-              const style = transformStyle(transform());
-              element.style.setProperty("transform", style.transform);
-            } else {
-              element.style.removeProperty("transform");
-            }
+          if (!transformsAreEqual(resolvedTransform, noopTransform())) {
+            const style = transformStyle(transform());
+            element.style.setProperty("transform", style.transform);
+          } else {
+            element.style.removeProperty("transform");
           }
         });
       }

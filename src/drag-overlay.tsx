@@ -2,7 +2,8 @@ import { Portal } from "solid-js/web";
 import { JSX, ParentComponent, Show } from "solid-js";
 
 import { useDragDropContext } from "./drag-drop-context";
-import { layoutStyle, transformStyle } from "./style";
+import { transformStyle } from "./style";
+import { elementLayout } from "./layout";
 
 interface DragOverlayProps {
   class?: string;
@@ -10,17 +11,46 @@ interface DragOverlayProps {
 }
 
 const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
-  const [state, { setUsingDragOverlay }] = useDragDropContext()!;
+  const [state, { onDragStart, onDragEnd, setOverlay, clearOverlay }] =
+    useDragDropContext()!;
 
-  setUsingDragOverlay(true);
+  let node: HTMLDivElement | undefined;
+
+  onDragStart(({ draggable }) => {
+    setOverlay({
+      node: draggable.node,
+      layout: draggable.layout,
+    });
+
+    queueMicrotask(() => {
+      if (node) {
+        const layout = elementLayout(node);
+        const delta = {
+          x: (draggable.layout.width - layout.width) / 2,
+          y: (draggable.layout.height - layout.height) / 2,
+        };
+        layout.x += delta.x;
+        layout.y += delta.y;
+        setOverlay({ node, layout });
+      }
+    });
+  });
+
+  onDragEnd(() => queueMicrotask(clearOverlay));
 
   const style = (): JSX.CSSProperties => {
-    const draggable = state.active.draggable!;
+    const overlay = state.active.overlay;
+    const draggable = state.active.draggable;
+    if (!overlay || !draggable) return {};
+
     return {
       position: "fixed",
       transition: "transform 0s",
-      ...layoutStyle(draggable.layout),
-      ...transformStyle(draggable.transform),
+      top: `${overlay.layout.top}px`,
+      left: `${overlay.layout.left}px`,
+      "min-width": `${draggable.layout.width}px`,
+      "min-height": `${draggable.layout.height}px`,
+      ...transformStyle(overlay.transform),
       ...props.style,
     };
   };
@@ -28,8 +58,10 @@ const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
   return (
     <Portal mount={document.body}>
       <Show when={state.active.draggable}>
-        <div class={props.class} style={style()}>
-          {props.children}
+        <div ref={node} class={props.class} style={style()}>
+          {typeof props.children === "function"
+            ? props.children(state.active.draggable)
+            : props.children}
         </div>
       </Show>
     </Portal>
@@ -37,3 +69,4 @@ const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
 };
 
 export { DragOverlay };
+

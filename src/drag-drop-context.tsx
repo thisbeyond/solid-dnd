@@ -11,8 +11,14 @@ import {
 import { createStore, Store } from "solid-js/store";
 
 import { CollisionDetector, mostIntersecting } from "./collision";
-import { layoutsAreEqual, elementLayout, Layout, Transform } from "./layout";
-import { makeTransformable } from "./make-transformable";
+import {
+  layoutsAreEqual,
+  elementLayout,
+  Layout,
+  Transform,
+  noopTransform,
+  transformLayout,
+} from "./layout";
 
 type Id = string | number;
 
@@ -44,7 +50,7 @@ interface Transformer {
   callback: TransformerCallback;
 }
 
-export interface DraggableOrDroppable {
+interface Item {
   id: Id;
   node: HTMLElement;
   layout: Layout;
@@ -55,18 +61,21 @@ export interface DraggableOrDroppable {
   _pendingCleanup?: boolean;
 }
 
-type Draggable = DraggableOrDroppable;
+interface Draggable extends Item {}
 
-type Droppable = DraggableOrDroppable;
+interface Droppable extends Item {}
+
+interface Overlay extends Item {}
 
 type DragEvent = {
   draggable: Draggable;
   droppable?: Droppable | null;
+  overlay?: Overlay | null;
 };
 
 type RecomputeFilter = "all" | "draggable" | "droppable";
 
-export interface DragDropState {
+interface DragDropState {
   draggables: Record<Id, Draggable>;
   droppables: Record<Id, Droppable>;
   sensors: Record<Id, Sensor>;
@@ -77,12 +86,11 @@ export interface DragDropState {
     droppable: Droppable | null;
     sensorId: Id | null;
     sensor: Sensor | null;
+    overlay: Overlay | null;
   };
-  usingDragOverlay: boolean;
 }
 
 interface DragDropActions {
-  setUsingDragOverlay(value?: boolean): void;
   addTransformer(
     type: "draggables" | "droppables",
     id: Id,
@@ -103,6 +111,8 @@ interface DragDropActions {
   removeDroppable(id: Id): void;
   addSensor(sensor: Omit<Sensor, "coordinates">): void;
   removeSensor(id: Id): void;
+  setOverlay(overlay: Pick<Overlay, "node" | "layout">): void;
+  clearOverlay(): void;
   recomputeLayouts(filter?: RecomputeFilter): boolean;
   detectCollisions(): void;
   draggableActivators(draggableId: Id, asHandlers?: boolean): Listeners;
@@ -168,15 +178,9 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           ? state.sensors[state.active.sensorId]
           : null;
       },
+      overlay: null,
     },
-    usingDragOverlay: false,
   });
-
-  const setUsingDragOverlay: DragDropActions["setUsingDragOverlay"] = (
-    boolean = true
-  ) => {
-    setState("usingDragOverlay", boolean);
-  };
 
   const addTransformer: DragDropActions["addTransformer"] = (
     type,
@@ -208,7 +212,45 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     let transformer: Transformer | undefined;
 
     if (!existingDraggable) {
-      makeTransformable("draggables", draggable, state);
+      Object.defineProperties(draggable, {
+        transformers: {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: {},
+        },
+        transform: {
+          enumerable: true,
+          configurable: true,
+          get: () => {
+            if (state.active.overlay) {
+              return noopTransform();
+            }
+
+            const transformers = Object.values(
+              state.draggables[id].transformers
+            );
+            transformers.sort((a, b) => a.order - b.order);
+
+            return transformers.reduce(
+              (transform: Transform, transformer: Transformer) => {
+                return transformer.callback(transform);
+              },
+              noopTransform()
+            );
+          },
+        },
+        transformed: {
+          enumerable: true,
+          configurable: true,
+          get: () => {
+            return transformLayout(
+              state.draggables[id].layout,
+              state.draggables[id].transform
+            );
+          },
+        },
+      });
     } else if (state.active.draggableId === id) {
       const layoutDelta = {
         x: existingDraggable.layout.x - layout.x,
@@ -281,7 +323,41 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     };
 
     if (!existingDroppable) {
-      makeTransformable("droppables", droppable, state);
+      Object.defineProperties(droppable, {
+        transformers: {
+          enumerable: true,
+          configurable: true,
+          writable: true,
+          value: {},
+        },
+        transform: {
+          enumerable: true,
+          configurable: true,
+          get: () => {
+            const transformers = Object.values(
+              state.droppables[id].transformers
+            );
+            transformers.sort((a, b) => a.order - b.order);
+
+            return transformers.reduce(
+              (transform: Transform, transformer: Transformer) => {
+                return transformer.callback(transform);
+              },
+              noopTransform()
+            );
+          },
+        },
+        transformed: {
+          enumerable: true,
+          configurable: true,
+          get: () => {
+            return transformLayout(
+              state.droppables[id].layout,
+              state.droppables[id].transform
+            );
+          },
+        },
+      });
     }
 
     setState("droppables", id, droppable);
@@ -338,6 +414,75 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       setState("sensors", id, undefined!);
     });
   };
+
+  const setOverlay: DragDropActions["setOverlay"] = ({ node, layout }) => {
+    const existing = state.active.overlay;
+    const overlay = {
+      node,
+      layout,
+    };
+
+    if (!existing) {
+      Object.defineProperties(overlay, {
+        id: {
+          enumerable: true,
+          configurable: true,
+          get: () => state.active.draggable?.id,
+        },
+        data: {
+          enumerable: true,
+          configurable: true,
+          get: () => state.active.draggable?.data,
+        },
+        transformers: {
+          enumerable: true,
+          configurable: true,
+          get: () =>
+            Object.fromEntries(
+              Object.entries(
+                state.active.draggable
+                  ? state.active.draggable.transformers
+                  : {}
+              ).filter(([id]) => id !== "addDraggable-existing-offset")
+            ),
+        },
+        transform: {
+          enumerable: true,
+          configurable: true,
+          get: () => {
+            const transformers = Object.values(
+              state.active.overlay ? state.active.overlay.transformers : []
+            );
+            transformers.sort((a, b) => a.order - b.order);
+
+            return transformers.reduce(
+              (transform: Transform, transformer: Transformer) => {
+                return transformer.callback(transform);
+              },
+              noopTransform()
+            );
+          },
+        },
+        transformed: {
+          enumerable: true,
+          configurable: true,
+          get: () => {
+            return state.active.overlay
+              ? transformLayout(
+                  state.active.overlay!.layout,
+                  state.active.overlay!.transform
+                )
+              : new Layout({ x: 0, y: 0, width: 0, height: 0 });
+          },
+        },
+      });
+    }
+
+    setState("active", "overlay", overlay);
+  };
+
+  const clearOverlay: DragDropActions["clearOverlay"] = () =>
+    setState("active", "overlay", null);
 
   const sensorStart: DragDropActions["sensorStart"] = (id, coordinates) => {
     batch(() => {
@@ -422,6 +567,8 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
         ? Object.values(state.droppables)
         : [];
 
+    const overlay = state.active.overlay;
+
     batch(() => {
       for (const draggable of draggables) {
         if (draggable) {
@@ -444,13 +591,22 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           }
         }
       }
+
+      if (overlay) {
+        const currentLayout = overlay.layout;
+        const layout = elementLayout(overlay.node);
+        if (!layoutsAreEqual(currentLayout, layout)) {
+          setState("active", "overlay", "layout", layout);
+          anyLayoutChanged = true;
+        }
+      }
     });
 
     return anyLayoutChanged;
   };
 
   const detectCollisions: DragDropActions["detectCollisions"] = () => {
-    const draggable = state.active.draggable;
+    const draggable = state.active.overlay ?? state.active.draggable;
     if (draggable) {
       const droppable = props.collisionDetector(
         draggable,
@@ -512,8 +668,9 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     createEffect(() => {
       const draggable = state.active.draggable;
       if (draggable) {
-        Object.values(draggable.transform);
-        untrack(() => handler({ draggable }));
+        const overlay = untrack(() => state.active.overlay);
+        Object.values(overlay ? overlay.transform : draggable.transform);
+        untrack(() => handler({ draggable, overlay }));
       }
     });
   };
@@ -523,28 +680,40 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       const draggable = state.active.draggable;
       const droppable = state.active.droppable;
       if (draggable) {
-        untrack(() => handler({ draggable, droppable }));
+        untrack(() =>
+          handler({ draggable, droppable, overlay: state.active.overlay })
+        );
       }
     });
   };
 
   const onDragEnd: DragDropActions["onDragEnd"] = (handler) => {
     createEffect(
-      ({ previousDraggable, previousDroppable }) => {
+      ({ previousDraggable, previousDroppable, previousOverlay }) => {
         const draggable = state.active.draggable;
         const droppable = draggable ? state.active.droppable : null;
+        const overlay = draggable ? state.active.overlay : null;
 
         if (!draggable && previousDraggable) {
           untrack(() =>
             handler({
               draggable: previousDraggable,
               droppable: previousDroppable,
+              overlay: previousOverlay,
             })
           );
         }
-        return { previousDraggable: draggable, previousDroppable: droppable };
+        return {
+          previousDraggable: draggable,
+          previousDroppable: droppable,
+          previousOverlay: overlay,
+        };
       },
-      { previousDraggable: null, previousDroppable: null }
+      {
+        previousDraggable: null,
+        previousDroppable: null,
+        previousOverlay: null,
+      }
     );
   };
 
@@ -561,7 +730,6 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   props.onDragEnd && onDragEnd(props.onDragEnd);
 
   const actions = {
-    setUsingDragOverlay,
     addTransformer,
     removeTransformer,
     addDraggable,
@@ -570,6 +738,8 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     removeDroppable,
     addSensor,
     removeSensor,
+    setOverlay,
+    clearOverlay,
     recomputeLayouts,
     detectCollisions,
     draggableActivators,
@@ -600,8 +770,11 @@ export type {
   Listeners,
   DragEventHandler,
   DragEvent,
+  DragDropState,
+  Item,
   Draggable,
   Droppable,
+  Overlay,
   SensorActivator,
   Transformer,
 };
