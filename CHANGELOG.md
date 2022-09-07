@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0] - 2022-09-07
 
 Refactor core to lean more into reactivity. Note there are multiple breaking
 changes in this release - see below for details.
@@ -495,7 +495,8 @@ sortable lists.
   from each other.
 
 <!-- prettier-ignore -->
-[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.6.1...HEAD
+[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/thisbeyond/solid-dnd/compare/0.6.1...0.7.0
 [0.6.1]: https://github.com/thisbeyond/solid-dnd/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/thisbeyond/solid-dnd/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/thisbeyond/solid-dnd/compare/0.4.2...0.5.0
