@@ -1,4 +1,12 @@
-import { Component, For, JSX, mergeProps, onCleanup, onMount } from "solid-js";
+import {
+  Component,
+  For,
+  JSX,
+  mergeProps,
+  onCleanup,
+  onMount,
+  Show,
+} from "solid-js";
 import { Portal } from "solid-js/web";
 
 import { Id, useDragDropContext } from "./drag-drop-context";
@@ -8,7 +16,6 @@ import { layoutStyle, transformStyle } from "./style";
 interface HighlighterProps {
   id: Id;
   layout: Layout;
-  transform: Transform;
   active?: boolean;
   color?: string;
   style?: JSX.CSSProperties;
@@ -69,7 +76,6 @@ const DragDropDebugger = () => {
             <Highlighter
               id={droppable.id}
               layout={droppable.layout}
-              transform={droppable.transform}
               active={droppable.id === state.active.droppableId}
             />
           ) : null
@@ -81,7 +87,6 @@ const DragDropDebugger = () => {
             <Highlighter
               id={draggable.id}
               layout={draggable.layout}
-              transform={draggable.transform}
               active={draggable.id === state.active.draggableId}
               color="blue"
               style={{
@@ -93,6 +98,19 @@ const DragDropDebugger = () => {
           ) : null
         }
       </For>
+      <Show when={state.active.overlay} keyed>
+        {(overlay) => (
+          <Highlighter
+            id={overlay.id}
+            layout={overlay.layout}
+            active={true}
+            color="orange"
+            style={{
+              ...transformStyle(overlay.transform),
+            }}
+          />
+        )}
+      </Show>
     </Portal>
   );
 };
