@@ -73,8 +73,6 @@ type DragEvent = {
   overlay?: Overlay | null;
 };
 
-type RecomputeFilter = "all" | "draggable" | "droppable";
-
 interface DragDropState {
   draggables: Record<Id, Draggable>;
   droppables: Record<Id, Droppable>;
@@ -113,7 +111,7 @@ interface DragDropActions {
   removeSensor(id: Id): void;
   setOverlay(overlay: Pick<Overlay, "node" | "layout">): void;
   clearOverlay(): void;
-  recomputeLayouts(filter?: RecomputeFilter): boolean;
+  recomputeLayouts(): boolean;
   detectCollisions(): void;
   draggableActivators(draggableId: Id, asHandlers?: boolean): Listeners;
   sensorStart(id: Id, coordinates: Coordinates): void;
@@ -552,28 +550,24 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     return listeners;
   };
 
-  const recomputeLayouts: DragDropActions["recomputeLayouts"] = (
-    filter = "all"
-  ) => {
+  const recomputeLayouts: DragDropActions["recomputeLayouts"] = () => {
     let anyLayoutChanged = false;
 
-    const draggables =
-      filter === "all" || filter === "draggable"
-        ? Object.values(state.draggables)
-        : [];
-
-    const droppables =
-      filter === "all" || filter === "droppable"
-        ? Object.values(state.droppables)
-        : [];
-
+    const draggables = Object.values(state.draggables);
+    const droppables = Object.values(state.droppables);
     const overlay = state.active.overlay;
 
     batch(() => {
+      const cache: WeakMap<Element, Layout> = new WeakMap();
+
       for (const draggable of draggables) {
         if (draggable) {
           const currentLayout = draggable.layout;
-          const layout = elementLayout(draggable.node);
+
+          if (!cache.has(draggable.node))
+            cache.set(draggable.node, elementLayout(draggable.node));
+          const layout = cache.get(draggable.node)!;
+
           if (!layoutsAreEqual(currentLayout, layout)) {
             setState("draggables", draggable.id, "layout", layout);
             anyLayoutChanged = true;
@@ -584,7 +578,11 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       for (const droppable of droppables) {
         if (droppable) {
           const currentLayout = droppable.layout;
-          const layout = elementLayout(droppable.node);
+
+          if (!cache.has(droppable.node))
+            cache.set(droppable.node, elementLayout(droppable.node));
+          const layout = cache.get(droppable.node)!;
+
           if (!layoutsAreEqual(currentLayout, layout)) {
             setState("droppables", droppable.id, "layout", layout);
             anyLayoutChanged = true;
