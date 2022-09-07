@@ -35,6 +35,16 @@ changes in this release - see below for details.
   });
   ```
 
+- Support using function element form for `DragOverlay` children. This enables
+  referencing the related `Draggable` directly without the need to track
+  separately. For example:
+
+  ```jsx
+  <DragOverlay>
+    {(draggable) => <div>Draggable {draggable.id}</div>}
+  </DragOverlay>
+  ```
+
 ### Changed
 
 - **Breaking Change** Refactor core to lean more into reactivity.
