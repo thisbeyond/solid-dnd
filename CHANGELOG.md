@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- Emit more useful warnings when attempting to remove nonexistent items. Rather
+  than fail with error (`Cannot read properties of undefined`), emit an
+  appropriate console warning instead and then return.
+
 ### Fixed
 
 - Ensure layouts recomputed before other effects on drag start. Without this,

@@ -184,13 +184,42 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     type,
     id,
     transformer
-  ) => setState(type, id, "transformers", transformer.id, transformer);
+  ) => {
+    const displayType = type.substring(0, type.length - 1);
+
+    if (!untrack(() => state[type][id])) {
+      console.warn(
+        `Cannot add transformer to nonexistent ${displayType} with id: ${id}`
+      );
+      return;
+    }
+
+    setState(type, id, "transformers", transformer.id, transformer);
+  };
 
   const removeTransformer: DragDropActions["removeTransformer"] = (
     type,
     id,
     transformerId
-  ) => setState(type, id, "transformers", transformerId, undefined!);
+  ) => {
+    const displayType = type.substring(0, type.length - 1);
+
+    if (!untrack(() => state[type][id])) {
+      console.warn(
+        `Cannot remove transformer from nonexistent ${displayType} with id: ${id}`
+      );
+      return;
+    }
+
+    if (!untrack(() => state[type][id]["transformers"][transformerId])) {
+      console.warn(
+        `Cannot remove from ${displayType} with id ${id}, nonexistent transformer with id: ${transformerId}`
+      );
+      return;
+    }
+
+    setState(type, id, "transformers", transformerId, undefined!);
+  };
 
   const addDraggable: DragDropActions["addDraggable"] = ({
     id,
@@ -288,6 +317,11 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
 
   const removeDraggable: DragDropActions["removeDraggable"] = (id) => {
+    if (!untrack(() => state.draggables[id])) {
+      console.warn(`Cannot remove nonexistent draggable with id: ${id}`);
+      return;
+    }
+
     setState("draggables", id, "_pendingCleanup", true);
     queueMicrotask(() => cleanupDraggable(id));
   };
@@ -366,6 +400,11 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
 
   const removeDroppable: DragDropActions["removeDroppable"] = (id) => {
+    if (!untrack(() => state.droppables[id])) {
+      console.warn(`Cannot remove nonexistent droppable with id: ${id}`);
+      return;
+    }
+
     setState("droppables", id, "_pendingCleanup", true);
     queueMicrotask(() => cleanupDroppable(id));
   };
@@ -404,6 +443,11 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   };
 
   const removeSensor: DragDropActions["removeSensor"] = (id) => {
+    if (!untrack(() => state.sensors[id])) {
+      console.warn(`Cannot remove nonexistent sensor with id: ${id}`);
+      return;
+    }
+
     const cleanupActive = state.active.sensorId === id;
     batch(() => {
       if (cleanupActive) {
