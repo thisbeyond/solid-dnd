@@ -1,11 +1,12 @@
 import { Portal } from "solid-js/web";
 import { JSX, ParentComponent, Show } from "solid-js";
 
-import { useDragDropContext } from "./drag-drop-context";
+import { Draggable, useDragDropContext } from "./drag-drop-context";
 import { transformStyle } from "./style";
 import { elementLayout } from "./layout";
 
 interface DragOverlayProps {
+  children: Element | ((activeDraggable: Draggable | null) => Element);
   class?: string;
   style?: JSX.CSSProperties;
 }

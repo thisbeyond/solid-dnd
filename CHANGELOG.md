@@ -20,6 +20,8 @@
 
 - Don't apply redundant adjustment transformer when a drag overlay is used.
 
+- Improve typings for `DragOverlay` to better describe function form.
+
 ## [0.7.0] - 2022-09-07
 
 Refactor core to lean more into reactivity. Note there are multiple breaking
