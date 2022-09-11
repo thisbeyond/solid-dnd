@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Don't apply redundant adjustment transformer when a drag overlay is used.
+
 ## [0.7.0] - 2022-09-07
 
 Refactor core to lean more into reactivity. Note there are multiple breaking

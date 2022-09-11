@@ -249,7 +249,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           },
         },
       });
-    } else if (state.active.draggableId === id) {
+    } else if (state.active.draggableId === id && !state.active.overlay) {
       const layoutDelta = {
         x: existingDraggable.layout.x - layout.x,
         y: existingDraggable.layout.y - layout.y,
