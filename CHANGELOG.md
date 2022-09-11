@@ -4,6 +4,14 @@
 
 ### Fixed
 
+- Ensure layouts recomputed before other effects on drag start. Without this,
+  issues could occur where collisions were detected against stale positions and
+  items moved incorrectly as a result. In addition, layouts might not have been
+  recomputed correctly on drag end if adjustments were made by custom
+  `onDragEnd` handlers. Now, core behaviour such as `recomputeLayouts` and
+  `detectCollisions` is called explicitly as part of `dragStart` and `dragEnd`
+  to ensure correct ordering.
+
 - Don't apply redundant adjustment transformer when a drag overlay is used.
 
 ## [0.7.0] - 2022-09-07

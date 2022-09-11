@@ -637,10 +637,14 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       },
     };
 
+    recomputeLayouts();
+
     batch(() => {
       setState("active", "draggableId", draggableId);
       addTransformer("draggables", draggableId, transformer);
     });
+
+    detectCollisions();
   };
 
   const dragEnd: DragDropActions["dragEnd"] = () => {
@@ -651,6 +655,8 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
       }
       setState("active", ["draggableId", "droppableId"], null);
     });
+
+    recomputeLayouts();
   };
 
   const onDragStart: DragDropActions["onDragStart"] = (handler) => {
@@ -715,12 +721,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     );
   };
 
-  onDragStart(() => {
-    recomputeLayouts();
-    detectCollisions();
-  });
   onDragMove(() => detectCollisions());
-  onDragEnd(() => recomputeLayouts());
 
   props.onDragStart && onDragStart(props.onDragStart);
   props.onDragMove && onDragMove(props.onDragMove);
