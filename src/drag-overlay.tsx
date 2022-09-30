@@ -6,7 +6,7 @@ import { transformStyle } from "./style";
 import { elementLayout } from "./layout";
 
 interface DragOverlayProps {
-  children: JSX.Element | Element | ((activeDraggable: Draggable | null) => (JSX.Element | Element));
+  children: JSX.Element | ((activeDraggable: Draggable | null) => JSX.Element);
   class?: string;
   style?: JSX.CSSProperties;
 }
