@@ -7,6 +7,8 @@
 - Typing error for `DragOverlay` children caused by use of `Element` instead of
   `JSX.Element`.
 
+- Fix high severity vulnerability suggested by npm.
+
 ## [0.7.1] - 2022-09-11
 
 ### Added
