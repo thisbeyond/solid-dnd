@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Typing error for `DragOverlay` children caused by use of `Element` instead of
+  `JSX.Element`.
+
 ## [0.7.1] - 2022-09-11
 
 ### Added
