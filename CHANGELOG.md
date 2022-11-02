@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Only accept primary button (left-click) for activating drag with default
+  pointer sensor. Fix an issue on some platforms where the contextmenu shows on
+  right-click and intercepts the pointerup events that would cancel the drag,
+  leading to a sticky unintended drag.
+
 ## [0.7.2] - 2022-10-07
 
 ### Fixed

@@ -40,6 +40,8 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
   let activationDraggableId: Id | null = null;
 
   const attach: SensorActivator<"pointerdown"> = (event, draggableId) => {
+    if (event.button !== 0) return;
+
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
 
