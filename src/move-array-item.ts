@@ -3,8 +3,8 @@ const moveArrayItem = <T>(
   fromIndex: number,
   toIndex: number
 ): T[] => {
-  const newArray = array.slice();
-  newArray.splice(toIndex, 0, ...newArray.splice(fromIndex, 1));
+  const newArray = [...array];
+  [newArray[fromIndex], newArray[toIndex]] = [newArray[toIndex], newArray[fromIndex]];
   return newArray;
 };
 
