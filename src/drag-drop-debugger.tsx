@@ -10,7 +10,7 @@ import {
 import { Portal } from "solid-js/web";
 
 import { Id, useDragDropContext } from "./drag-drop-context";
-import { Layout, Transform } from "./layout";
+import { Layout } from "./layout";
 import { layoutStyle, transformStyle } from "./style";
 
 interface HighlighterProps {

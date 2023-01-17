@@ -82,6 +82,7 @@ interface DragDropState {
     draggable: Draggable | null;
     droppableId: Id | null;
     droppable: Droppable | null;
+    forceImmediateTransition: boolean;
     sensorId: Id | null;
     sensor: Sensor | null;
     overlay: Overlay | null;
@@ -115,7 +116,10 @@ interface DragDropActions {
   detectCollisions(): void;
   draggableActivators(draggableId: Id, asHandlers?: boolean): Listeners;
   sensorStart(id: Id, coordinates: Coordinates): void;
-  sensorMove(coordinates: Coordinates): void;
+  sensorMove(
+    coordinates: Coordinates,
+    forceImmediateTransition?: boolean
+  ): void;
   sensorEnd(): void;
   dragStart(draggableId: Id): void;
   dragEnd(): void;
@@ -170,6 +174,7 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
           ? state.droppables[state.active.droppableId]
           : null;
       },
+      forceImmediateTransition: false,
       sensorId: null,
       get sensor(): Sensor | null {
         return state.active.sensorId !== null
@@ -229,7 +234,10 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   }) => {
     const existingDraggable = state.draggables[id];
 
-    const draggable = {
+    const draggable: Omit<
+      Draggable,
+      "transform" | "transformed" | "transformers"
+    > = {
       id,
       node,
       layout,
@@ -346,7 +354,10 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   }) => {
     const existingDroppable = state.droppables[id];
 
-    const droppable = {
+    const droppable: Omit<
+      Droppable,
+      "transform" | "transformed" | "transformers"
+    > = {
       id,
       node,
       layout,
@@ -536,15 +547,21 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
     });
   };
 
-  const sensorMove: DragDropActions["sensorMove"] = (coordinates) => {
+  const sensorMove: DragDropActions["sensorMove"] = (
+    coordinates,
+    forceImmediateTransition = false
+  ) => {
     const sensorId = state.active.sensorId;
     if (!sensorId) {
       console.warn("Cannot move sensor when no sensor active.");
       return;
     }
 
-    setState("sensors", sensorId, "coordinates", "current", {
-      ...coordinates,
+    batch(() => {
+      setState("sensors", sensorId, "coordinates", "current", {
+        ...coordinates,
+      });
+      setState("active", "forceImmediateTransition", forceImmediateTransition);
     });
   };
 

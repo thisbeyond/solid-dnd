@@ -1,6 +1,7 @@
 export { DragDropProvider, useDragDropContext } from "./drag-drop-context";
 export { DragDropSensors } from "./drag-drop-sensors";
 export { createPointerSensor } from "./create-pointer-sensor";
+export { createKeyboardSensor } from "./create-keyboard-sensor";
 export { createDraggable } from "./create-draggable";
 export { createDroppable } from "./create-droppable";
 export { DragOverlay } from "./drag-overlay";

@@ -29,6 +29,7 @@
   },
   "sideEffects": false,
   "scripts": {
+    "dev": "rollup -cw",
     "build": "rollup -c",
     "prepublishOnly": "npm run build",
     "release": "release-it"

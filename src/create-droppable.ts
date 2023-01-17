@@ -54,8 +54,8 @@ const createDroppable = (id: Id, data: Record<string, any> = {}): Droppable => {
         createEffect(() => {
           const resolvedTransform = transform();
           if (!transformsAreEqual(resolvedTransform, noopTransform())) {
-            const style = transformStyle(transform());
-            element.style.setProperty("transform", style.transform);
+            const style = transformStyle(resolvedTransform);
+            element.style.setProperty("transform", style.transform as string);
           } else {
             element.style.removeProperty("transform");
           }

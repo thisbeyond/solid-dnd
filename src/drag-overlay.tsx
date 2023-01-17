@@ -46,7 +46,7 @@ const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
 
     return {
       position: "fixed",
-      transition: "transform 0s",
+      transition: state.active.forceImmediateTransition ? "transform 0s" : "",
       top: `${overlay.layout.top}px`,
       left: `${overlay.layout.left}px`,
       "min-width": `${draggable.layout.width}px`,
