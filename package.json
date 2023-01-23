@@ -57,7 +57,7 @@
     "prettier": "^2.7.1",
     "release-it": "^15.5.0",
     "tsup": "^6.5.0",
-    "tsup-preset-solid": "0.1.4",
+    "tsup-preset-solid": "^0.1.4",
     "solid-js": "^1.5",
     "typescript": "^4.8.4"
   },
