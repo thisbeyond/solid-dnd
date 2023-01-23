@@ -84,7 +84,7 @@ const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
         const resolvedTransform = transform();
         if (!transformsAreEqual(resolvedTransform, noopTransform())) {
           const style = transformStyle(transform());
-          element.style.setProperty("transform", style.transform);
+          element.style.setProperty("transform", style.transform ?? null);
         } else {
           element.style.removeProperty("transform");
         }
