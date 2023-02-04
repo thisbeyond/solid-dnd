@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Optimise production builds by stripping console messages and fix errors caused
+  by mixed js and jsx output. As part of this, switch to
+  [tsup](https://tsup.egoist.dev/) for building the library (which should be
+  faster due to the use of [esbuild](https://esbuild.github.io/)).
+
+  Thanks you [@thetarnav](https://github.com/thetarnav) for this improvement.
+
+
 ## [0.7.3] - 2022-11-02
 
 ### Fixed
