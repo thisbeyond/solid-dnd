@@ -86,7 +86,7 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
 
           if (!transformsAreEqual(resolvedTransform, noopTransform())) {
             const style = transformStyle(resolvedTransform);
-            element.style.setProperty("transform", style.transform as string);
+            element.style.setProperty("transform", style.transform);
           } else {
             element.style.removeProperty("transform");
           }

@@ -107,7 +107,6 @@ const createKeyboardSensor = (id: Id = "keyboard-sensor"): void => {
             sensorMove(initialCoordinates);
           case " ":
           case "Enter":
-          case "Escape":
             detach();
             if (isActiveSensor()) {
               event.preventDefault();
