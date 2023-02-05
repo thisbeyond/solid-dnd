@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.4] - 2023-02-04
+
+### Fixed
+
+- Optimise production builds by stripping console messages and fix errors caused
+  by mixed js and jsx output. As part of this, switch to
+  [tsup](https://tsup.egoist.dev/) for building the library (which should be
+  faster due to the use of [esbuild](https://esbuild.github.io/)).
+
+  Thanks you [@thetarnav](https://github.com/thetarnav) for this improvement.
+
+
 ## [0.7.3] - 2022-11-02
 
 ### Fixed
@@ -535,7 +547,8 @@ sortable lists.
   from each other.
 
 <!-- prettier-ignore -->
-[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.7.3...HEAD
+[unreleased]: https://github.com/thisbeyond/solid-dnd/compare/0.7.4...HEAD
+[0.7.4]: https://github.com/thisbeyond/solid-dnd/compare/0.7.3...0.7.4
 [0.7.3]: https://github.com/thisbeyond/solid-dnd/compare/0.7.2...0.7.3
 [0.7.2]: https://github.com/thisbeyond/solid-dnd/compare/0.7.1...0.7.2
 [0.7.1]: https://github.com/thisbeyond/solid-dnd/compare/0.7.0...0.7.1
