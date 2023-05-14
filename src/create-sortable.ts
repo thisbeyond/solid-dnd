@@ -10,7 +10,7 @@ import {
   Transformer,
   useDragDropContext,
 } from "./drag-drop-context";
-import { Layout, noopTransform, Transform, transformsAreEqual } from "./layout";
+import { Layout, noopTransform, Transform, transformsAreEqual, elementLayout } from "./layout";
 import { transformStyle } from "./style";
 
 interface Sortable {
@@ -33,7 +33,7 @@ const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
   const initialIndex = (): number => sortableState.initialIds.indexOf(id);
   const currentIndex = (): number => sortableState.sortedIds.indexOf(id);
   const layoutById = (id: Id): Layout | null =>
-    dndState.droppables[id]?.layout || null;
+    dndState.droppables[id]?.node ? elementLayout(dndState.droppables[id].node) : null;
 
   const sortedTransform = (): Transform => {
     const delta = noopTransform();
