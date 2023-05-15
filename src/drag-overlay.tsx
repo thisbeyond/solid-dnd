@@ -11,7 +11,7 @@ interface DragOverlayProps {
   style?: JSX.CSSProperties;
 }
 
-const DragOverlay: ParentComponent<DragOverlayProps> = (props) => {
+const DragOverlay = (props: DragOverlayProps) => {
   const [state, { onDragStart, onDragEnd, setOverlay, clearOverlay }] =
     useDragDropContext()!;
 
