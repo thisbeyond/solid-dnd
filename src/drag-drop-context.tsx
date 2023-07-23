@@ -715,10 +715,11 @@ const DragDropProvider: ParentComponent<DragDropContextProps> = (
   const onDragMove: DragDropActions["onDragMove"] = (handler) => {
     createEffect(() => {
       const draggable = state.active.draggable;
+      const droppable = state.active.droppable;
       if (draggable) {
         const overlay = untrack(() => state.active.overlay);
         Object.values(overlay ? overlay.transform : draggable.transform);
-        untrack(() => handler({ draggable, overlay }));
+        untrack(() => handler({ draggable, droppable, overlay }));
       }
     });
   };
