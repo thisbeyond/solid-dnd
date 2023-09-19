@@ -42,6 +42,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsup",
+    "watch": "tsup --watch",
     "prepublishOnly": "npm run build",
     "release": "release-it"
   },
