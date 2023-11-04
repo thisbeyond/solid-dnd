@@ -43,7 +43,7 @@
   "scripts": {
     "build": "tsup",
     "watch": "tsup --watch",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "pnpm run build",
     "release": "release-it"
   },
   "repository": {
@@ -64,5 +64,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "packageManager": "pnpm@8.6.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.6.0"
   }
 }
