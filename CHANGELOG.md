@@ -5,6 +5,7 @@
 ### Fixed
 
 - Updated typings for `DragOverlay` to support function child without error.
+  Thanks to [pardeshirzadeh](https://github.com/pardeshirzadeh) for this fix.
 
 ### Changed
 
