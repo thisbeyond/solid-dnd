@@ -1,5 +1,15 @@
 # Changelog
 
+## [Upcoming]
+
+### Fixed
+
+- Updated typings for `DragOverlay` to support function child without error.
+
+### Changed
+
+- Switched to pnpm as default package manager for repository.
+
 ## [0.7.4] - 2023-02-04
 
 ### Fixed
