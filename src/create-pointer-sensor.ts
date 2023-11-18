@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js";
+import { onCleanup, onMount, untrack } from "solid-js";
 
 import {
   Coordinates,
@@ -91,11 +91,15 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
 
     if (isActiveSensor()) {
       event.preventDefault();
-      sensorMove(coordinates);
+      sensorMove(coordinates, true);
     }
   };
 
   const onPointerUp = (event: PointerEvent): void => {
+    const sensor = untrack(() => state.active.sensor);
+    if (sensor) {
+      sensorMove(sensor.coordinates.current);
+    }
     detach();
     if (isActiveSensor()) {
       event.preventDefault();

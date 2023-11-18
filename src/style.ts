@@ -11,7 +11,7 @@ const layoutStyle = (layout: Layout): JSX.CSSProperties => {
   };
 };
 
-const transformStyle = (transform: Transform): JSX.CSSProperties => {
+const transformStyle = (transform: Transform): JSX.CSSProperties & { transform: string } => {
   return { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` };
 };
 

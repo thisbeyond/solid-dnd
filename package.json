@@ -41,6 +41,7 @@
   "typesVersions": {},
   "sideEffects": false,
   "scripts": {
+    "dev": "tsup --watch",
     "build": "tsup",
     "watch": "tsup --watch",
     "prepublishOnly": "pnpm run build",

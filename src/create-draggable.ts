@@ -76,9 +76,17 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
         createEffect(() => {
           const resolvedTransform = transform();
 
+          if (state.active.forceImmediateTransition) {
+            element.style.setProperty("transition-property", "transform");
+            element.style.setProperty("transition-duration", "0ms");
+          } else {
+            element.style.removeProperty("transition-property");
+            element.style.removeProperty("transition-duration");
+          }
+
           if (!transformsAreEqual(resolvedTransform, noopTransform())) {
-            const style = transformStyle(transform());
-            element.style.setProperty("transform", style.transform ?? null);
+            const style = transformStyle(resolvedTransform);
+            element.style.setProperty("transform", style.transform);
           } else {
             element.style.removeProperty("transform");
           }
