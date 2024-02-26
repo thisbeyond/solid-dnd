@@ -1,6 +1,7 @@
 import {
   createEffect,
   createSignal,
+  createMemo,
   onCleanup,
   onMount,
   Setter,
@@ -42,7 +43,7 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
   });
   onCleanup(() => removeDraggable(id));
 
-  const isActiveDraggable = () => state.active.draggableId === id;
+  const isActiveDraggable = createMemo(() => state.active.draggableId === id);
   const transform = () => {
     return state.draggables[id]?.transform || noopTransform();
   };
