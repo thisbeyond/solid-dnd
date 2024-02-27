@@ -1,5 +1,6 @@
 import {
   createEffect,
+  createMemo,
   createSignal,
   onCleanup,
   onMount,
@@ -40,10 +41,10 @@ const createDroppable = (id: Id, data: Record<string, any> = {}): Droppable => {
   });
   onCleanup(() => removeDroppable(id));
 
-  const isActiveDroppable = () => state.active.droppableId === id;
-  const transform = () => {
+  const isActiveDroppable = createMemo(() => state.active.droppableId === id);
+  const transform = createMemo(() => {
     return state.droppables[id]?.transform || noopTransform();
-  };
+  });
   const droppable = Object.defineProperties(
     (element: HTMLElement, accessor?: () => { skipTransform?: boolean }) => {
       const config = accessor ? accessor() : {};

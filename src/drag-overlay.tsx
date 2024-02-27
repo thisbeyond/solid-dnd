@@ -1,5 +1,5 @@
 import { Portal } from "solid-js/web";
-import { Component, JSX, Show } from "solid-js";
+import { Component, JSX, Show, createMemo } from "solid-js";
 
 import { Draggable, useDragDropContext } from "./drag-drop-context";
 import { transformStyle } from "./style";
@@ -39,7 +39,7 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
 
   onDragEnd(() => queueMicrotask(clearOverlay));
 
-  const style = (): JSX.CSSProperties => {
+  const style = createMemo((): JSX.CSSProperties => {
     const overlay = state.active.overlay;
     const draggable = state.active.draggable;
     if (!overlay || !draggable) return {};
@@ -54,7 +54,7 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
       ...transformStyle(overlay.transform),
       ...props.style,
     };
-  };
+  });
 
   return (
     <Portal mount={document.body}>
@@ -70,4 +70,3 @@ const DragOverlay: Component<DragOverlayProps> = (props) => {
 };
 
 export { DragOverlay };
-

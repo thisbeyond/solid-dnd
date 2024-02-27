@@ -1,6 +1,7 @@
 import {
   createEffect,
   createSignal,
+  createMemo,
   onCleanup,
   onMount,
   Setter,
@@ -42,10 +43,10 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
   });
   onCleanup(() => removeDraggable(id));
 
-  const isActiveDraggable = () => state.active.draggableId === id;
-  const transform = () => {
+  const isActiveDraggable = createMemo(() => state.active.draggableId === id);
+  const transform = createMemo(() => {
     return state.draggables[id]?.transform || noopTransform();
-  };
+  });
 
   const draggable = Object.defineProperties(
     (element: HTMLElement, accessor?: () => { skipTransform?: boolean }) => {
@@ -96,9 +97,7 @@ const createDraggable = (id: Id, data: Record<string, any> = {}): Draggable => {
       },
       dragActivators: {
         enumerable: true,
-        get: () => {
-          return draggableActivators(id, true);
-        },
+        get: createMemo(() => draggableActivators(id, true)),
       },
       transform: {
         enumerable: true,

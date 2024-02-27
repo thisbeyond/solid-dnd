@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js";
+import { createMemo, onCleanup, onMount } from "solid-js";
 
 import {
   Coordinates,
@@ -32,7 +32,7 @@ const createPointerSensor = (id: Id = "pointer-sensor"): void => {
     removeSensor(id);
   });
 
-  const isActiveSensor = () => state.active.sensorId === id;
+  const isActiveSensor = createMemo(() => state.active.sensorId === id);
 
   const initialCoordinates: Coordinates = { x: 0, y: 0 };
 
