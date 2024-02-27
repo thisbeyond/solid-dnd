@@ -1,4 +1,4 @@
-import { createEffect, onCleanup, onMount } from "solid-js";
+import { createEffect, createMemo, onCleanup, onMount } from "solid-js";
 
 import { createDraggable } from "./create-draggable";
 import { createDroppable } from "./create-droppable";
@@ -30,12 +30,16 @@ const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
   const droppable = createDroppable(id, data);
   const setNode = combineRefs(draggable.ref, droppable.ref);
 
-  const initialIndex = (): number => sortableState.initialIds.indexOf(id);
-  const currentIndex = (): number => sortableState.sortedIds.indexOf(id);
+  const initialIndex = createMemo((): number =>
+    sortableState.initialIds.indexOf(id)
+  );
+  const currentIndex = createMemo((): number =>
+    sortableState.sortedIds.indexOf(id)
+  );
   const layoutById = (id: Id): Layout | null =>
     dndState.droppables[id]?.layout || null;
 
-  const sortedTransform = (): Transform => {
+  const sortedTransform = createMemo((): Transform => {
     const delta = noopTransform();
     const resolvedInitialIndex = initialIndex();
     const resolvedCurrentIndex = currentIndex();
@@ -53,7 +57,7 @@ const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
     }
 
     return delta;
-  };
+  });
 
   const transformer: Transformer = {
     id: "sortableOffset",
@@ -67,13 +71,13 @@ const createSortable = (id: Id, data: Record<string, any> = {}): Sortable => {
   onMount(() => addTransformer("droppables", id, transformer));
   onCleanup(() => removeTransformer("droppables", id, transformer.id));
 
-  const transform = (): Transform => {
+  const transform = createMemo((): Transform => {
     return (
       (id === dndState.active.draggableId && !dndState.active.overlay
         ? dndState.draggables[id]?.transform
         : dndState.droppables[id]?.transform) || noopTransform()
     );
-  };
+  });
 
   const sortable = Object.defineProperties(
     (element: HTMLElement) => {
